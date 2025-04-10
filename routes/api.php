@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ChucVuController;
 use App\Http\Controllers\DanhGiaController;
+use App\Http\Controllers\NhanVienController;
 use App\Http\Controllers\QuanLyPhimController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -32,3 +33,9 @@ Route::post('/danh-gia/create', [DanhGiaController::class, 'createData']);
 Route::put('/danh-gia/update', [DanhGiaController::class, 'updateData']);
 Route::delete('/danh-gia/delete/{id}', [DanhGiaController::class, 'deleteData']);
 Route::put('/danh-gia/doi-trang-thai', [DanhGiaController::class, 'doiTrangThai']);
+
+Route::get('/nhan-vien/data', [NhanVienController::class, 'getData']);
+Route::post('/nhan-vien/create', [NhanVienController::class, 'createData']);
+Route::put('/nhan-vien/update', [NhanVienController::class, 'updateData']);
+Route::delete('/nhan-vien/delete/{id}', [NhanVienController::class, 'deleteData']);
+Route::put('/nhan-vien/doi-trang-thai', [NhanVienController::class, 'doiTrangThai']);
