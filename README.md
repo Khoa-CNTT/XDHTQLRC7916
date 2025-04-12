@@ -16,5 +16,5 @@
 
 - **HTML5, CSS3, JavaScript**
 - **Bootstrap 5** – xây dựng giao diện responsive
-- **Font Awesome** – biểu tượng trực quan
+- **Font Awesome** – biểu tượng trực quan[]
 - **Vue.js**  framework
