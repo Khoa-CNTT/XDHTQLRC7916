@@ -18,7 +18,7 @@ use App\Http\Controllers\TheLoaiController;
 use App\Http\Controllers\TrangChuController;
 use App\Http\Controllers\LoginGoogleController;
 use App\Http\Controllers\ThanhToanController;
-use App\Http\Controllers\ChatbotController;
+//use App\Http\Controllers\ChatbotController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -212,5 +212,5 @@ Route::get('/thanh-toan/ipn', [ThanhToanController::class, 'ipnVnpay']); // Thê
 Route::get('/thanh-toan/chi-tiet-hoa-don/{maHoaDon}', [ThanhToanController::class, 'chiTietHoaDon']);
 
 // Chatbot API routes
-Route::post('/chatbot/query', [ChatbotController::class, 'query']);
-Route::get('/chatbot/suggest-movies', [ChatbotController::class, 'suggestMovies']);
+// Route::post('/chatbot/query', [ChatbotController::class, 'query']);
+// Route::get('/chatbot/suggest-movies', [ChatbotController::class, 'suggestMovies']);
