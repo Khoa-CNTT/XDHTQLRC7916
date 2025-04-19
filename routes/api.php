@@ -18,8 +18,10 @@ use App\Http\Controllers\TheLoaiController;
 use App\Http\Controllers\TrangChuController;
 use App\Http\Controllers\LoginGoogleController;
 use App\Http\Controllers\ThanhToanController;
+
 use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\GocDienAnhController;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -157,6 +159,7 @@ Route::post("/khach-hang/dat-lai-mat-khau", [KhachHangController::class, 'datLai
 Route::post("/khach-hang/quen-mat-khau", [KhachHangController::class, 'quenMatKhau']);
 Route::post('/dang-ky', [KhachHangController::class, 'dangKy']);
 Route::post("/khach-hang/kich-hoat", [KhachHangController::class, 'kichHoat']);
+Route::post("/khach-hang/thong-tin-ca-nhan", [KhachHangController::class, 'thongTinCaNhan']);
 
 
 Route::get('/lay-ve/data', [ChiTietVeController::class, 'getDataOpen']);
@@ -205,6 +208,7 @@ Route::get('/thanh-toan/ipn', [ThanhToanController::class, 'ipnVnpay']); // Thê
 Route::get('/thanh-toan/chi-tiet-hoa-don/{maHoaDon}', [ThanhToanController::class, 'chiTietHoaDon']);
 
 // Chatbot API routes
+
 Route::post('/chatbot/query', [ChatbotController::class, 'query']);
 Route::get('/chatbot/suggest-movies', [ChatbotController::class, 'suggestMovies']);
 
