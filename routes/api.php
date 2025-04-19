@@ -164,6 +164,7 @@ Route::post("/khach-hang/dat-lai-mat-khau", [KhachHangController::class, 'datLai
 Route::post("/khach-hang/quen-mat-khau", [KhachHangController::class, 'quenMatKhau']);
 Route::post('/dang-ky', [KhachHangController::class, 'dangKy']);
 Route::post("/khach-hang/kich-hoat", [KhachHangController::class, 'kichHoat']);
+Route::post("/khach-hang/thong-tin-ca-nhan", [KhachHangController::class, 'thongTinCaNhan']);
 
 
 Route::get('/lay-ve/data', [ChiTietVeController::class, 'getDataOpen']);
