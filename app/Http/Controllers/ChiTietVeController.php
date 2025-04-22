@@ -13,10 +13,38 @@ class ChiTietVeController extends Controller
 {
     public function getData()
     {
-        $data   =   ChiTietVe::where('tinh_trang', 1)
+        $data = ChiTietVe::join('suat_chieus', 'chi_tiet_ves.id_suat', '=', 'suat_chieus.id')
+            ->join('quan_ly_phims', 'suat_chieus.phim_id', '=', 'quan_ly_phims.id')
+            ->join('ghes', 'chi_tiet_ves.id_ghe', '=', 'ghes.id')
+            ->join('phongs', 'ghes.phong_id', '=', 'phongs.id')
+            ->leftJoin('khach_hangs', 'chi_tiet_ves.id_khach_hang', '=', 'khach_hangs.id')
+            ->leftJoin('hoa_dons', 'chi_tiet_ves.id_hoa_don', '=', 'hoa_dons.id')
+            ->select(
+                'chi_tiet_ves.id',
+                'chi_tiet_ves.gia_tien',
+                'chi_tiet_ves.tinh_trang',
+                'chi_tiet_ves.thoi_gian_dat',
+                'chi_tiet_ves.thoi_gian_het_han',
+                'quan_ly_phims.ten_phim',
+                'suat_chieus.ngay_chieu',
+                'suat_chieus.gio_bat_dau',
+                'suat_chieus.gio_ket_thuc',
+                'suat_chieus.dinh_dang',
+                'suat_chieus.ngon_ngu',
+                'ghes.ten_ghe',
+                'ghes.hang',
+                'ghes.cot',
+                'ghes.loai_ghe',
+                'phongs.ten_phong',
+                'khach_hangs.ten_khach_hang',
+                'hoa_dons.ma_hoa_don',
+                'hoa_dons.trang_thai as trang_thai_hoa_don'
+            )
+            ->orderBy('chi_tiet_ves.created_at', 'desc')
             ->get();
 
         return response()->json([
+            'status' => true,
             'data' => $data
         ]);
     }
@@ -41,12 +69,12 @@ class ChiTietVeController extends Controller
             ->first();
         if ($master->is_master) {
             $ve = ChiTietVe::where('id', $id)->first();
-        $ve->tinh_trang = 0;
-        $ve->save();
-        return response()->json([
-            'status'    =>  true,
-            'message'   =>  'Đã xoá dịch vụ thành công!'
-        ]);
+            $ve->tinh_trang = 0;
+            $ve->save();
+            return response()->json([
+                'status'    =>  true,
+                'message'   =>  'Đã xoá dịch vụ thành công!'
+            ]);
         } else {
             $check = ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
                 ->where('chuc_vus.tinh_trang', 1)
@@ -55,20 +83,18 @@ class ChiTietVeController extends Controller
                 ->first();
             if ($check) {
                 $ve = ChiTietVe::where('id', $id)->first();
-        $ve->tinh_trang = 0;
-        $ve->save();
-        return response()->json([
-            'status'    =>  true,
-            'message'   =>  'Đã xoá dịch vụ thành công!'
-        ]);
+                $ve->tinh_trang = 0;
+                $ve->save();
+                return response()->json([
+                    'status'    =>  true,
+                    'message'   =>  'Đã xoá dịch vụ thành công!'
+                ]);
             } else {
                 return response()->json([
                     "message" => 'bạn không có quyền này'
                 ]);
             }
         }
-
-
     }
 
 
@@ -81,12 +107,12 @@ class ChiTietVeController extends Controller
         if ($master->is_master) {
             $data   = $request->all();
 
-        ChiTietVe::find($request->id)->update($data);
+            ChiTietVe::find($request->id)->update($data);
 
-        return response()->json([
-            'status'    =>  true,
-            'message'   =>  'Đã cập nhật dịch vụ thành công!'
-        ]);
+            return response()->json([
+                'status'    =>  true,
+                'message'   =>  'Đã cập nhật dịch vụ thành công!'
+            ]);
         } else {
             $check = ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
                 ->where('chuc_vus.tinh_trang', 1)
@@ -96,20 +122,18 @@ class ChiTietVeController extends Controller
             if ($check) {
                 $data   = $request->all();
 
-        ChiTietVe::find($request->id)->update($data);
+                ChiTietVe::find($request->id)->update($data);
 
-        return response()->json([
-            'status'    =>  true,
-            'message'   =>  'Đã cập nhật dịch vụ thành công!'
-        ]);
+                return response()->json([
+                    'status'    =>  true,
+                    'message'   =>  'Đã cập nhật dịch vụ thành công!'
+                ]);
             } else {
                 return response()->json([
                     "message" => 'bạn không có quyền này'
                 ]);
             }
         }
-
-
     }
 
     // Trong ChiTietVeController.php

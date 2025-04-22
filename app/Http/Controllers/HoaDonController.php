@@ -65,5 +65,4 @@ class HoaDonController extends Controller
             ]);
         }
     }
-
 }

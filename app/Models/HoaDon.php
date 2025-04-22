@@ -14,11 +14,29 @@ class HoaDon extends Model
     protected $fillable = [
         'ma_hoa_don',
         'id_khach_hang',
+        'id_suat',
         'tong_tien',
-        'is_thanh_toan',
+        'phuong_thuc_thanh_toan',
+        'trang_thai',
+        'ngay_thanh_toan',
+        'ghi_chu'
     ];
-    public function ves()
+
+    // Thêm relationship với SuatChieu
+    public function suatChieu()
     {
-        return $this->hasMany(ChiTietVe::class, 'id_hoa_don');
+        return $this->belongsTo(SuatChieu::class, 'id_suat', 'id');
+    }
+
+    // Thêm relationship với ChiTietVe
+    public function chiTietVes()
+    {
+        return $this->hasMany(ChiTietVe::class, 'id_hoa_don', 'id');
+    }
+
+    // Thêm relationship với KhachHang
+    public function khachHang()
+    {
+        return $this->belongsTo(KhachHang::class, 'id_khach_hang', 'id');
     }
 }
