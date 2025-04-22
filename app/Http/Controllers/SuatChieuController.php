@@ -124,9 +124,8 @@ class SuatChieuController extends Controller
         $request->validate([
             'phim_id' => 'required|exists:quan_ly_phims,id',
             'phong_id' => 'required|exists:phongs,id',
-            'ngay_chieu' => 'required|date',
+            'ngay_chieu' => 'required|date|after_or_equal:today',
             'gio_bat_dau' => 'required',
-            'gio_ket_thuc' => 'required',
             'gia_ve' => 'required|numeric',
             'dinh_dang' => 'required',
             'ngon_ngu' => 'required',
@@ -145,9 +144,9 @@ class SuatChieuController extends Controller
 
         // Tính giờ kết thúc dựa trên thời lượng phim
         $gioBatDau = $request->gio_bat_dau;
-        $gioKetThuc = $request->gio_ket_thuc;
 
-        // $gioKetThuc = date('H:i:s', strtotime($gioBatDau . ' + ' . $phim->thoi_luong . ' minutes'));
+
+        $gioKetThuc = date('H:i:s', strtotime($gioBatDau . ' + ' . $phim->thoi_luong . ' minutes'));
 
         // Kiểm tra xung đột lịch chiếu trong cùng phòng
         $suatChieuTrung = SuatChieu::where('phong_id', $request->phong_id)
@@ -217,34 +216,6 @@ class SuatChieuController extends Controller
             ->first();
         if ($master->is_master) {
             $daCoNguoiDat = ChiTietVe::where('id_suat', $id)
-            ->where('tinh_trang', 1)
-            ->exists();
-
-        if ($daCoNguoiDat) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Không thể xóa suất chiếu đã có người đặt vé!'
-            ]);
-        }
-
-        // Xóa chi tiết vé trước
-        ChiTietVe::where('id_suat', $id)->delete();
-
-        // Xóa suất chiếu
-        SuatChieu::find($id)->delete();
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Đã xoá suất chiếu thành công!'
-        ]);
-        } else {
-            $check = ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
-                ->where('chuc_vus.tinh_trang', 1)
-                ->where('id_quyen', $user->id_chuc_vu)
-                ->where('id_chuc_nang', $id_chuc_nang)
-                ->first();
-            if ($check) {
-                $daCoNguoiDat = ChiTietVe::where('id_suat', $id)
                 ->where('tinh_trang', 1)
                 ->exists();
 
@@ -265,6 +236,34 @@ class SuatChieuController extends Controller
                 'status' => true,
                 'message' => 'Đã xoá suất chiếu thành công!'
             ]);
+        } else {
+            $check = ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
+                ->where('chuc_vus.tinh_trang', 1)
+                ->where('id_quyen', $user->id_chuc_vu)
+                ->where('id_chuc_nang', $id_chuc_nang)
+                ->first();
+            if ($check) {
+                $daCoNguoiDat = ChiTietVe::where('id_suat', $id)
+                    ->where('tinh_trang', 1)
+                    ->exists();
+
+                if ($daCoNguoiDat) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Không thể xóa suất chiếu đã có người đặt vé!'
+                    ]);
+                }
+
+                // Xóa chi tiết vé trước
+                ChiTietVe::where('id_suat', $id)->delete();
+
+                // Xóa suất chiếu
+                SuatChieu::find($id)->delete();
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Đã xoá suất chiếu thành công!'
+                ]);
             } else {
                 return response()->json([
                     "message" => 'bạn không có quyền này'
@@ -284,69 +283,69 @@ class SuatChieuController extends Controller
         $master = ChucVu::where('id', $user->id_chuc_vu)
             ->first();
         if ($master->is_master) {
-           // Kiểm tra xem suất chiếu đã có người đặt vé chưa
-        $daCoNguoiDat = ChiTietVe::where('suat_chieu_id', $request->id)
-        ->where('tinh_trang', 1)
-        ->exists();
+            // Kiểm tra xem suất chiếu đã có người đặt vé chưa
+            $daCoNguoiDat = ChiTietVe::where('suat_chieu_id', $request->id)
+                ->where('tinh_trang', 1)
+                ->exists();
 
-    $suatChieu = SuatChieu::find($request->id);
-    if (!$suatChieu) {
-        return response()->json([
-            'status' => false,
-            'message' => 'Không tìm thấy suất chiếu!'
-        ]);
-    }
+            $suatChieu = SuatChieu::find($request->id);
+            if (!$suatChieu) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Không tìm thấy suất chiếu!'
+                ]);
+            }
 
-    if ($daCoNguoiDat) {
-        // Nếu đã có người đặt vé, chỉ cho phép cập nhật giá vé và trạng thái
-        $suatChieu->gia_ve = $request->gia_ve;
-        $suatChieu->trang_thai = $request->trang_thai;
-        $suatChieu->save();
+            if ($daCoNguoiDat) {
+                // Nếu đã có người đặt vé, chỉ cho phép cập nhật giá vé và trạng thái
+                $suatChieu->gia_ve = $request->gia_ve;
+                $suatChieu->trang_thai = $request->trang_thai;
+                $suatChieu->save();
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Đã cập nhật giá vé và trạng thái suất chiếu!'
-        ]);
-    }
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Đã cập nhật giá vé và trạng thái suất chiếu!'
+                ]);
+            }
 
-    // Nếu chưa có ai đặt vé, cho phép cập nhật đầy đủ
-    // Tính lại thời gian kết thúc nếu thay đổi phim hoặc thời gian bắt đầu
-    if ($request->phim_id != $suatChieu->phim_id || $request->gio_bat_dau != $suatChieu->gio_bat_dau) {
-        $phim = QuanLyPhim::find($request->phim_id);
-        $gioBatDau = $request->gio_bat_dau;
-        $gioKetThuc = date('H:i:s', strtotime($gioBatDau . ' + ' . $phim->thoi_luong . ' minutes'));
+            // Nếu chưa có ai đặt vé, cho phép cập nhật đầy đủ
+            // Tính lại thời gian kết thúc nếu thay đổi phim hoặc thời gian bắt đầu
+            if ($request->phim_id != $suatChieu->phim_id || $request->gio_bat_dau != $suatChieu->gio_bat_dau) {
+                $phim = QuanLyPhim::find($request->phim_id);
+                $gioBatDau = $request->gio_bat_dau;
+                $gioKetThuc = date('H:i:s', strtotime($gioBatDau . ' + ' . $phim->thoi_luong . ' minutes'));
 
-        // Kiểm tra xung đột lịch chiếu
-        $suatChieuTrung = SuatChieu::where('phong_id', $request->phong_id)
-            ->where('ngay_chieu', $request->ngay_chieu)
-            ->where('id', '!=', $request->id)
-            ->where(function ($query) use ($gioBatDau, $gioKetThuc) {
-                $query->whereBetween('gio_bat_dau', [$gioBatDau, $gioKetThuc])
-                    ->orWhereBetween('gio_ket_thuc', [$gioBatDau, $gioKetThuc])
-                    ->orWhere(function ($q) use ($gioBatDau, $gioKetThuc) {
-                        $q->where('gio_bat_dau', '<=', $gioBatDau)
-                            ->where('gio_ket_thuc', '>=', $gioKetThuc);
-                    });
-            })
-            ->exists();
+                // Kiểm tra xung đột lịch chiếu
+                $suatChieuTrung = SuatChieu::where('phong_id', $request->phong_id)
+                    ->where('ngay_chieu', $request->ngay_chieu)
+                    ->where('id', '!=', $request->id)
+                    ->where(function ($query) use ($gioBatDau, $gioKetThuc) {
+                        $query->whereBetween('gio_bat_dau', [$gioBatDau, $gioKetThuc])
+                            ->orWhereBetween('gio_ket_thuc', [$gioBatDau, $gioKetThuc])
+                            ->orWhere(function ($q) use ($gioBatDau, $gioKetThuc) {
+                                $q->where('gio_bat_dau', '<=', $gioBatDau)
+                                    ->where('gio_ket_thuc', '>=', $gioKetThuc);
+                            });
+                    })
+                    ->exists();
 
-        if ($suatChieuTrung) {
+                if ($suatChieuTrung) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Đã có suất chiếu khác trong cùng thời gian và phòng này!'
+                    ]);
+                }
+
+                $request->merge(['gio_ket_thuc' => $gioKetThuc]);
+            }
+
+            $data = $request->all();
+            $suatChieu->update($data);
+
             return response()->json([
-                'status' => false,
-                'message' => 'Đã có suất chiếu khác trong cùng thời gian và phòng này!'
+                'status' => true,
+                'message' => 'Đã cập nhật suất chiếu thành công!'
             ]);
-        }
-
-        $request->merge(['gio_ket_thuc' => $gioKetThuc]);
-    }
-
-    $data = $request->all();
-    $suatChieu->update($data);
-
-    return response()->json([
-        'status' => true,
-        'message' => 'Đã cập nhật suất chiếu thành công!'
-    ]);
         } else {
             $check = ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
                 ->where('chuc_vus.tinh_trang', 1)
@@ -355,76 +354,74 @@ class SuatChieuController extends Controller
                 ->first();
             if ($check) {
                 // Kiểm tra xem suất chiếu đã có người đặt vé chưa
-        $daCoNguoiDat = ChiTietVe::where('suat_chieu_id', $request->id)
-        ->where('tinh_trang', 1)
-        ->exists();
+                $daCoNguoiDat = ChiTietVe::where('suat_chieu_id', $request->id)
+                    ->where('tinh_trang', 1)
+                    ->exists();
 
-    $suatChieu = SuatChieu::find($request->id);
-    if (!$suatChieu) {
-        return response()->json([
-            'status' => false,
-            'message' => 'Không tìm thấy suất chiếu!'
-        ]);
-    }
+                $suatChieu = SuatChieu::find($request->id);
+                if (!$suatChieu) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Không tìm thấy suất chiếu!'
+                    ]);
+                }
 
-    if ($daCoNguoiDat) {
-        // Nếu đã có người đặt vé, chỉ cho phép cập nhật giá vé và trạng thái
-        $suatChieu->gia_ve = $request->gia_ve;
-        $suatChieu->trang_thai = $request->trang_thai;
-        $suatChieu->save();
+                if ($daCoNguoiDat) {
+                    // Nếu đã có người đặt vé, chỉ cho phép cập nhật giá vé và trạng thái
+                    $suatChieu->gia_ve = $request->gia_ve;
+                    $suatChieu->trang_thai = $request->trang_thai;
+                    $suatChieu->save();
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Đã cập nhật giá vé và trạng thái suất chiếu!'
-        ]);
-    }
+                    return response()->json([
+                        'status' => true,
+                        'message' => 'Đã cập nhật giá vé và trạng thái suất chiếu!'
+                    ]);
+                }
 
-    // Nếu chưa có ai đặt vé, cho phép cập nhật đầy đủ
-    // Tính lại thời gian kết thúc nếu thay đổi phim hoặc thời gian bắt đầu
-    if ($request->phim_id != $suatChieu->phim_id || $request->gio_bat_dau != $suatChieu->gio_bat_dau) {
-        $phim = QuanLyPhim::find($request->phim_id);
-        $gioBatDau = $request->gio_bat_dau;
-        $gioKetThuc = date('H:i:s', strtotime($gioBatDau . ' + ' . $phim->thoi_luong . ' minutes'));
+                // Nếu chưa có ai đặt vé, cho phép cập nhật đầy đủ
+                // Tính lại thời gian kết thúc nếu thay đổi phim hoặc thời gian bắt đầu
+                if ($request->phim_id != $suatChieu->phim_id || $request->gio_bat_dau != $suatChieu->gio_bat_dau) {
+                    $phim = QuanLyPhim::find($request->phim_id);
+                    $gioBatDau = $request->gio_bat_dau;
+                    $gioKetThuc = date('H:i:s', strtotime($gioBatDau . ' + ' . $phim->thoi_luong . ' minutes'));
 
-        // Kiểm tra xung đột lịch chiếu
-        $suatChieuTrung = SuatChieu::where('phong_id', $request->phong_id)
-            ->where('ngay_chieu', $request->ngay_chieu)
-            ->where('id', '!=', $request->id)
-            ->where(function ($query) use ($gioBatDau, $gioKetThuc) {
-                $query->whereBetween('gio_bat_dau', [$gioBatDau, $gioKetThuc])
-                    ->orWhereBetween('gio_ket_thuc', [$gioBatDau, $gioKetThuc])
-                    ->orWhere(function ($q) use ($gioBatDau, $gioKetThuc) {
-                        $q->where('gio_bat_dau', '<=', $gioBatDau)
-                            ->where('gio_ket_thuc', '>=', $gioKetThuc);
-                    });
-            })
-            ->exists();
+                    // Kiểm tra xung đột lịch chiếu
+                    $suatChieuTrung = SuatChieu::where('phong_id', $request->phong_id)
+                        ->where('ngay_chieu', $request->ngay_chieu)
+                        ->where('id', '!=', $request->id)
+                        ->where(function ($query) use ($gioBatDau, $gioKetThuc) {
+                            $query->whereBetween('gio_bat_dau', [$gioBatDau, $gioKetThuc])
+                                ->orWhereBetween('gio_ket_thuc', [$gioBatDau, $gioKetThuc])
+                                ->orWhere(function ($q) use ($gioBatDau, $gioKetThuc) {
+                                    $q->where('gio_bat_dau', '<=', $gioBatDau)
+                                        ->where('gio_ket_thuc', '>=', $gioKetThuc);
+                                });
+                        })
+                        ->exists();
 
-        if ($suatChieuTrung) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Đã có suất chiếu khác trong cùng thời gian và phòng này!'
-            ]);
-        }
+                    if ($suatChieuTrung) {
+                        return response()->json([
+                            'status' => false,
+                            'message' => 'Đã có suất chiếu khác trong cùng thời gian và phòng này!'
+                        ]);
+                    }
 
-        $request->merge(['gio_ket_thuc' => $gioKetThuc]);
-    }
+                    $request->merge(['gio_ket_thuc' => $gioKetThuc]);
+                }
 
-    $data = $request->all();
-    $suatChieu->update($data);
+                $data = $request->all();
+                $suatChieu->update($data);
 
-    return response()->json([
-        'status' => true,
-        'message' => 'Đã cập nhật suất chiếu thành công!'
-    ]);
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Đã cập nhật suất chiếu thành công!'
+                ]);
             } else {
                 return response()->json([
                     "message" => 'bạn không có quyền này'
                 ]);
             }
         }
-
-
     }
 
     // Đổi trạng thái suất chiếu
@@ -436,38 +433,38 @@ class SuatChieuController extends Controller
             ->first();
         if ($master->is_master) {
             $suat = SuatChieu::find($request->id);
-        if ($suat) {
-            // Kiểm tra nếu suất chiếu đã bắt đầu và có người đặt vé
-            $daCoNguoiDat = ChiTietVe::where('id_suat', $request->id)
-                ->where('tinh_trang', 1)
-                ->exists();
+            if ($suat) {
+                // Kiểm tra nếu suất chiếu đã bắt đầu và có người đặt vé
+                $daCoNguoiDat = ChiTietVe::where('id_suat', $request->id)
+                    ->where('tinh_trang', 1)
+                    ->exists();
 
-            $daQua = Carbon::now() > Carbon::parse($suat->thoi_gian_bat_dau);
+                $daQua = Carbon::now() > Carbon::parse($suat->thoi_gian_bat_dau);
 
-            if ($daQua && $daCoNguoiDat && $suat->tinh_trang == 1) {
+                if ($daQua && $daCoNguoiDat && $suat->tinh_trang == 1) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => "Không thể hủy suất chiếu đã bắt đầu và có người đặt vé!"
+                    ]);
+                }
+
+                if ($suat->tinh_trang == 1) {
+                    $suat->tinh_trang = 0;
+                } else {
+                    $suat->tinh_trang = 1;
+                }
+                $suat->save();
+
+                return response()->json([
+                    'status' => true,
+                    'message' => "Đổi trạng thái suất chiếu thành công!"
+                ]);
+            } else {
                 return response()->json([
                     'status' => false,
-                    'message' => "Không thể hủy suất chiếu đã bắt đầu và có người đặt vé!"
+                    'message' => "Đã có lỗi xảy ra!"
                 ]);
             }
-
-            if ($suat->tinh_trang == 1) {
-                $suat->tinh_trang = 0;
-            } else {
-                $suat->tinh_trang = 1;
-            }
-            $suat->save();
-
-            return response()->json([
-                'status' => true,
-                'message' => "Đổi trạng thái suất chiếu thành công!"
-            ]);
-        } else {
-            return response()->json([
-                'status' => false,
-                'message' => "Đã có lỗi xảy ra!"
-            ]);
-        }
         } else {
             $check = ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
                 ->where('chuc_vus.tinh_trang', 1)
@@ -476,46 +473,44 @@ class SuatChieuController extends Controller
                 ->first();
             if ($check) {
                 $suat = SuatChieu::find($request->id);
-        if ($suat) {
-            // Kiểm tra nếu suất chiếu đã bắt đầu và có người đặt vé
-            $daCoNguoiDat = ChiTietVe::where('id_suat', $request->id)
-                ->where('tinh_trang', 1)
-                ->exists();
+                if ($suat) {
+                    // Kiểm tra nếu suất chiếu đã bắt đầu và có người đặt vé
+                    $daCoNguoiDat = ChiTietVe::where('id_suat', $request->id)
+                        ->where('tinh_trang', 1)
+                        ->exists();
 
-            $daQua = Carbon::now() > Carbon::parse($suat->thoi_gian_bat_dau);
+                    $daQua = Carbon::now() > Carbon::parse($suat->thoi_gian_bat_dau);
 
-            if ($daQua && $daCoNguoiDat && $suat->tinh_trang == 1) {
-                return response()->json([
-                    'status' => false,
-                    'message' => "Không thể hủy suất chiếu đã bắt đầu và có người đặt vé!"
-                ]);
-            }
+                    if ($daQua && $daCoNguoiDat && $suat->tinh_trang == 1) {
+                        return response()->json([
+                            'status' => false,
+                            'message' => "Không thể hủy suất chiếu đã bắt đầu và có người đặt vé!"
+                        ]);
+                    }
 
-            if ($suat->tinh_trang == 1) {
-                $suat->tinh_trang = 0;
-            } else {
-                $suat->tinh_trang = 1;
-            }
-            $suat->save();
+                    if ($suat->tinh_trang == 1) {
+                        $suat->tinh_trang = 0;
+                    } else {
+                        $suat->tinh_trang = 1;
+                    }
+                    $suat->save();
 
-            return response()->json([
-                'status' => true,
-                'message' => "Đổi trạng thái suất chiếu thành công!"
-            ]);
-        } else {
-            return response()->json([
-                'status' => false,
-                'message' => "Đã có lỗi xảy ra!"
-            ]);
-        }
+                    return response()->json([
+                        'status' => true,
+                        'message' => "Đổi trạng thái suất chiếu thành công!"
+                    ]);
+                } else {
+                    return response()->json([
+                        'status' => false,
+                        'message' => "Đã có lỗi xảy ra!"
+                    ]);
+                }
             } else {
                 return response()->json([
                     "message" => 'bạn không có quyền này'
                 ]);
             }
         }
-
-
     }
 
     // Cập nhật trạng thái suất chiếu tự động (có thể chạy bằng cron job)
