@@ -555,8 +555,12 @@ class SuatChieuController extends Controller
         }
 
         $tongSoGhe = Ghe::where('phong_id', $suatChieu->phong_id)->count();
+        // Đếm số ghế đã đặt (có trong hóa đơn hợp lệ)
         $soGheDaDat = ChiTietVe::where('id_suat', $id)
-            ->where('tinh_trang', 1)
+            ->where(function ($query) {
+                $query->where('tinh_trang', 1) // Ghế đã đặt
+                    ->orWhere('tinh_trang', 2); // Ghế đang giữ
+            })
             ->count();
 
         return response()->json([
