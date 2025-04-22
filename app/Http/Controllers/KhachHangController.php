@@ -289,6 +289,25 @@ class KhachHangController extends Controller
             'message'   =>  "Đã đặt lại mật khẩu thành công!",
         ]);
     }
+
+    public function doiMatKhau(Request $request){
+        $check  = Auth::guard('khach_hang')->attempt(['email' => $request->email, 'password' =>  $request->password]);
+
+        $kh = KhachHang::where('email', $request->email)->first();
+        if($check){
+            $kh['password'] = bcrypt($request->moi);
+            $kh->save();
+            return response()->json([
+                'status' => true,
+                'message'=> "Đổi mật khẩu thành công"
+            ]);
+        }else{
+            return response()->json([
+                'status' => false,
+                'message'=> "Đổi mật khẩu thất bại"
+            ]);
+        }
+    }
     public function quenMatKhau(KhachHangQuenMatKhauRequest $request)
     {
         $hash_reset     =   Str::uuid();
