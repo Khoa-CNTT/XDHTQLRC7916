@@ -9,34 +9,62 @@ class GocDienAnhController extends Controller
 {
     public function getData()
     {
-        $data = GocDienAnh::all();
-        return response()->json($data);
+        $data = GocDienAnh::orderBy('ngay_dang', 'desc')->get();
+        return response()->json([
+            'data' => $data
+        ]);
     }
 
     public function createData(Request $request)
     {
-        $data = GocDienAnh::create($request->all());
-        return response()->json($data);
+        $data = $request->all();
+        $data['ngay_dang'] = now();
+
+        GocDienAnh::create($data);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Đã tạo mới góc điện ảnh thành công!'
+        ]);
     }
 
     public function updateData(Request $request)
     {
-        $data = GocDienAnh::find($request->id);
-        $data->update($request->all());
-        return response()->json($data);
+        $data = $request->all();
+        GocDienAnh::find($request->id)->update($data);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Đã cập nhật góc điện ảnh thành công!'
+        ]);
     }
 
     public function deleteData($id)
     {
         GocDienAnh::find($id)->delete();
-        return response()->json(['message' => 'Deleted successfully']);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Đã xoá góc điện ảnh thành công!'
+        ]);
     }
 
     public function doiTrangThai(Request $request)
     {
-        $data = GocDienAnh::find($request->id);
-        $data->trang_thai = !$data->trang_thai;
-        $data->save();
-        return response()->json($data);
+        $goc_dien_anh = GocDienAnh::find($request->id);
+        if ($goc_dien_anh) {
+            $goc_dien_anh->trang_thai = !$goc_dien_anh->trang_thai;
+            $goc_dien_anh->save();
+
+            return response()->json([
+                'status' => true,
+                'message' => "Đổi trạng thái góc điện ảnh thành công!"
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => "Đã có lỗi xảy ra!"
+            ]);
+        }
     }
 }
