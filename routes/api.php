@@ -168,6 +168,7 @@ Route::get('/lay-ve/data', [ChiTietVeController::class, 'getDataOpen']);
 Route::get('/lay-ve/data-1/{id}', [ChiTietVeController::class, 'getData1']);
 Route::post('/lay-ve/doi-trang-thai-dat', [ChiTietVeController::class, 'chaneStatusDat']);
 Route::post('/lay-ve/doi-trang-thai-huy', [ChiTietVeController::class, 'chaneStatusHuy']);
+Route::post('/lay-ve/kiem-tra-trang-thai', [ChiTietVeController::class, 'kiemTraTrangThai']);
 Route::get('/ghe-client/data/{id}', [ChiTietVeController::class, 'getDataClient']);
 
 Route::get('/trang-chu/data', [TrangChuController::class, 'dataTrangChu']);
