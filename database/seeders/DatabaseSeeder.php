@@ -16,7 +16,18 @@ class DatabaseSeeder extends Seeder
     {
         // Gọi các Seeder cần thiết
         $this->call([
-
+            KhachHangSeeder::class,
+            ChucVuSeeder::class,
+            DanhGiaSeeder::class,
+            DichVuSeeder::class,
+            NhanVienSeeder::class,
+            PhongSeeder::class,
+            GheSeeder::class,
+            TheLoaiSeeder::class,
+            QuanLyPhimSeeder::class,
+            SlideSeeder::class,
+            BanerSeeder::class,
+            ChucNangSeeder::class
         ]);
 
         // User::factory(10)->create();
