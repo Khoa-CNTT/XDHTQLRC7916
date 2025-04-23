@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             SlideSeeder::class,
             BanerSeeder::class,
             ChucNangSeeder::class
+
         ]);
 
         // User::factory(10)->create();

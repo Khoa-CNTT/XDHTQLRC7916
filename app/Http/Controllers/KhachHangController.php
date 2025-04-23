@@ -80,6 +80,13 @@ class KhachHangController extends Controller
         }
     }
 
+    public function thongTinCaNhan(){
+        $user = Auth::guard('sanctum')->user();
+        return response()->json([
+            'data' => $user
+        ]);
+    }
+
     public function deleteData($id)
     {
         $id_chuc_nang = 8;
@@ -147,7 +154,7 @@ class KhachHangController extends Controller
             }
         }
 
-        
+
     }
     public function doiTrangThai(Request $request)
     {
@@ -190,7 +197,7 @@ class KhachHangController extends Controller
                         $khach_hang->tinh_trang = 1;
                     }
                     $khach_hang->save();
-        
+
                     return response()->json([
                         'status' => true,
                         'message' => "Đổi trạng thái khách hàng thành công!"
@@ -208,7 +215,7 @@ class KhachHangController extends Controller
             }
         }
 
-       
+
     }
 
     public function dangNhap(Request $request)
@@ -281,6 +288,25 @@ class KhachHangController extends Controller
             'status'    =>  true,
             'message'   =>  "Đã đặt lại mật khẩu thành công!",
         ]);
+    }
+
+    public function doiMatKhau(Request $request){
+        $check  = Auth::guard('khach_hang')->attempt(['email' => $request->email, 'password' =>  $request->password]);
+
+        $kh = KhachHang::where('email', $request->email)->first();
+        if($check){
+            $kh['password'] = bcrypt($request->moi);
+            $kh->save();
+            return response()->json([
+                'status' => true,
+                'message'=> "Đổi mật khẩu thành công"
+            ]);
+        }else{
+            return response()->json([
+                'status' => false,
+                'message'=> "Đổi mật khẩu thất bại"
+            ]);
+        }
     }
     public function quenMatKhau(KhachHangQuenMatKhauRequest $request)
     {
