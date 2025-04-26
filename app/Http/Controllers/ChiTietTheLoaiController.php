@@ -46,7 +46,8 @@ class ChiTietTheLoaiController extends Controller
 
         return response()->json([
             'status'    =>  true,
-            'message'   =>  'Đã cập nhật dịch vụ thành công!'
+            'message'   =>  'Cập nhật dịch vụ thành công!'
         ]);
     }
 }
+
