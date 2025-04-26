@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\KhachHang;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\SendMail;
 use App\Models\ChiTietPhanQuyen;
 use App\Models\ChucVu;
+use App\Models\HoaDon;
 
 class KhachHangController extends Controller
 {
@@ -80,7 +82,8 @@ class KhachHangController extends Controller
         }
     }
 
-    public function thongTinCaNhan(){
+    public function thongTinCaNhan()
+    {
         $user = Auth::guard('sanctum')->user();
         return response()->json([
             'data' => $user
@@ -142,19 +145,17 @@ class KhachHangController extends Controller
                 ->first();
             if ($check) {
                 $data   = $request->all();
-        KhachHang::find($request->id)->update($data);
-        return response()->json([
-            'status'    =>  true,
-            'message'   =>  'Đã cập nhật  thành công!'
-        ]);
+                KhachHang::find($request->id)->update($data);
+                return response()->json([
+                    'status'    =>  true,
+                    'message'   =>  'Đã cập nhật  thành công!'
+                ]);
             } else {
                 return response()->json([
                     "message" => 'bạn không có quyền này'
                 ]);
             }
         }
-
-
     }
     public function doiTrangThai(Request $request)
     {
@@ -164,24 +165,24 @@ class KhachHangController extends Controller
             ->first();
         if ($master->is_master) {
             $khach_hang = KhachHang::find($request->id);
-        if ($khach_hang) {
-            if ($khach_hang->tinh_trang == 1) {
-                $khach_hang->tinh_trang = 0;
-            } else {
-                $khach_hang->tinh_trang = 1;
-            }
-            $khach_hang->save();
+            if ($khach_hang) {
+                if ($khach_hang->tinh_trang == 1) {
+                    $khach_hang->tinh_trang = 0;
+                } else {
+                    $khach_hang->tinh_trang = 1;
+                }
+                $khach_hang->save();
 
-            return response()->json([
-                'status' => true,
-                'message' => "Đổi trạng thái khách hàng thành công!"
-            ]);
-        } else {
-            return response()->json([
-                'status' => false,
-                'message' => "Đã có lỗi xảy ra!"
-            ]);
-        }
+                return response()->json([
+                    'status' => true,
+                    'message' => "Đổi trạng thái khách hàng thành công!"
+                ]);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => "Đã có lỗi xảy ra!"
+                ]);
+            }
         } else {
             $check = ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
                 ->where('chuc_vus.tinh_trang', 1)
@@ -214,8 +215,6 @@ class KhachHangController extends Controller
                 ]);
             }
         }
-
-
     }
 
     public function dangNhap(Request $request)
@@ -290,21 +289,22 @@ class KhachHangController extends Controller
         ]);
     }
 
-    public function doiMatKhau(Request $request){
+    public function doiMatKhau(Request $request)
+    {
         $check  = Auth::guard('khach_hang')->attempt(['email' => $request->email, 'password' =>  $request->password]);
 
         $kh = KhachHang::where('email', $request->email)->first();
-        if($check){
+        if ($check) {
             $kh['password'] = bcrypt($request->moi);
             $kh->save();
             return response()->json([
                 'status' => true,
-                'message'=> "Đổi mật khẩu thành công"
+                'message' => "Đổi mật khẩu thành công"
             ]);
-        }else{
+        } else {
             return response()->json([
                 'status' => false,
-                'message'=> "Đổi mật khẩu thất bại"
+                'message' => "Đổi mật khẩu thất bại"
             ]);
         }
     }
@@ -420,5 +420,14 @@ class KhachHangController extends Controller
                 'message' => "Vui lòng đăng nhập"
             ]);
         }
+    }
+    public function loadHD()
+    {
+        $khach_hang = Auth::guard('sanctum')->user();
+        $data = HoaDon::where('id_khach_hang', $khach_hang->id)
+            ->get();
+        return response()->json([
+            'data' => $data
+        ]);
     }
 }
