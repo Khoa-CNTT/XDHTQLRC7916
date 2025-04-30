@@ -13,38 +13,10 @@ class ChiTietVeController extends Controller
 {
     public function getData()
     {
-        $data = ChiTietVe::join('suat_chieus', 'chi_tiet_ves.id_suat', '=', 'suat_chieus.id')
-            ->join('quan_ly_phims', 'suat_chieus.phim_id', '=', 'quan_ly_phims.id')
-            ->join('ghes', 'chi_tiet_ves.id_ghe', '=', 'ghes.id')
-            ->join('phongs', 'ghes.phong_id', '=', 'phongs.id')
-            ->leftJoin('khach_hangs', 'chi_tiet_ves.id_khach_hang', '=', 'khach_hangs.id')
-            ->leftJoin('hoa_dons', 'chi_tiet_ves.id_hoa_don', '=', 'hoa_dons.id')
-            ->select(
-                'chi_tiet_ves.id',
-                'chi_tiet_ves.gia_tien',
-                'chi_tiet_ves.tinh_trang',
-                'chi_tiet_ves.thoi_gian_dat',
-                'chi_tiet_ves.thoi_gian_het_han',
-                'quan_ly_phims.ten_phim',
-                'suat_chieus.ngay_chieu',
-                'suat_chieus.gio_bat_dau',
-                'suat_chieus.gio_ket_thuc',
-                'suat_chieus.dinh_dang',
-                'suat_chieus.ngon_ngu',
-                'ghes.ten_ghe',
-                'ghes.hang',
-                'ghes.cot',
-                'ghes.loai_ghe',
-                'phongs.ten_phong',
-                'khach_hangs.ten_khach_hang',
-                'hoa_dons.ma_hoa_don',
-                'hoa_dons.trang_thai as trang_thai_hoa_don'
-            )
-            ->orderBy('chi_tiet_ves.created_at', 'desc')
+        $data   =   ChiTietVe::where('tinh_trang', 1)
             ->get();
 
         return response()->json([
-            'status' => true,
             'data' => $data
         ]);
     }
@@ -222,6 +194,24 @@ class ChiTietVeController extends Controller
                 return response()->json([
                     'status' => false,
                     'message' => "Ghế này đã được đặt!"
+                ]);
+            }
+        }
+    }
+    public function kiemTraTrangThai(Request $request)
+    {
+        $ve = ChiTietVe::where('id_ghe', $request->id_ghe)
+            ->where('id_suat', $request->id_suat)
+            ->first();
+        if ($ve) {
+            if ($ve->id_khach_hang == $request->id_khach_hang && $ve->tinh_trang == 1) {
+                $ve->tinh_trang = 0;
+
+                $ve->save();
+
+                return response()->json([
+                    'status' => true,
+                    'message' => "Đã huỷ ghế thành công! Do đã quá thời gian thanh toán"
                 ]);
             }
         }
