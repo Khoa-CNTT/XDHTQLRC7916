@@ -14,7 +14,7 @@ class DichVuController extends Controller
         ]);
     }
     public function getDataDichVu(){
-        $data   =   DichVu::take(4)->get();
+        $data   =   DichVu::where('tinh_trang', 1)->get();
         return response()->json([
             'data'  =>  $data
         ]);

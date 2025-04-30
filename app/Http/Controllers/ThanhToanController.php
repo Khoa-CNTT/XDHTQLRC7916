@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ChiTietVe;
+use App\Models\ChiTietVeDichVu;
 use App\Models\HoaDon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
@@ -31,7 +32,7 @@ class ThanhToanController extends Controller
                 ]);
             }
 
-            $tongTien = $ve->sum('gia_tien');
+            $tongTien = $request->tong_tien;
 
             // Tạo mã hóa đơn
             $maHoaDon = 'HD' . Str::random(8);
@@ -256,6 +257,16 @@ class ThanhToanController extends Controller
             )
             ->get();
 
+        $chiTietVesDichVu = ChiTietVeDichVu::join('chi_tiet_ves', 'chi_tiet_ve_dich_vus.id_chi_tiet_ve', 'chi_tiet_ves.id')
+            ->join('dich_vus', 'chi_tiet_ve_dich_vus.id_dich_vu', 'dich_vus.id')
+            ->join('hoa_dons', 'chi_tiet_ves.id_hoa_don', 'hoa_dons.id')
+            ->where('hoa_dons.id', $hoaDon->id)
+            ->select(
+                'chi_tiet_ve_dich_vus.*',
+                'dich_vus.*'
+            )
+            ->get();
+
         // Lấy thông tin suất chiếu và phim một cách an toàn
         $suatChieu = null;
         if ($hoaDon->id_suat) {
@@ -285,7 +296,8 @@ class ThanhToanController extends Controller
                     'ghi_chu' => $hoaDon->ghi_chu
                 ],
                 'chi_tiet_ves' => $chiTietVes,
-                'suat_chieu' => $suatChieu
+                'suat_chieu' => $suatChieu,
+                'chi_tiet_ve_dich_vus' => $chiTietVesDichVu
             ]
         ]);
     }
@@ -389,4 +401,5 @@ class ThanhToanController extends Controller
             ]);
         }
     }
+
 }

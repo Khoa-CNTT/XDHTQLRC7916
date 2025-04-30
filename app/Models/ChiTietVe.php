@@ -12,6 +12,7 @@ class ChiTietVe extends Model
     protected $fillable = [
         'id_suat',
         'id_ghe',
+        'id_chi_tiet_ve_dich_vu',
         'gia_ve',
         'id_hoa_don',
         'gia_tien',
@@ -22,5 +23,11 @@ class ChiTietVe extends Model
     public function hoaDon()
     {
         return $this->belongsTo(HoaDon::class, 'id_hoa_don');
+    }
+    public function dichVus()
+    {
+        return $this->belongsToMany(DichVu::class, 'chi_tiet_ve_dich_vus', 'id_chi_tiet_ve', 'id_dich_vu')
+            ->withPivot('so_luong')
+            ->withTimestamps();
     }
 }

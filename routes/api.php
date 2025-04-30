@@ -20,6 +20,7 @@ use App\Http\Controllers\LoginGoogleController;
 use App\Http\Controllers\ThanhToanController;
 
 use App\Http\Controllers\ChatbotController;
+use App\Http\Controllers\ChiTietVeDichVuController;
 use App\Http\Controllers\GocDienAnhController;
 
 use Illuminate\Http\Request;
@@ -176,6 +177,13 @@ Route::get('/trang-chu/data', [TrangChuController::class, 'dataTrangChu']);
 Route::get('/lay-danh-gia/data/{id}', [DanhGiaController::class, 'getDataChiTietPhim']);
 Route::get('/lay-dich-vu/data', [DichVuController::class, 'getDataDichVu']);
 Route::get('/lay-dich-vu-khuyen-mai/data', [DichVuController::class, 'getDataDichVuKhuyenMai']);
+Route::post('/dat-dich-vu', [ChiTietVeDichVuController::class, 'datDichVu']);
+Route::post('/huy-dich-vu', [ChiTietVeDichVuController::class, 'huyDichVu']);
+Route::post('/tang-dich-vu', [ChiTietVeDichVuController::class, 'tangDichVu']);
+Route::post('/giam-dich-vu', [ChiTietVeDichVuController::class, 'giamDichVu']);
+Route::get('/danh-sach-dich-vu/{id_suat}', [ChiTietVeDichVuController::class, 'getDanhSachDichVu']);
+Route::get('/danh-sach-dich-vu-theo-ve/{id_chi_tiet_ve}', [ChiTietVeDichVuController::class, 'getDanhSachDichVuTheoVe']);
+
 
 
 
@@ -205,6 +213,8 @@ Route::get('/auth/google', [LoginGoogleController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [LoginGoogleController::class, 'handleGoogleCallback']);
 
 // Thêm route mới để xử lý kết quả thanh toán
+Route::post('/thanh-toan/dat-dich-vu', [ThanhToanController::class, 'datDichVu']);
+Route::post('/thanh-toan/huy-dich-vu', [ThanhToanController::class, 'huyDichVu']);
 Route::post('/thanh-toan', [ThanhToanController::class, 'thanhToan']);
 Route::post('/thanh-toan/ket-qua', [ThanhToanController::class, 'ketQuaThanhToan']); // Đổi từ GET sang POST
 Route::get('/thanh-toan/ipn', [ThanhToanController::class, 'ipnVnpay']); // Thêm route cho IPN
@@ -214,6 +224,7 @@ Route::get('/thanh-toan/chi-tiet-hoa-don/{maHoaDon}', [ThanhToanController::clas
 
 Route::post('/chatbot/query', [ChatbotController::class, 'query']);
 Route::get('/chatbot/suggest-movies', [ChatbotController::class, 'suggestMovies']);
+Route::post('/chatbot/bill-history', [ChatbotController::class, 'viewBillHistory']);
 
 Route::prefix('goc-dien-anh')->group(function () {
     Route::get('/data', [GocDienAnhController::class, 'getData']);
