@@ -27,7 +27,8 @@ class DatabaseSeeder extends Seeder
             QuanLyPhimSeeder::class,
             SlideSeeder::class,
             BanerSeeder::class,
-            ChucNangSeeder::class
+            ChucNangSeeder::class,
+            GocDienAnhSeeder::class
 
         ]);
 
