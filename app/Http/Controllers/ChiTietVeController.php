@@ -57,7 +57,7 @@ class ChiTietVeController extends Controller
 
         return response()->json([
             'status'    =>  true,
-            'message'   =>  'Đã tạo mới dịch vụ thành công!'
+            'message'   =>  'Đã tạo mới vé thành công!'
         ]);
     }
 
@@ -73,7 +73,7 @@ class ChiTietVeController extends Controller
             $ve->save();
             return response()->json([
                 'status'    =>  true,
-                'message'   =>  'Đã xoá dịch vụ thành công!'
+                'message'   =>  'Đã xoá vé thành công!'
             ]);
         } else {
             $check = ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
@@ -87,7 +87,7 @@ class ChiTietVeController extends Controller
                 $ve->save();
                 return response()->json([
                     'status'    =>  true,
-                    'message'   =>  'Đã xoá dịch vụ thành công!'
+                    'message'   =>  'Đã xoá vé thành công!'
                 ]);
             } else {
                 return response()->json([
@@ -111,7 +111,7 @@ class ChiTietVeController extends Controller
 
             return response()->json([
                 'status'    =>  true,
-                'message'   =>  'Đã cập nhật dịch vụ thành công!'
+                'message'   =>  'Đã cập nhật vé thành công!'
             ]);
         } else {
             $check = ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
@@ -126,7 +126,7 @@ class ChiTietVeController extends Controller
 
                 return response()->json([
                     'status'    =>  true,
-                    'message'   =>  'Đã cập nhật dịch vụ thành công!'
+                    'message'   =>  'Đã cập nhật vé thành công!'
                 ]);
             } else {
                 return response()->json([
