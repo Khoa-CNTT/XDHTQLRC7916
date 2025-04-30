@@ -219,14 +219,6 @@ class KhachHangController extends Controller
 
     public function dangNhap(Request $request)
     {
-
-        // $check = NhanVien::where('email',$request->email)
-        //                   ->where('password',$request->password)
-        //                   ->first();
-
-        // Câu lệnh này cố gắng xác thực người dùng với guard nhan_vien bằng cách kiểm tra email và mật khẩu được cung cấp. Nếu thông tin đăng nhập đúng,
-        // người dùng sẽ được xác thực và phương thức attempt sẽ trả về true. Nếu thông tin đăng nhập không đúng, nó sẽ trả về false.
-        // khi mật khẩu mã hóa ở database khi người dùng nhập câu lệnh này xác thực người dùng nhập có đúng với mk trước khi mã hóa
         $check  = Auth::guard('khach_hang')->attempt(['email' => $request->email, 'password' =>  $request->password]);
         if ($check) {
             $user =  Auth::guard('khach_hang')->user();
