@@ -146,6 +146,7 @@ Route::group(['middleware' => 'adminMiddle'], function () {
 
 //client
 Route::get('/hoa-don/data', [HoaDonController::class, 'getData']);
+Route::get('/hoa-don/data-client', [HoaDonController::class, 'getDataClient']);
 Route::post('/hoa-don/create', [HoaDonController::class, 'create']);
 Route::post('/hoa-don/chi-tiet-dat-ve', [HoaDonController::class, 'chiTietDatVe']);
 

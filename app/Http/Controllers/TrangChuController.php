@@ -13,8 +13,6 @@ class TrangChuController extends Controller
     {
         $listPhim = QuanLyPhim::leftjoin('the_loais', 'the_loais.id', 'quan_ly_phims.id_the_loai')
             ->select('quan_ly_phims.*','the_loais.ten_the_loai')
-            ->orderBy('ten_phim', 'DESC')
-            ->take(8)
             ->get();
 
         return response()->json([
