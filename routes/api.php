@@ -162,6 +162,7 @@ Route::post('/dang-ky', [KhachHangController::class, 'dangKy']);
 Route::post("/khach-hang/kich-hoat", [KhachHangController::class, 'kichHoat']);
 Route::post("/khach-hang/thong-tin-ca-nhan", [KhachHangController::class, 'thongTinCaNhan']);
 Route::post("/khach-hang/doi-mat-khau", [KhachHangController::class, 'doiMatKhau']);
+Route::get("/khach-hang/hoa-don", [KhachHangController::class, 'loadHD']);
 
 
 
