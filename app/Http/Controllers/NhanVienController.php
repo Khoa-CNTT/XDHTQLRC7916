@@ -40,7 +40,7 @@ class NhanVienController extends Controller
                 ]);
             } else {
                 return response()->json([
-                    "message" => 'bạn không có quyền này'
+                    "message" => 'bạn không có quyền '
                 ]);
             }
         }
