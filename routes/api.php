@@ -22,6 +22,7 @@ use App\Http\Controllers\ThanhToanController;
 use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\ChiTietVeDichVuController;
 use App\Http\Controllers\GocDienAnhController;
+use App\Http\Controllers\ThongKeController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -140,6 +141,13 @@ Route::group(['middleware' => 'adminMiddle'], function () {
             Route::delete('/delete/{id}', [TheLoaiController::class, 'deleteTheLoai']);
             Route::put('/update', [TheLoaiController::class, 'updateTheLoai']);
         });
+        // Thống kê routes
+        Route::get('/thong-ke/doanh-thu', [ThongKeController::class, 'thongKeDoanhThu']);
+        Route::get('/thong-ke/theo-ngay', [ThongKeController::class, 'thongKeTheoNgay']);
+        Route::get('/thong-ke/theo-tuan', [ThongKeController::class, 'thongKeTheoTuan']);
+        Route::get('/thong-ke/theo-thang', [ThongKeController::class, 'thongKeTheoThang']);
+        Route::get('/thong-ke/theo-quy', [ThongKeController::class, 'thongKeTheoQuy']);
+        Route::get('/thong-ke/theo-nam', [ThongKeController::class, 'thongKeTheoNam']);
     });
 });
 
@@ -234,4 +242,6 @@ Route::prefix('goc-dien-anh')->group(function () {
     Route::post('/update', [GocDienAnhController::class, 'updateData']);
     Route::delete('/delete/{id}', [GocDienAnhController::class, 'deleteData']);
     Route::post('/doi-trang-thai', [GocDienAnhController::class, 'doiTrangThai']);
+    Route::get('/data-by-id/{id}', [GocDienAnhController::class, 'getDataById']);
 });
+

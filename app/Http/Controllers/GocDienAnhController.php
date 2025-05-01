@@ -67,4 +67,21 @@ class GocDienAnhController extends Controller
             ]);
         }
     }
+
+    public function getDataById($id)
+    {
+        $goc_dien_anh = GocDienAnh::find($id);
+
+        if ($goc_dien_anh) {
+            return response()->json([
+                'status' => true,
+                'data' => $goc_dien_anh
+            ]);
+        }
+
+        return response()->json([
+            'status' => false,
+            'message' => 'Không tìm thấy thông tin góc điện ảnh!'
+        ]);
+    }
 }
