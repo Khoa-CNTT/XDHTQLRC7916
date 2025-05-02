@@ -18,7 +18,9 @@ class ChiTietVe extends Model
         'gia_tien',
         'id_khach_hang',
         'ghi_chu',
-        'tinh_trang'
+        'tinh_trang',
+        'thoi_gian_dat',
+        'thoi_gian_het_han'
     ];
     public function hoaDon()
     {
@@ -29,5 +31,9 @@ class ChiTietVe extends Model
         return $this->belongsToMany(DichVu::class, 'chi_tiet_ve_dich_vus', 'id_chi_tiet_ve', 'id_dich_vu')
             ->withPivot('so_luong')
             ->withTimestamps();
+    }
+    public function ghe()
+    {
+        return $this->belongsTo(Ghe::class, 'id_ghe', 'id');
     }
 }

@@ -85,6 +85,7 @@ Route::group(['middleware' => 'adminMiddle'], function () {
     Route::get('/suat-chieu/so-ghe-trong/{id}', [SuatChieuController::class, 'getSoGheTrong']);
     Route::get('/suat-chieu/cap-nhat-trang-thai-tu-dong', [SuatChieuController::class, 'capNhatTrangThaiTuDong']);
     Route::get('/suat-chieu/open-data', [SuatChieuController::class, 'openData']);
+    Route::get('/suat-chieu/lay-phong/{id_phim}', [SuatChieuController::class, 'layPhong']);
 
 
 
@@ -259,5 +260,9 @@ Route::prefix('goc-dien-anh')->group(function () {
 Route::get('/su-kien/client/data', [SuKienController::class, 'getDataSuKien']);
 // Su kien client chi tiet
 Route::get('/su-kien/client/chi-tiet/{id}', [SuKienController::class, 'getChiTietSuKien']);
+
+Route::get('/suat-chieu/lay-suat/{id_phim}/{id_phong}', [SuatChieuController::class, 'laySuat']);
+
+Route::get('/chi-tiet-ve/lay-theo-suat/{id_suat}', [ChiTietVeController::class, 'layTheoSuat']);
 
 

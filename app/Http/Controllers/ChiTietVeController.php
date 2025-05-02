@@ -20,13 +20,13 @@ class ChiTietVeController extends Controller
             ->leftJoin('khach_hangs', 'chi_tiet_ves.id_khach_hang', '=', 'khach_hangs.id')
             ->leftJoin('hoa_dons', 'chi_tiet_ves.id_hoa_don', '=', 'hoa_dons.id')
             ->select(
+                'chi_tiet_ves.id_suat',
                 'chi_tiet_ves.id',
                 'chi_tiet_ves.gia_tien',
                 'chi_tiet_ves.tinh_trang',
                 'chi_tiet_ves.thoi_gian_dat',
                 'chi_tiet_ves.thoi_gian_het_han',
-                'quan_ly_phims.ten_phim',
-                'suat_chieus.ngay_chieu',
+                'quan_ly_phims.ten_phim',                'suat_chieus.ngay_chieu',
                 'suat_chieus.gio_bat_dau',
                 'suat_chieus.gio_ket_thuc',
                 'suat_chieus.dinh_dang',
@@ -36,6 +36,7 @@ class ChiTietVeController extends Controller
                 'ghes.cot',
                 'ghes.loai_ghe',
                 'phongs.ten_phong',
+                'phongs.id as id_phong',
                 'khach_hangs.ten_khach_hang',
                 'hoa_dons.ma_hoa_don',
                 'hoa_dons.trang_thai as trang_thai_hoa_don'
@@ -258,5 +259,46 @@ class ChiTietVeController extends Controller
             'data' => $data,
             'tong_tien' => $tongTien
         ]);
+    }
+
+    public function layTheoSuat($id_suat)
+    {
+        try {
+            $data = ChiTietVe::leftJoin('khach_hangs', 'chi_tiet_ves.id_khach_hang', 'khach_hangs.id')
+                            ->leftJoin('hoa_dons', 'chi_tiet_ves.id_hoa_don', 'hoa_dons.id')
+                            ->leftJoin('ghes', 'chi_tiet_ves.id_ghe', 'ghes.id')
+                            ->where('chi_tiet_ves.id_suat', $id_suat)
+                            ->select(
+                                'chi_tiet_ves.id',
+                                'chi_tiet_ves.id_suat',
+                                'chi_tiet_ves.id_ghe',
+                                'chi_tiet_ves.id_khach_hang',
+                                'chi_tiet_ves.id_hoa_don',
+                                'chi_tiet_ves.gia_tien',
+                                'chi_tiet_ves.tinh_trang',
+                                'chi_tiet_ves.thoi_gian_dat',
+                                'chi_tiet_ves.thoi_gian_het_han',
+                                'chi_tiet_ves.ghi_chu',
+                                'khach_hangs.ten_khach_hang',
+                                'hoa_dons.ma_hoa_don',
+                                'ghes.ten_ghe',
+                                'ghes.hang',
+                                'ghes.cot',
+                                'ghes.loai_ghe',
+                                'ghes.trang_thai as trang_thai_ghe'
+                            )
+                            ->get();
+
+            return response()->json([
+                'status'    => true,
+                'data'      => $data
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'    => false,
+                'message'   => 'Đã có lỗi xảy ra khi lấy dữ liệu vé!',
+                'error'     => $e->getMessage()
+            ]);
+        }
     }
 }
