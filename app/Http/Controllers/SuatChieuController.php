@@ -177,19 +177,41 @@ class SuatChieuController extends Controller
         try {
             // Tạo suất chiếu
             $suat = SuatChieu::create($data);
-
             // Tạo chi tiết vé cho tất cả ghế trong phòng
             $danhSachGhe = Ghe::where('phong_id', $request->phong_id)->get();
             foreach ($danhSachGhe as $ghe) {
-                ChiTietVe::create([
-                    'id_suat' => $suat->id,
-                    'tinh_trang' => 0, // Ghế trống
-                    'id_ghe' => $ghe->id,
-                    'hoa_don_id' => null,
-                    'gia_tien' => $request->gia_ve,
-                    'khach_hang_id' => null,
-                    'ghi_chu' => null,
-                ]);
+                if($ghe->loai_ghe==1){
+                    ChiTietVe::create([
+                        'id_suat' => $suat->id,
+                        'tinh_trang' => 0, // Ghế trống
+                        'id_ghe' => $ghe->id,
+                        'hoa_don_id' => null,
+                        'gia_tien' => $request->gia_ve_vip,
+                        'khach_hang_id' => null,
+                        'ghi_chu' => null,
+                    ]);
+                }elseif($ghe->loai_ghe==2){
+                    ChiTietVe::create([
+                        'id_suat' => $suat->id,
+                        'tinh_trang' => 0, // Ghế trống
+                        'id_ghe' => $ghe->id,
+                        'hoa_don_id' => null,
+                        'gia_tien' => $request->gia_ve_doi,
+                        'khach_hang_id' => null,
+                        'ghi_chu' => null,
+                    ]);
+                }else{
+                    ChiTietVe::create([
+                        'id_suat' => $suat->id,
+                        'tinh_trang' => 0, // Ghế trống
+                        'id_ghe' => $ghe->id,
+                        'hoa_don_id' => null,
+                        'gia_tien' => $request->gia_ve,
+                        'khach_hang_id' => null,
+                        'ghi_chu' => null,
+                    ]);
+                }
+
             }
 
             DB::commit();

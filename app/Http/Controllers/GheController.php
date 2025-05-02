@@ -47,7 +47,7 @@ class GheController extends Controller
             }
         }
 
-       
+
     }
 
 
@@ -59,10 +59,10 @@ class GheController extends Controller
             'phong_id' => 'required|exists:phongs,id',
             'hang' => 'required|integer',
             'cot' => 'required|integer',
-            'loai_ghe' => 'required|in:0,1', // 0: Thường, 1: VIP
+            'loai_ghe' => 'required|in:0,1,2', // 0: Thường, 1: VIP, 3: ghế đôi
             'trang_thai' => 'required|in:0,1', // 0: Không hoạt động, 1: Hoạt động
         ]);
-        
+
         $id_chuc_nang = 31;
         $user = Auth::guard('sanctum')->user();
         $master = ChucVu::where('id', $user->id_chuc_vu)
@@ -70,7 +70,7 @@ class GheController extends Controller
         if ($master->is_master) {
             $data = $request->all();
             Ghe::create($data);
-    
+
             return response()->json([
                 'status' => true,
                 'message' => 'Thêm mới ghế thành công!'
@@ -82,10 +82,10 @@ class GheController extends Controller
                 ->where('id_chuc_nang', $id_chuc_nang)
                 ->first();
             if ($check) {
-                
+
                 $data = $request->all();
                 Ghe::create($data);
-        
+
                 return response()->json([
                     'status' => true,
                     'message' => 'Thêm mới ghế thành công!'
@@ -97,9 +97,9 @@ class GheController extends Controller
             }
         }
 
-        
 
-       
+
+
     }
 
     // Tạo nhiều ghế cùng lúc cho một phòng
@@ -158,7 +158,7 @@ class GheController extends Controller
             'phong_id' => 'required|exists:phongs,id',
             'hang' => 'required|integer',
             'cot' => 'required|integer',
-            'loai_ghe' => 'required|in:0,1',
+            'loai_ghe' => 'required|in:0,1,2',
             'trang_thai' => 'required|in:0,1',
         ]);
 
@@ -169,7 +169,7 @@ class GheController extends Controller
         if ($master->is_master) {
             $data = $request->all();
             Ghe::find($request->id)->update($data);
-    
+
             return response()->json([
                 'status' => true,
                 'message' => 'Cập nhật ghế thành công!'
@@ -195,7 +195,7 @@ class GheController extends Controller
             }
         }
 
-       
+
     }
 
     // Xóa ghế
@@ -256,7 +256,7 @@ class GheController extends Controller
             }
         }
 
-       
+
     }
 
     // Đổi trạng thái ghế
@@ -273,21 +273,21 @@ class GheController extends Controller
                 $daCoNguoiDat = ChiTietVe::where('id_ghe', $ghe->id)
                     ->where('tinh_trang', 1)
                     ->exists();
-    
+
                 if ($daCoNguoiDat && $ghe->trang_thai == 1) {
                     return response()->json([
                         'status' => false,
                         'message' => 'Không thể vô hiệu hóa ghế đã có người đặt!'
                     ]);
                 }
-    
+
                 if ($ghe->trang_thai == 1) {
                     $ghe->trang_thai = 0;
                 } else {
                     $ghe->trang_thai = 1;
                 }
                 $ghe->save();
-    
+
                 return response()->json([
                     'status' => true,
                     'message' => "Đổi trạng thái ghế thành công!"
@@ -343,7 +343,7 @@ class GheController extends Controller
             }
         }
 
-        
+
     }
 
     // Đổi loại ghế
@@ -362,7 +362,7 @@ class GheController extends Controller
                     $ghe->loai_ghe = 1; // Chuyển từ Thường sang VIP
                 }
                 $ghe->save();
-    
+
                 return response()->json([
                     'status' => true,
                     'message' => "Đổi loại ghế thành công!"
@@ -388,7 +388,7 @@ class GheController extends Controller
                         $ghe->loai_ghe = 1; // Chuyển từ Thường sang VIP
                     }
                     $ghe->save();
-        
+
                     return response()->json([
                         'status' => true,
                         'message' => "Đổi loại ghế thành công!"
@@ -406,7 +406,7 @@ class GheController extends Controller
             }
         }
 
-       
+
     }
 
     // Lấy ghế theo phòng
