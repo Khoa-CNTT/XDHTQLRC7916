@@ -32,6 +32,29 @@ class HoaDonController extends Controller
             'hoa_don' => $data
         ]);
     }
+    public function getDataClient()
+    {
+        $data = HoaDon::join('khach_hangs', 'hoa_dons.id_khach_hang', 'khach_hangs.id')
+            ->join('suat_chieus', 'hoa_dons.id_suat', 'suat_chieus.id')
+            ->join('quan_ly_phims', 'suat_chieus.phim_id', 'quan_ly_phims.id') // Sửa lại id_phim thành phim_id
+            ->where('hoa_dons.trang_thai', 1)
+            ->select(
+                'hoa_dons.*',
+                'khach_hangs.ten_khach_hang',
+                'quan_ly_phims.ten_phim',
+                'suat_chieus.gio_bat_dau',
+                'suat_chieus.ngay_chieu',
+                'suat_chieus.dinh_dang',
+                'suat_chieus.ngon_ngu'
+            )
+            ->orderBy('hoa_dons.created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'hoa_don' => $data
+        ]);
+    }
 
     public function chiTietDatVe(Request $request)
     {

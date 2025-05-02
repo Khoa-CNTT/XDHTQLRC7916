@@ -8,6 +8,7 @@ use App\Models\ChucVu;
 use App\Models\Ghe;
 use App\Models\SuatChieu;
 use App\Models\QuanLyPhim;
+use App\Models\Phong;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -569,5 +570,70 @@ class SuatChieuController extends Controller
             'so_ghe_da_dat' => $soGheDaDat,
             'so_ghe_trong' => $tongSoGhe - $soGheDaDat
         ]);
+    }
+
+    public function layPhong($id_phim)
+    {
+        try {
+            $phong = Phong::join('suat_chieus', 'phongs.id', '=', 'suat_chieus.phong_id')
+                         ->where('suat_chieus.phim_id', $id_phim)
+                         ->where('phongs.tinh_trang', 1)
+                         ->select('phongs.*')
+                         ->distinct()
+                         ->get();
+
+            return response()->json([
+                'status'    => true,
+                'phong'     => $phong
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'    => false,
+                'message'   => 'Đã có lỗi xảy ra khi lấy danh sách phòng!',
+                'error'     => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function laySuat($id_phim, $id_phong)
+    {
+        try {
+            // Query không có filter ngày giờ để debug
+            $suat = SuatChieu::where('phim_id', $id_phim)
+                            ->where('phong_id', $id_phong)
+                            ->where('trang_thai', '!=', 'Hủy')
+                            ->orderBy('ngay_chieu', 'asc')
+                            ->orderBy('gio_bat_dau', 'asc')
+                            ->get();
+
+            // Lấy SQL query để debug
+            $sql = SuatChieu::where('phim_id', $id_phim)
+                            ->where('phong_id', $id_phong)
+                            ->where('trang_thai', '!=', 'Hủy')
+                            ->orderBy('ngay_chieu', 'asc')
+                            ->orderBy('gio_bat_dau', 'asc')
+                            ->toSql();
+
+            return response()->json([
+                'status'    => true,
+                'suat'      => $suat,
+                'debug'     => [
+                    'sql'          => $sql,
+                    'phim_id'      => $id_phim,
+                    'phong_id'     => $id_phong,
+                    'raw_data'     => SuatChieu::where('phim_id', $id_phim)->get(),
+                    'date_check'   => [
+                        'current_date' => date('Y-m-d'),
+                        'current_time' => date('H:i:s'),
+                    ]
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'    => false,
+                'message'   => 'Đã có lỗi xảy ra khi lấy danh sách suất chiếu!',
+                'error'     => $e->getMessage()
+            ]);
+        }
     }
 }

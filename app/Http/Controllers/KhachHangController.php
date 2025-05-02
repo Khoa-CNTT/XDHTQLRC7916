@@ -422,9 +422,14 @@ class KhachHangController extends Controller
     {
         $khach_hang = Auth::guard('sanctum')->user();
         $data = HoaDon::where('id_khach_hang', $khach_hang->id)
+            ->where('trang_thai', '1')
             ->get();
+        $tong_tien_da_thanh_toan = HoaDon::where('id_khach_hang', $khach_hang->id)
+            ->where('trang_thai', '1')
+            ->sum('tong_tien');
         return response()->json([
-            'data' => $data
+            'data' => $data,
+            'tong_tien_da_thanh_toan' => $tong_tien_da_thanh_toan
         ]);
     }
 }
