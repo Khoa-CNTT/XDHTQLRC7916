@@ -214,6 +214,8 @@ Route::put('/slide/doi-trang-thai', [SlideController::class, 'doiTrangThai']);
 Route::get('khach-hang/dang-xuat', [KhachHangController::class, 'dangXuat']);
 Route::get('khach-hang/dang-xuat-all', [KhachHangController::class, 'dangXuatAll']);
 Route::post('khach-hang/danh-gia', [DanhGiaController::class, 'danhGia']);
+Route::delete('khach-hang/danh-gia/delete/{id}', [DanhGiaController::class, 'deleteDataClient']);
+Route::put('khach-hang/danh-gia/update', [DanhGiaController::class, 'updateDataClient']);
 
 Route::get('admin/dang-xuat', [NhanVienController::class, 'dangXuat']);
 Route::get('admin/dang-xuat-all', [NhanVienController::class, 'dangXuatAll']);
