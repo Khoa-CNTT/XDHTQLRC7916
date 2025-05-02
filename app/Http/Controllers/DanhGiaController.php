@@ -28,7 +28,6 @@ class DanhGiaController extends Controller
             ->leftjoin('quan_ly_phims', 'quan_ly_phims.id', 'danh_gias.id_phim')
             ->where('danh_gias.id_phim', $id)
             ->select('danh_gias.*', 'khach_hangs.ten_khach_hang', 'quan_ly_phims.ten_phim')
-            ->take(5)
             ->get();
 
             return response()->json([
