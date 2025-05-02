@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DoiMatKhauRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\KhachHang;
@@ -281,7 +282,7 @@ class KhachHangController extends Controller
         ]);
     }
 
-    public function doiMatKhau(Request $request)
+    public function doiMatKhau(DoiMatKhauRequest $request)
     {
         $check  = Auth::guard('khach_hang')->attempt(['email' => $request->email, 'password' =>  $request->password]);
 
@@ -289,6 +290,10 @@ class KhachHangController extends Controller
         if ($check) {
             $kh['password'] = bcrypt($request->moi);
             $kh->save();
+            $ds_token = $kh->tokens;
+            foreach ($ds_token as $k => $v) {
+                $v->delete();
+            }
             return response()->json([
                 'status' => true,
                 'message' => "Đổi mật khẩu thành công"
