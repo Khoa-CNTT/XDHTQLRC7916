@@ -22,6 +22,7 @@ use App\Http\Controllers\ThanhToanController;
 use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\ChiTietVeDichVuController;
 use App\Http\Controllers\GocDienAnhController;
+use App\Http\Controllers\SuKienController;
 use App\Http\Controllers\ThongKeController;
 
 use Illuminate\Http\Request;
@@ -148,6 +149,14 @@ Route::group(['middleware' => 'adminMiddle'], function () {
         Route::get('/thong-ke/theo-thang', [ThongKeController::class, 'thongKeTheoThang']);
         Route::get('/thong-ke/theo-quy', [ThongKeController::class, 'thongKeTheoQuy']);
         Route::get('/thong-ke/theo-nam', [ThongKeController::class, 'thongKeTheoNam']);
+
+
+        // Su kien
+        Route::get('/su-kien/data', [SuKienController::class, 'getData']);
+        Route::post('/su-kien/create', [SuKienController::class, 'createData']);
+        Route::put('/su-kien/update', [SuKienController::class, 'updateData']);
+        Route::delete('/su-kien/delete/{id}', [SuKienController::class, 'deleteData']);
+        Route::put('/su-kien/doi-trang-thai', [SuKienController::class, 'doiTrangThai']);
     });
 });
 
@@ -246,4 +255,9 @@ Route::prefix('goc-dien-anh')->group(function () {
     Route::post('/doi-trang-thai', [GocDienAnhController::class, 'doiTrangThai']);
     Route::get('/data-by-id/{id}', [GocDienAnhController::class, 'getDataById']);
 });
+
+Route::get('/su-kien/client/data', [SuKienController::class, 'getDataSuKien']);
+// Su kien client chi tiet
+Route::get('/su-kien/client/chi-tiet/{id}', [SuKienController::class, 'getChiTietSuKien']);
+
 
