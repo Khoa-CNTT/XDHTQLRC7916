@@ -15,6 +15,8 @@ use App\Models\ChiTietVe;
 use App\Models\HoaDon;
 use App\Models\DichVu;
 use App\Models\ChiTietTheLoai;
+use App\Models\GocDienAnh;
+use App\Models\SuKien;
 use Exception;
 
 class ChatbotController extends Controller
@@ -189,8 +191,38 @@ class ChatbotController extends Controller
             'the_loai' => [],
             'danh_gia' => [],
             'dich_vu' => [],
-            'hoa_don' => []
+            'hoa_don' => [],
+            'goc_dien_anh' => [],
+            'su_kien' => []
         ];
+
+        // Check for movie news related keywords
+        if (preg_match('/(tin tức|tin phim|góc điện ảnh|bài viết|news|article)/ui', $question)) {
+            $news = GocDienAnh::where('trang_thai', true)
+                ->orderBy('ngay_dang', 'desc')
+                ->take(5)
+                ->get();
+
+            if ($news->isNotEmpty()) {
+                $contextData['query_type'] = 'movie_news';
+                $contextData['goc_dien_anh'] = $news;
+            }
+        }
+
+        // Check for event related keywords
+        if (preg_match('/(sự kiện|event|khuyến mãi|ưu đãi|promotion)/ui', $question)) {
+            $currentDate = now()->format('Y-m-d');
+            $events = SuKien::where('tinh_trang', true)
+                ->where('ngay_ket_thuc', '>=', $currentDate)
+                ->orderBy('ngay_bat_dau', 'asc')
+                ->take(5)
+                ->get();
+
+            if ($events->isNotEmpty()) {
+                $contextData['query_type'] = 'events';
+                $contextData['su_kien'] = $events;
+            }
+        }
 
         // Check for bill total and spending related keywords
         if (preg_match('/(tổng tiền|chi tiêu|đã tiêu|số tiền|thanh toán|đã xài|đã dùng|tổng cộng|tổng số tiền|tổng chi phí)/ui', $question)) {
@@ -699,6 +731,86 @@ class ChatbotController extends Controller
                 'message' => $this->callGeminiApi(
                     "Không thể truy xuất lịch sử hóa đơn. Hãy thông báo cho người dùng một cách thân thiện.",
                     ['type' => 'bill_history_error']
+                ),
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get latest movie news
+     */
+    public function getLatestNews(Request $request)
+    {
+        try {
+            $news = GocDienAnh::where('trang_thai', true)
+                ->orderBy('ngay_dang', 'desc')
+                ->take(5)
+                ->get();
+
+            $contextData = [
+                'type' => 'movie_news',
+                'news' => $news
+            ];
+
+            $response = $this->callGeminiApi(
+                "Hiển thị các tin tức điện ảnh mới nhất cho khách hàng.",
+                $contextData
+            );
+
+            return response()->json([
+                'status' => true,
+                'message' => $response,
+                'data' => $news
+            ]);
+        } catch (Exception $e) {
+            Log::error('Get latest news error: ' . $e->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => $this->callGeminiApi(
+                    "Không thể lấy tin tức mới nhất. Hãy thông báo cho người dùng một cách thân thiện.",
+                    ['type' => 'news_error']
+                ),
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get current events
+     */
+    public function getCurrentEvents(Request $request)
+    {
+        try {
+            $currentDate = now()->format('Y-m-d');
+            $events = SuKien::where('tinh_trang', true)
+                ->where('ngay_ket_thuc', '>=', $currentDate)
+                ->orderBy('ngay_bat_dau', 'asc')
+                ->take(5)
+                ->get();
+
+            $contextData = [
+                'type' => 'events',
+                'events' => $events
+            ];
+
+            $response = $this->callGeminiApi(
+                "Hiển thị các sự kiện và khuyến mãi đang diễn ra tại rạp.",
+                $contextData
+            );
+
+            return response()->json([
+                'status' => true,
+                'message' => $response,
+                'data' => $events
+            ]);
+        } catch (Exception $e) {
+            Log::error('Get current events error: ' . $e->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => $this->callGeminiApi(
+                    "Không thể lấy thông tin sự kiện. Hãy thông báo cho người dùng một cách thân thiện.",
+                    ['type' => 'events_error']
                 ),
                 'error' => $e->getMessage()
             ], 500);

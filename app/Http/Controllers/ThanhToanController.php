@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
+use Endroid\QrCode\ErrorCorrectionLevel;
 
 class ThanhToanController extends Controller
 {
@@ -132,6 +135,74 @@ class ThanhToanController extends Controller
         }
     }
 
+    private function generateGroupTicketQRData($hoaDon, $chiTietVes, $suatChieu)
+    {
+        try {
+            if ($chiTietVes->isEmpty()) {
+                throw new \Exception('Không tìm thấy vé trong hóa đơn');
+            }
+
+            if (!$suatChieu) {
+                throw new \Exception('Không tìm thấy thông tin suất chiếu');
+            }
+
+            // Chỉ tạo QR code cho URL check-in
+            $checkInUrl = url("/api/hoa-don/check-in/{$hoaDon->ma_hoa_don}");
+
+            // Tạo QR code với endroid/qr-code
+            $qrCode = QrCode::create($checkInUrl)
+                ->setSize(300)
+                ->setMargin(10)
+                ->setErrorCorrectionLevel(ErrorCorrectionLevel::High);
+
+            $writer = new PngWriter();
+            $result = $writer->write($qrCode);
+
+            // Lấy data URI của QR code
+            $qrCodeDataUri = $result->getDataUri();
+
+            // Tạo một mảng chứa thông tin của tất cả các vé
+            $groupTicketData = [
+                'ma_hoa_don' => $hoaDon->ma_hoa_don,
+                'id_suat' => $suatChieu->id,
+                'id_phong' => $suatChieu->phong_id,
+                'ten_phong' => $suatChieu->ten_phong,
+                'id_phim' => $suatChieu->phim_id,
+                'ten_phim' => $suatChieu->ten_phim,
+                'thoi_gian' => $suatChieu->ngay_chieu . ' ' . $suatChieu->gio_bat_dau,
+                'so_luong_ve' => $chiTietVes->count(),
+                'tong_tien' => $hoaDon->tong_tien,
+                'check_in_url' => $checkInUrl,
+                'danh_sach_ve' => $chiTietVes->map(function($ve) {
+                    if (!$ve->ghe) {
+                        throw new \Exception('Không tìm thấy thông tin ghế cho vé: ' . $ve->id);
+                    }
+                    return [
+                        'id_ve' => $ve->id,
+                        'id_ghe' => $ve->id_ghe,
+                        'ten_ghe' => $ve->ghe->ten_ghe,
+                        'loai_ghe' => $ve->ghe->loai_ghe ?? 'Thường',
+                        'gia_ve' => $ve->gia_ve
+                    ];
+                })->toArray()
+            ];
+
+            return [
+                'qr_code' => $qrCodeDataUri,
+                'ticket_info' => $groupTicketData
+            ];
+
+        } catch (\Exception $e) {
+            Log::error('Lỗi tạo QR code: ' . $e->getMessage());
+
+            // Nếu có lỗi, trả về chỉ thông tin vé mà không có QR code
+            return [
+                'qr_code' => null,
+                'ticket_info' => $groupTicketData ?? []
+            ];
+        }
+    }
+
     public function ketQuaThanhToan(Request $request)
     {
         try {
@@ -189,10 +260,45 @@ class ThanhToanController extends Controller
                         'tinh_trang' => 2  // Đã thanh toán
                     ]);
 
+                // Get suất chiếu details
+                $suatChieu = DB::table('suat_chieus')
+                    ->join('quan_ly_phims', 'suat_chieus.phim_id', '=', 'quan_ly_phims.id')
+                    ->join('phongs', 'suat_chieus.phong_id', '=', 'phongs.id')
+                    ->where('suat_chieus.id', $hoaDon->id_suat)
+                    ->select(
+                        'suat_chieus.*',
+                        'quan_ly_phims.id as phim_id',
+                        'quan_ly_phims.ten_phim',
+                        'phongs.id as phong_id',
+                        'phongs.ten_phong'
+                    )
+                    ->first();
+
+                // Lấy tất cả vé trong hóa đơn
+                $chiTietVes = ChiTietVe::with(['ghe'])
+                    ->where('id_hoa_don', $hoaDon->id)
+                    ->get();
+
+                if ($chiTietVes->isEmpty()) {
+                    throw new \Exception('Không tìm thấy vé trong hóa đơn');
+                }
+
+                // Tạo một QR code duy nhất cho tất cả các vé
+                $qrResult = $this->generateGroupTicketQRData($hoaDon, $chiTietVes, $suatChieu);
+
                 return response()->json([
                     'status' => true,
                     'message' => 'Thanh toán thành công!',
-                    'ma_hoa_don' => $vnp_TxnRef
+                    'ma_hoa_don' => $vnp_TxnRef,
+                    'thoi_gian_thanh_toan' => Carbon::now()->format('Y-m-d H:i:s'),
+                    'tickets' => [
+                        'thong_tin_ve' => $chiTietVes,
+                        'qr_code' => $qrResult['qr_code'],
+                        'qr_code_type' => 'data-url',
+                        'so_luong_ve' => $chiTietVes->count(),
+                        'tong_tien' => $hoaDon->tong_tien,
+                        'chi_tiet' => $qrResult['ticket_info']
+                    ]
                 ]);
             } else {
                 // Xử lý thanh toán thất bại
@@ -209,11 +315,11 @@ class ThanhToanController extends Controller
                 ]);
             }
         } catch (\Exception $e) {
-            Log::error('VNPAY Processing Error: ' . $e->getMessage());
+            Log::error('Lỗi xử lý thanh toán: ' . $e->getMessage());
             return response()->json([
                 'status' => false,
-                'message' => 'Có lỗi xảy ra trong quá trình xử lý thanh toán!'
-            ]);
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
+            ], 500);
         }
     }
 
@@ -230,7 +336,6 @@ class ThanhToanController extends Controller
 
     public function chiTietHoaDon($maHoaDon)
     {
-
         $user = Auth::guard('sanctum')->user();
 
         // Lấy thông tin hóa đơn
@@ -257,6 +362,24 @@ class ThanhToanController extends Controller
             )
             ->get();
 
+        // Lấy thông tin suất chiếu và phim
+        $suatChieu = DB::table('suat_chieus')
+            ->join('quan_ly_phims', 'suat_chieus.phim_id', '=', 'quan_ly_phims.id')
+            ->join('phongs', 'suat_chieus.phong_id', '=', 'phongs.id')
+            ->where('suat_chieus.id', $hoaDon->id_suat)
+            ->select(
+                'suat_chieus.*',
+                'quan_ly_phims.ten_phim',
+                'quan_ly_phims.hinh_anh',
+                'phongs.ten_phong',
+                'phongs.id as phong_id',
+                'quan_ly_phims.id as phim_id'
+            )
+            ->first();
+
+        // Tạo QR code cho hóa đơn
+        $qrResult = $this->generateGroupTicketQRData($hoaDon, $chiTietVes, $suatChieu);
+
         $chiTietVesDichVu = ChiTietVeDichVu::join('chi_tiet_ves', 'chi_tiet_ve_dich_vus.id_chi_tiet_ve', 'chi_tiet_ves.id')
             ->join('dich_vus', 'chi_tiet_ve_dich_vus.id_dich_vu', 'dich_vus.id')
             ->join('hoa_dons', 'chi_tiet_ves.id_hoa_don', 'hoa_dons.id')
@@ -266,23 +389,6 @@ class ThanhToanController extends Controller
                 'dich_vus.*'
             )
             ->get();
-
-        // Lấy thông tin suất chiếu và phim một cách an toàn
-        $suatChieu = null;
-        if ($hoaDon->id_suat) {
-            $suatChieu = DB::table('suat_chieus')
-                ->join('quan_ly_phims', 'suat_chieus.phim_id', '=', 'quan_ly_phims.id')
-                ->join('phongs', 'suat_chieus.phong_id', '=', 'phongs.id')
-                ->where('suat_chieus.id', $hoaDon->id_suat)
-                ->select(
-                    'suat_chieus.ngay_chieu',
-                    'suat_chieus.gio_bat_dau',
-                    'quan_ly_phims.ten_phim',
-                    'quan_ly_phims.hinh_anh',
-                    'phongs.ten_phong'
-                )
-                ->first();
-        }
 
         return response()->json([
             'status' => true,
@@ -297,11 +403,13 @@ class ThanhToanController extends Controller
                 ],
                 'chi_tiet_ves' => $chiTietVes,
                 'suat_chieu' => $suatChieu,
-                'chi_tiet_ve_dich_vus' => $chiTietVesDichVu
+                'chi_tiet_ve_dich_vus' => $chiTietVesDichVu,
+                'qr_code' => $qrResult['qr_code'],
+                'qr_code_type' => 'data-url',
+                'chi_tiet_qr' => $qrResult['ticket_info']
             ]
         ]);
     }
-
 
     // Hàm xử lý IPN (Instant Payment Notification) từ VNPAY
     public function ipnVnpay(Request $request)
@@ -365,21 +473,49 @@ class ThanhToanController extends Controller
             }
 
             if ($vnp_ResponseCode == "00") {
-                $hoaDon->trang_thai = 1; // Đã thanh toán
+                $hoaDon->trang_thai = 1;
                 $hoaDon->ngay_thanh_toan = Carbon::now();
                 $hoaDon->ghi_chu = 'Thanh toán thành công qua VNPay IPN. Mã giao dịch: ' . $vnp_TransactionNo;
                 $hoaDon->save();
 
-                // CẬP NHẬT TRẠNG THÁI VÉ - Thêm đoạn code này
-                $chiTietVes = ChiTietVe::where('id_hoa_don', $hoaDon->id)->get();
+                // Get suất chiếu details
+                $suatChieu = DB::table('suat_chieus')
+                    ->join('quan_ly_phims', 'suat_chieus.phim_id', '=', 'quan_ly_phims.id')
+                    ->join('phongs', 'suat_chieus.phong_id', '=', 'phongs.id')
+                    ->where('suat_chieus.id', $hoaDon->id_suat)
+                    ->select(
+                        'suat_chieus.*',
+                        'quan_ly_phims.id as phim_id',
+                        'quan_ly_phims.ten_phim',
+                        'phongs.id as phong_id',
+                        'phongs.ten_phong'
+                    )
+                    ->first();
+
+                // Lấy tất cả vé trong hóa đơn
+                $chiTietVes = ChiTietVe::with('ghe')
+                    ->where('id_hoa_don', $hoaDon->id)
+                    ->get();
+
                 foreach ($chiTietVes as $chiTietVe) {
                     $chiTietVe->tinh_trang = 2; // Đánh dấu vé đã thanh toán
                     $chiTietVe->save();
                 }
 
+                // Tạo một QR code duy nhất cho tất cả các vé
+                $qrResult = $this->generateGroupTicketQRData($hoaDon, $chiTietVes, $suatChieu);
+
                 return response()->json([
                     'RspCode' => '00',
-                    'Message' => 'Confirm Success'
+                    'Message' => 'Confirm Success',
+                    'tickets' => [
+                        'thong_tin_ve' => $chiTietVes,
+                        'qr_code' => $qrResult['qr_code'],
+                        'qr_code_type' => 'data-url',
+                        'so_luong_ve' => $chiTietVes->count(),
+                        'tong_tien' => $hoaDon->tong_tien,
+                        'chi_tiet' => $qrResult['ticket_info']
+                    ]
                 ]);
             } else {
                 $hoaDon->trang_thai = 2; // Đã hủy
@@ -402,4 +538,166 @@ class ThanhToanController extends Controller
         }
     }
 
+    public function checkInHoaDon($ma_hoa_don)
+    {
+        try {
+            // Tìm hóa đơn
+            $hoaDon = HoaDon::where('ma_hoa_don', $ma_hoa_don)->first();
+
+            if (!$hoaDon) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Không tìm thấy hóa đơn!'
+                ], 404);
+            }
+
+            // Kiểm tra trạng thái thanh toán
+            if ($hoaDon->trang_thai != 1) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Hóa đơn chưa được thanh toán!'
+                ], 400);
+            }
+
+            // Lấy tất cả vé trong hóa đơn
+            $chiTietVes = ChiTietVe::where('id_hoa_don', $hoaDon->id)->get();
+
+            if ($chiTietVes->isEmpty()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Không tìm thấy vé trong hóa đơn!'
+                ], 404);
+            }
+
+            // Kiểm tra xem có vé nào đã check-in chưa
+            $daCheckIn = $chiTietVes->where('checked_in', 1)->count();
+            if ($daCheckIn > 0) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Một số vé trong hóa đơn đã được check-in trước đó!'
+                ], 400);
+            }
+
+            // Lấy thông tin suất chiếu
+            $suatChieu = DB::table('suat_chieus')
+                ->where('id', $hoaDon->id_suat)
+                ->first();
+
+            if (!$suatChieu) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Không tìm thấy thông tin suất chiếu!'
+                ], 404);
+            }
+
+            // Kiểm tra thời gian check-in
+            $now = now()->setTimezone('Asia/Ho_Chi_Minh');
+
+            // Parse thời gian chiếu và chuyển về múi giờ Việt Nam
+            $thoiGianChieu = Carbon::parse($suatChieu->ngay_chieu . ' ' . $suatChieu->gio_bat_dau)
+                ->setTimezone('Asia/Ho_Chi_Minh');
+
+            // Nếu thời gian chiếu là ngày mai và giờ hiện tại > 18:00, cho phép check-in
+            $isNextDayEarlyMorning = false;
+            if ($thoiGianChieu->format('Y-m-d') > $now->format('Y-m-d')) {
+                if ($thoiGianChieu->format('H:i') < '12:00' && $now->format('H:i') > '18:00') {
+                    $isNextDayEarlyMorning = true;
+                }
+            }
+
+            // Tính thời gian check-in
+            $thoiGianBatDauCheckIn = $thoiGianChieu->copy()->subMinutes(30);
+            $thoiGianKetThucCheckIn = $thoiGianChieu->copy()->addMinutes(10);
+
+            // Log để debug thời gian
+            Log::info('Debug thời gian check-in:', [
+                'now' => $now->format('Y-m-d H:i:s'),
+                'timezone' => $now->timezone->getName(),
+                'thoiGianChieu' => $thoiGianChieu->format('Y-m-d H:i:s'),
+                'batDauCheckIn' => $thoiGianBatDauCheckIn->format('Y-m-d H:i:s'),
+                'ketThucCheckIn' => $thoiGianKetThucCheckIn->format('Y-m-d H:i:s')
+            ]);
+
+            // Kiểm tra thời gian check-in
+            $allowCheckIn = $isNextDayEarlyMorning ||
+                ($now->format('Y-m-d') === $thoiGianChieu->format('Y-m-d') &&
+                $now->between($thoiGianBatDauCheckIn, $thoiGianKetThucCheckIn));
+
+            if (!$allowCheckIn) {
+                // Nếu là suất chiếu ngày mai sáng sớm
+                if ($thoiGianChieu->format('Y-m-d') > $now->format('Y-m-d') && $thoiGianChieu->format('H:i') < '12:00') {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Suất chiếu sáng sớm ngày mai, check-in sẽ mở lúc 18:00 hôm nay',
+                        'gio hien tai' => $now->format('H:i'),
+                        'debug_time' => [
+                            'ngay_gio_hien_tai' => $now->format('Y-m-d H:i:s'),
+                            'ngay_gio_chieu' => $thoiGianChieu->format('Y-m-d H:i:s'),
+                            'gio_bat_dau_checkin' => $thoiGianBatDauCheckIn->format('H:i'),
+                            'gio_ket_thuc_checkin' => $thoiGianKetThucCheckIn->format('H:i'),
+                            'timezone' => $now->timezone->getName()
+                        ]
+                    ], 400);
+                }
+
+                if ($now->lt($thoiGianBatDauCheckIn)) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Chưa đến thời gian check-in! Check-in sẽ bắt đầu lúc ' . $thoiGianBatDauCheckIn->format('H:i'),
+                        'gio hien tai' => $now->format('H:i'),
+                        'debug_time' => [
+                            'ngay_gio_hien_tai' => $now->format('Y-m-d H:i:s'),
+                            'ngay_gio_chieu' => $thoiGianChieu->format('Y-m-d H:i:s'),
+                            'gio_bat_dau_checkin' => $thoiGianBatDauCheckIn->format('H:i'),
+                            'gio_ket_thuc_checkin' => $thoiGianKetThucCheckIn->format('H:i'),
+                            'timezone' => $now->timezone->getName()
+                        ]
+                    ], 400);
+                } else {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Đã quá thời gian check-in! Thời gian check-in đã kết thúc lúc ' . $thoiGianKetThucCheckIn->format('H:i'),
+                        'gio hien tai' => $now->format('H:i'),
+                        'debug_time' => [
+                            'ngay_gio_hien_tai' => $now->format('Y-m-d H:i:s'),
+                            'ngay_gio_chieu' => $thoiGianChieu->format('Y-m-d H:i:s'),
+                            'gio_bat_dau_checkin' => $thoiGianBatDauCheckIn->format('H:i'),
+                            'gio_ket_thuc_checkin' => $thoiGianKetThucCheckIn->format('H:i'),
+                            'timezone' => $now->timezone->getName()
+                        ]
+                    ], 400);
+                }
+            }
+
+            // Tiến hành check-in tất cả các vé
+            foreach ($chiTietVes as $chiTietVe) {
+                $chiTietVe->checked_in = 1;
+                $chiTietVe->thoi_gian_check_in = now()->setTimezone('Asia/Ho_Chi_Minh');
+                $chiTietVe->save();
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Check-in thành công ' . $chiTietVes->count() . ' vé!',
+                'data' => [
+                    'ma_hoa_don' => $hoaDon->ma_hoa_don,
+                    'so_ve_check_in' => $chiTietVes->count(),
+                    'thoi_gian_check_in' => Carbon::now()->format('Y-m-d H:i:s'),
+                    'danh_sach_ghe' => $chiTietVes->map(function($ve) {
+                        return [
+                            'id_ve' => $ve->id,
+                            'ten_ghe' => $ve->ghe->ten_ghe ?? 'Unknown'
+                        ];
+                    })
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Lỗi check-in hóa đơn: ' . $e->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

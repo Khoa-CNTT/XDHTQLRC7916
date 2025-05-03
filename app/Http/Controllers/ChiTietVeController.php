@@ -301,4 +301,5 @@ class ChiTietVeController extends Controller
             ]);
         }
     }
+
 }
