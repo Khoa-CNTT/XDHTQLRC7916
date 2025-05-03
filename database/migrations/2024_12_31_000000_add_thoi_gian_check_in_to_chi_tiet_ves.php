@@ -9,6 +9,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
+    //ALTER TABLE
     public function up(): void
     {
         Schema::table('chi_tiet_ves', function (Blueprint $table) {

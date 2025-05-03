@@ -78,6 +78,7 @@ Route::group(['middleware' => 'adminMiddle'], function () {
 
     Route::get('/suat-chieu/data', [SuatChieuController::class, 'getData']);
     Route::post('/suat-chieu/create', [SuatChieuController::class, 'store']);
+    Route::post('/suat-chieu/create-multiple', [SuatChieuController::class, 'storeMultiple']);
     Route::delete('/suat-chieu/delete/{id}', [SuatChieuController::class, 'destroy']);
     Route::put('/suat-chieu/update', [SuatChieuController::class, 'update']);
     Route::put('/suat-chieu/doi-trang-thai', [SuatChieuController::class, 'doiTrangThai']);
