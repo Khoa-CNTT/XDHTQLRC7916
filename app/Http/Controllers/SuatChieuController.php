@@ -79,9 +79,14 @@ class SuatChieuController extends Controller
         foreach ($data as $suat) {
             $tongSoGhe = Ghe::where('phong_id', $suat->phong_id)->count();
             $soGheDaDat = ChiTietVe::where('id_suat', $suat->id)
-                ->where('tinh_trang', 1)
+                ->where(function ($query) {
+                    $query->where('tinh_trang', 1) // Ghế đã đặt
+                        ->orWhere('tinh_trang', 2); // Ghế đang giữ
+                })
                 ->count();
             $suat->so_ghe_trong = $tongSoGhe - $soGheDaDat;
+            //tong so ghe
+            $suat->tong_so_ghe = $tongSoGhe;
         }
 
         return response()->json([

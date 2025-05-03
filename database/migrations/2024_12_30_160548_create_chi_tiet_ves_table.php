@@ -34,6 +34,8 @@ return new class extends Migration
 
             // Trạng thái ghế (0: Còn trống, 1: Đã đặt, 2: Đang tạm giữ)
             $table->tinyInteger('tinh_trang')->default(0);
+            // Trạng thái đã check in (0: Chưa check in, 1: Đã check in)
+            $table->tinyInteger('checked_in')->default(0);
 
             // Thời gian đặt và hết hạn (cho tính năng tạm giữ ghế)
             $table->timestamp('thoi_gian_dat')->nullable();

@@ -265,4 +265,5 @@ Route::get('/suat-chieu/lay-suat/{id_phim}/{id_phong}', [SuatChieuController::cl
 
 Route::get('/chi-tiet-ve/lay-theo-suat/{id_suat}', [ChiTietVeController::class, 'layTheoSuat']);
 
+Route::get('/chi-tiet-ve/check-in/{id_chi_tiet_ve}', [ChiTietVeController::class, 'checkIn']);
 
