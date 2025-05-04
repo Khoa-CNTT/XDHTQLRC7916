@@ -192,7 +192,8 @@ Route::post('/lay-ve/doi-trang-thai-huy', [ChiTietVeController::class, 'chaneSta
 Route::post('/lay-ve/kiem-tra-trang-thai', [ChiTietVeController::class, 'kiemTraTrangThai']);
 Route::get('/ghe-client/data/{id}', [ChiTietVeController::class, 'getDataClient']);
 
-Route::get('/trang-chu/data', [TrangChuController::class, 'dataTrangChu']);
+Route::post('/trang-chu/data', [TrangChuController::class, 'dataTrangChu']);
+Route::post('/trang-chu/phim-sap-chieu/data', [TrangChuController::class, 'dataPhimSapChieu']);
 
 Route::get('/lay-danh-gia/data/{id}', [DanhGiaController::class, 'getDataChiTietPhim']);
 Route::get('/lay-dich-vu/data', [DichVuController::class, 'getDataDichVu']);
