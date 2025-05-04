@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignId('id_dich_vu')->nullable()->constrained('dich_vus')->onDelete('cascade');
             $table->integer('so_luong')->default(0); // Số lượng dịch vụ được chọn
             $table->decimal('gia_tien', 10, 2); // Giá tiền của dịch vụ tại thời điểm mua
+            $table->integer('check_in_dich_vu')->default(0);
+            $table->dateTime('thoi_gian_check_in_dich_vu')->nullable();
             $table->timestamps();
         });
     }

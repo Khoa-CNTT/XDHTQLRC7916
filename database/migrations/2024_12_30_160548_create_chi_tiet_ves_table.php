@@ -37,10 +37,6 @@ return new class extends Migration
             // Trạng thái đã check in (0: Chưa check in, 1: Đã check in)
             $table->tinyInteger('checked_in')->default(0);
 
-            // Thời gian đặt và hết hạn (cho tính năng tạm giữ ghế)
-            $table->timestamp('thoi_gian_dat')->nullable();
-            $table->timestamp('thoi_gian_het_han')->nullable();
-
             // Ghi chú
             $table->text('ghi_chu')->nullable();
 

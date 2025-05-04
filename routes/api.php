@@ -123,6 +123,8 @@ Route::group(['middleware' => 'adminMiddle'], function () {
     Route::put('/ghe/doi-trang-thai', [GheController::class, 'doiTrangThai']);
     Route::put('/ghe/doi-loai-ghe', [GheController::class, 'doiLoaiGhe']);
 
+    Route::post('/hoa-don/check-in/{ma_hoa_don}', [ThanhToanController::class, 'checkInHoaDon']);
+    Route::post('/hoa-don/check-in-dich-vu/{ma_hoa_don}', [ThanhToanController::class, 'checkInDichVu']);
 
     Route::get('/user', function (Request $request) {
         return $request->user();
@@ -267,5 +269,5 @@ Route::get('/suat-chieu/lay-suat/{id_phim}/{id_phong}', [SuatChieuController::cl
 
 Route::get('/chi-tiet-ve/lay-theo-suat/{id_suat}', [ChiTietVeController::class, 'layTheoSuat']);
 
+//kiểm tra admin
 
-Route::get('/hoa-don/check-in/{ma_hoa_don}', [ThanhToanController::class, 'checkInHoaDon']);
