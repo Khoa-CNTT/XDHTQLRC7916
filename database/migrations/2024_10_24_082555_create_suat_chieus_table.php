@@ -19,6 +19,8 @@ return new class extends Migration
             $table->time('gio_bat_dau');
             $table->time('gio_ket_thuc');
             $table->decimal('gia_ve', 10, 2);
+            $table->decimal('gia_ve_vip', 10, 2)->default(0);
+            $table->decimal('gia_ve_doi', 10, 2)->default(0);
             $table->string('trang_thai')->default('Sắp chiếu'); // 'Sắp chiếu', 'Đang chiếu', 'Đã chiếu', 'Hết vé', 'Hủy'
             $table->string('dinh_dang')->default('2D'); // '2D', '3D', 'IMAX'
             $table->string('ngon_ngu')->default('Phụ đề'); // 'Phụ đề', 'Lồng tiếng', 'Nguyên bản'

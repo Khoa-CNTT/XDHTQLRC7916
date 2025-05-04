@@ -7,6 +7,7 @@ use App\Models\ChiTietVe;
 use App\Models\ChucVu;
 use App\Models\Ghe;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 
 class ChiTietVeController extends Controller
@@ -26,7 +27,8 @@ class ChiTietVeController extends Controller
                 'chi_tiet_ves.tinh_trang',
                 'chi_tiet_ves.thoi_gian_dat',
                 'chi_tiet_ves.thoi_gian_het_han',
-                'quan_ly_phims.ten_phim',                'suat_chieus.ngay_chieu',
+                'quan_ly_phims.ten_phim',
+                'suat_chieus.ngay_chieu',
                 'suat_chieus.gio_bat_dau',
                 'suat_chieus.gio_ket_thuc',
                 'suat_chieus.dinh_dang',
@@ -182,48 +184,98 @@ class ChiTietVeController extends Controller
 
     public function chaneStatusDat(Request $request)
     {
-        $ve = ChiTietVe::where('id_ghe', $request->id_ghe)
-            ->where('id_suat', $request->id_suat)
-            ->first();
-        if ($ve) {
-            if ($ve->tinh_trang == 0) {
-                $ve->tinh_trang = 1;
-                $ve->id_khach_hang = $request->id_khach_hang;
-                $ve->save();
+        $user = Auth::guard('sanctum')->user();
+        if ($user && $user instanceof \App\Models\KhachHang) {
+            $ve = ChiTietVe::where('id_ghe', $request->id_ghe)
+                ->where('id_suat', $request->id_suat)
+                ->first();
+            if ($ve) {
+                if ($ve->tinh_trang == 0) {
+                    $ve->tinh_trang = 1;
+                    $ve->id_khach_hang = $request->id_khach_hang;
+                    $ve->ma_check = $request->id_khach_hang . 'kh';
+                    $ve->save();
 
+                    return response()->json([
+                        'status' => true,
+                        'message' => "Đã chọn ghế thành công!"
+                    ]);
+                }
+            } else {
                 return response()->json([
-                    'status' => true,
-                    'message' => "Đã chọn ghế thành công!"
+                    'status' => false,
+                    'message' => "Đã có lỗi xảy ra!"
                 ]);
             }
         } else {
-            return response()->json([
-                'status' => false,
-                'message' => "Đã có lỗi xảy ra!"
-            ]);
+            $ve = ChiTietVe::where('id_ghe', $request->id_ghe)
+                ->where('id_suat', $request->id_suat)
+                ->first();
+            if ($ve) {
+                if ($ve->tinh_trang == 0) {
+                    $ve->tinh_trang = 1;
+                    $ve->id_nhan_vien = $user->id;
+                    $ve->ma_check = $user->id . 'nv';
+                    $ve->save();
+
+                    return response()->json([
+                        'status' => true,
+                        'message' => "Đã chọn ghế thành công!"
+                    ]);
+                }
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => "Đã có lỗi xảy ra!"
+                ]);
+            }
         }
     }
 
     public function chaneStatusHuy(Request $request)
     {
-        $ve = ChiTietVe::where('id_ghe', $request->id_ghe)
-            ->where('id_suat', $request->id_suat)
-            ->first();
-        if ($ve) {
-            if ($ve->id_khach_hang == $request->id_khach_hang && $ve->tinh_trang == 1) {
-                $ve->tinh_trang = 0;
+        $user = Auth::guard('sanctum')->user();
+        if ($user && $user instanceof \App\Models\KhachHang) {
+            $ve = ChiTietVe::where('id_ghe', $request->id_ghe)
+                ->where('id_suat', $request->id_suat)
+                ->first();
+            if ($ve) {
+                if ($ve->ma_check == $request->id_khach_hang . 'kh' && $ve->tinh_trang == 1) {
+                    $ve->tinh_trang = 0;
 
-                $ve->save();
+                    $ve->save();
 
-                return response()->json([
-                    'status' => true,
-                    'message' => "Đổi huỷ ghế thành công!"
-                ]);
-            } else {
-                return response()->json([
-                    'status' => false,
-                    'message' => "Ghế này đã được đặt!"
-                ]);
+                    return response()->json([
+                        'status' => true,
+                        'message' => "Đổi huỷ ghế thành công!"
+                    ]);
+                } else {
+                    return response()->json([
+                        'status' => false,
+                        'message' => "Ghế này đã được đặt!"
+                    ]);
+                }
+            }
+        } else {
+            $ve = ChiTietVe::where('id_ghe', $request->id_ghe)
+                ->where('id_suat', $request->id_suat)
+                ->first();
+            if ($ve) {
+                if ($ve->ma_check == $user->id . 'nv' && $ve->tinh_trang == 1) {
+                    $ve->tinh_trang = 0;
+
+                    $ve->save();
+
+                    return response()->json([
+                        'status' => true,
+                        'message' => "Đổi huỷ ghế thành công!"
+                    ]);
+                } else {
+                    return response()->json([
+                        'status' => false,
+                        'message' => "Ghế này đã được đặt!"
+                    ]);
+                }
             }
         }
     }
@@ -248,46 +300,60 @@ class ChiTietVeController extends Controller
     public function getData1($id)
     {
         $user = Auth::guard('sanctum')->user();
-        $data   =   ChiTietVe::leftjoin('ghes', 'chi_tiet_ves.id_ghe', 'ghes.id')
-            ->where('chi_tiet_ves.id_khach_hang', $user->id)
-            ->where('chi_tiet_ves.id_suat', $id)
-            ->where('chi_tiet_ves.tinh_trang', 1)
-            ->select('chi_tiet_ves.*', 'ghes.ten_ghe')
-            ->get();
-        $tongTien = $data->sum('gia_tien');
-        return response()->json([
-            'data' => $data,
-            'tong_tien' => $tongTien
-        ]);
+        if ($user && $user instanceof \App\Models\KhachHang) {
+            $data   =   ChiTietVe::leftjoin('ghes', 'chi_tiet_ves.id_ghe', 'ghes.id')
+                ->where('chi_tiet_ves.id_khach_hang', $user->id)
+                ->where('chi_tiet_ves.id_suat', $id)
+                ->where('chi_tiet_ves.tinh_trang', 1)
+                ->select('chi_tiet_ves.*', 'ghes.ten_ghe')
+                ->get();
+            $tongTien = $data->sum('gia_tien');
+            return response()->json([
+                'data' => $data,
+                'tong_tien' => $tongTien
+            ]);
+        } else {
+            $data   =   ChiTietVe::leftjoin('ghes', 'chi_tiet_ves.id_ghe', 'ghes.id')
+                ->where('chi_tiet_ves.id_nhan_vien', $user->id)
+                ->where('chi_tiet_ves.id_suat', $id)
+                ->where('chi_tiet_ves.tinh_trang', 1)
+                ->select('chi_tiet_ves.*', 'ghes.ten_ghe')
+                ->get();
+            $tongTien = $data->sum('gia_tien');
+            return response()->json([
+                'data' => $data,
+                'tong_tien' => $tongTien
+            ]);
+        }
     }
 
     public function layTheoSuat($id_suat)
     {
         try {
             $data = ChiTietVe::leftJoin('khach_hangs', 'chi_tiet_ves.id_khach_hang', 'khach_hangs.id')
-                            ->leftJoin('hoa_dons', 'chi_tiet_ves.id_hoa_don', 'hoa_dons.id')
-                            ->leftJoin('ghes', 'chi_tiet_ves.id_ghe', 'ghes.id')
-                            ->where('chi_tiet_ves.id_suat', $id_suat)
-                            ->select(
-                                'chi_tiet_ves.id',
-                                'chi_tiet_ves.id_suat',
-                                'chi_tiet_ves.id_ghe',
-                                'chi_tiet_ves.id_khach_hang',
-                                'chi_tiet_ves.id_hoa_don',
-                                'chi_tiet_ves.gia_tien',
-                                'chi_tiet_ves.tinh_trang',
-                                'chi_tiet_ves.thoi_gian_dat',
-                                'chi_tiet_ves.thoi_gian_het_han',
-                                'chi_tiet_ves.ghi_chu',
-                                'khach_hangs.ten_khach_hang',
-                                'hoa_dons.ma_hoa_don',
-                                'ghes.ten_ghe',
-                                'ghes.hang',
-                                'ghes.cot',
-                                'ghes.loai_ghe',
-                                'ghes.trang_thai as trang_thai_ghe'
-                            )
-                            ->get();
+                ->leftJoin('hoa_dons', 'chi_tiet_ves.id_hoa_don', 'hoa_dons.id')
+                ->leftJoin('ghes', 'chi_tiet_ves.id_ghe', 'ghes.id')
+                ->where('chi_tiet_ves.id_suat', $id_suat)
+                ->select(
+                    'chi_tiet_ves.id',
+                    'chi_tiet_ves.id_suat',
+                    'chi_tiet_ves.id_ghe',
+                    'chi_tiet_ves.id_khach_hang',
+                    'chi_tiet_ves.id_hoa_don',
+                    'chi_tiet_ves.gia_tien',
+                    'chi_tiet_ves.tinh_trang',
+                    'chi_tiet_ves.thoi_gian_dat',
+                    'chi_tiet_ves.thoi_gian_het_han',
+                    'chi_tiet_ves.ghi_chu',
+                    'khach_hangs.ten_khach_hang',
+                    'hoa_dons.ma_hoa_don',
+                    'ghes.ten_ghe',
+                    'ghes.hang',
+                    'ghes.cot',
+                    'ghes.loai_ghe',
+                    'ghes.trang_thai as trang_thai_ghe'
+                )
+                ->get();
 
             return response()->json([
                 'status'    => true,

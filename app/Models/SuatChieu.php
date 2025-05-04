@@ -15,6 +15,8 @@ class SuatChieu extends Model
         'gio_bat_dau',
         'gio_ket_thuc',
         'gia_ve',
+        'gia_ve_vip',
+        'gia_ve_doi',
         'trang_thai', // 'Sắp chiếu', 'Đang chiếu', 'Đã chiếu', 'Hết vé', 'Hủy'
         'dinh_dang', // '2D', '3D', 'IMAX', v.v.
         'ngon_ngu', // 'Phụ đề', 'Lồng tiếng', 'Nguyên bản'

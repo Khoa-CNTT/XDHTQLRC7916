@@ -78,6 +78,7 @@ Route::group(['middleware' => 'adminMiddle'], function () {
 
     Route::get('/suat-chieu/data', [SuatChieuController::class, 'getData']);
     Route::post('/suat-chieu/create', [SuatChieuController::class, 'store']);
+    Route::post('/suat-chieu/create-multiple', [SuatChieuController::class, 'storeMultiple']);
     Route::delete('/suat-chieu/delete/{id}', [SuatChieuController::class, 'destroy']);
     Route::put('/suat-chieu/update', [SuatChieuController::class, 'update']);
     Route::put('/suat-chieu/doi-trang-thai', [SuatChieuController::class, 'doiTrangThai']);
@@ -242,6 +243,7 @@ Route::post('/thanh-toan', [ThanhToanController::class, 'thanhToan']);
 Route::post('/thanh-toan/ket-qua', [ThanhToanController::class, 'ketQuaThanhToan']); // Đổi từ GET sang POST
 Route::get('/thanh-toan/ipn', [ThanhToanController::class, 'ipnVnpay']); // Thêm route cho IPN
 Route::get('/thanh-toan/chi-tiet-hoa-don/{maHoaDon}', [ThanhToanController::class, 'chiTietHoaDon']);
+Route::get('/hoa-don/check-in/{ma_hoa_don}', [ThanhToanController::class, 'checkInHoaDon']);
 
 // Chatbot API routes
 
@@ -267,3 +269,4 @@ Route::get('/suat-chieu/lay-suat/{id_phim}/{id_phong}', [SuatChieuController::cl
 Route::get('/chi-tiet-ve/lay-theo-suat/{id_suat}', [ChiTietVeController::class, 'layTheoSuat']);
 
 
+Route::get('/hoa-don/check-in/{ma_hoa_don}', [ThanhToanController::class, 'checkInHoaDon']);
