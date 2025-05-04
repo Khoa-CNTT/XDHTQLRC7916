@@ -68,6 +68,7 @@ class HoaDonController extends Controller
                 ->join('phongs', 'suat_chieus.phong_id', '=', 'phongs.id')
                 ->join('quan_ly_phims', 'suat_chieus.phim_id', '=', 'quan_ly_phims.id') // Sửa lại id_phim thành phim_id
                 ->join('khach_hangs', 'chi_tiet_ves.id_khach_hang', '=', 'khach_hangs.id')
+                ->join('hoa_dons', 'chi_tiet_ves.id_hoa_don', '=', 'hoa_dons.id')
                 ->select(
                     'ghes.ten_ghe',
                     'quan_ly_phims.ten_phim',
@@ -76,7 +77,8 @@ class HoaDonController extends Controller
                     'suat_chieus.dinh_dang',
                     'suat_chieus.ngon_ngu',
                     'phongs.ten_phong',
-                    'khach_hangs.ten_khach_hang'
+                    'khach_hangs.ten_khach_hang',
+                    'hoa_dons.ma_qr_checkin'
                 )
                 ->get();
 

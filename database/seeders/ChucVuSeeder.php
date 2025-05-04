@@ -30,7 +30,17 @@ class ChucVuSeeder extends Seeder
                 'ten_chuc_vu' => 'Kế toán',
                 'is_master'   =>0,
                 'tinh_trang'  => 1,
-            ]
+            ],
+            [
+                'ten_chuc_vu' => 'Check-in vé',
+                'is_master'   =>0,
+                'tinh_trang'  => 1,
+            ],
+            [
+                'ten_chuc_vu' => 'Check-in dịch vụ',
+                'is_master'   =>0,
+                'tinh_trang'  => 1,
+            ],
         ]);
     }
 }

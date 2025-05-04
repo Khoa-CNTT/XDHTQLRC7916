@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ChiTietVeDichVu extends Model
 {
     protected $table = 'chi_tiet_ve_dich_vus';
-    protected $fillable = ['id_chi_tiet_ve', 'id_dich_vu', 'so_luong', 'gia_tien'];
+    protected $fillable = ['id_chi_tiet_ve', 'id_dich_vu', 'so_luong', 'gia_tien', 'check_in_dich_vu','thoi_gian_check_in_dich_vu'];
 
     public function chiTietVe()
     {

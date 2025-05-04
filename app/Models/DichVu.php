@@ -12,7 +12,7 @@ class DichVu extends Model
         'ten_dich_vu',
         'gia_tien',
         'tinh_trang',
-        'hinh_anh'
+        'hinh_anh',
     ];
     public function chiTietVes()
     {

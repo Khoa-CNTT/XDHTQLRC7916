@@ -21,8 +21,6 @@ class ChiTietVe extends Model
         'id_nhan_vien',
         'ghi_chu',
         'tinh_trang',
-        'thoi_gian_dat',
-        'thoi_gian_het_han',
         'checked_in'
     ];
     public function hoaDon()

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('phuong_thuc_thanh_toan')->nullable();
             $table->tinyInteger('trang_thai')->default(0); // 0: Chờ thanh toán, 1: Đã thanh toán, 2: Đã hủy
             $table->timestamp('ngay_thanh_toan')->nullable();
+            $table->longText('ma_qr_checkin')->nullable();
             $table->text('ghi_chu')->nullable();
             $table->timestamps();
         });
