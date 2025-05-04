@@ -19,6 +19,7 @@ class HoaDon extends Model
         'phuong_thuc_thanh_toan',
         'trang_thai',
         'ngay_thanh_toan',
+        'ma_qr_checkin',
         'ghi_chu'
     ];
 

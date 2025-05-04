@@ -119,6 +119,31 @@ class ThanhToanController extends Controller
                 // Xử lý thanh toán tiền mặt
                 $hoaDon->trang_thai = 1; // Đã thanh toán
                 $hoaDon->ngay_thanh_toan = Carbon::now();
+
+                // Get suất chiếu details for direct payment
+                $suatChieu = DB::table('suat_chieus')
+                    ->join('quan_ly_phims', 'suat_chieus.phim_id', '=', 'quan_ly_phims.id')
+                    ->join('phongs', 'suat_chieus.phong_id', '=', 'phongs.id')
+                    ->where('suat_chieus.id', $hoaDon->id_suat)
+                    ->select(
+                        'suat_chieus.*',
+                        'quan_ly_phims.id as phim_id',
+                        'quan_ly_phims.ten_phim',
+                        'phongs.id as phong_id',
+                        'phongs.ten_phong'
+                    )
+                    ->first();
+
+                // Lấy tất cả vé trong hóa đơn
+                $chiTietVes = ChiTietVe::with(['ghe'])
+                    ->where('id_hoa_don', $hoaDon->id)
+                    ->get();
+
+                // Tạo một QR code duy nhất cho tất cả các vé
+                $qrResult = $this->generateGroupTicketQRData($hoaDon, $chiTietVes, $suatChieu);
+
+                // Lưu mã QR vào hóa đơn
+                $hoaDon->ma_qr_checkin = $qrResult['qr_code'];
                 $hoaDon->save();
 
                 return response()->json([
@@ -504,6 +529,10 @@ class ThanhToanController extends Controller
 
                 // Tạo một QR code duy nhất cho tất cả các vé
                 $qrResult = $this->generateGroupTicketQRData($hoaDon, $chiTietVes, $suatChieu);
+
+                // Lưu mã QR vào hóa đơn
+                $hoaDon->ma_qr_checkin = $qrResult['qr_code'];
+                $hoaDon->save();
 
                 return response()->json([
                     'RspCode' => '00',
