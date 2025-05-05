@@ -25,8 +25,6 @@ class ChiTietVeController extends Controller
                 'chi_tiet_ves.id',
                 'chi_tiet_ves.gia_tien',
                 'chi_tiet_ves.tinh_trang',
-                'chi_tiet_ves.thoi_gian_dat',
-                'chi_tiet_ves.thoi_gian_het_han',
                 'quan_ly_phims.ten_phim',                'suat_chieus.ngay_chieu',
                 'suat_chieus.gio_bat_dau',
                 'suat_chieus.gio_ket_thuc',
@@ -341,8 +339,6 @@ class ChiTietVeController extends Controller
                                 'chi_tiet_ves.id_hoa_don',
                                 'chi_tiet_ves.gia_tien',
                                 'chi_tiet_ves.tinh_trang',
-                                'chi_tiet_ves.thoi_gian_dat',
-                                'chi_tiet_ves.thoi_gian_het_han',
                                 'chi_tiet_ves.ghi_chu',
                                 'khach_hangs.ten_khach_hang',
                                 'hoa_dons.ma_hoa_don',
@@ -366,4 +362,16 @@ class ChiTietVeController extends Controller
             ]);
         }
     }
+
+    public function kiemTraDatVe(Request $request)
+{
+    $suatChieuId = $request->query('suat_chieu_id');
+    $daCoNguoiDat = \App\Models\ChiTietVe::where('id_suat', $suatChieuId)
+        ->where('tinh_trang', 1)
+        ->exists();
+
+    return response()->json([
+        'da_co_nguoi_dat' => $daCoNguoiDat
+    ]);
+}
 }
