@@ -726,9 +726,6 @@ class ThanhToanController extends Controller
 
     public function checkInHoaDon($ma_hoa_don)
     {
-        return response()->json([
-            $ma_hoa_don
-        ]);
         try {
             // Tìm hóa đơn
             $hoaDon = HoaDon::where('ma_hoa_don', $ma_hoa_don)->first();
@@ -782,11 +779,9 @@ class ThanhToanController extends Controller
             // Kiểm tra thời gian check-in
             $now = now()->setTimezone('Asia/Ho_Chi_Minh');
 
-            // Parse thời gian chiếu và chuyển về múi giờ Việt Nam
             $thoiGianChieu = Carbon::parse($suatChieu->ngay_chieu . ' ' . $suatChieu->gio_bat_dau)
                 ->setTimezone('Asia/Ho_Chi_Minh');
 
-            // Nếu thời gian chiếu là ngày mai và giờ hiện tại > 18:00, cho phép check-in
             $isNextDayEarlyMorning = false;
             if ($thoiGianChieu->format('Y-m-d') > $now->format('Y-m-d')) {
                 if ($thoiGianChieu->format('H:i') < '12:00' && $now->format('H:i') > '18:00') {
@@ -794,11 +789,9 @@ class ThanhToanController extends Controller
                 }
             }
 
-            // Tính thời gian check-in
             $thoiGianBatDauCheckIn = $thoiGianChieu->copy()->subMinutes(30);
             $thoiGianKetThucCheckIn = $thoiGianChieu->copy()->addMinutes(10);
 
-            // Log để debug thời gian
             Log::info('Debug thời gian check-in:', [
                 'now' => $now->format('Y-m-d H:i:s'),
                 'timezone' => $now->timezone->getName(),
@@ -807,13 +800,11 @@ class ThanhToanController extends Controller
                 'ketThucCheckIn' => $thoiGianKetThucCheckIn->format('Y-m-d H:i:s')
             ]);
 
-            // Kiểm tra thời gian check-in
             $allowCheckIn = $isNextDayEarlyMorning ||
                 ($now->format('Y-m-d') === $thoiGianChieu->format('Y-m-d') &&
                     $now->between($thoiGianBatDauCheckIn, $thoiGianKetThucCheckIn));
 
             if (!$allowCheckIn) {
-                // Nếu là suất chiếu ngày mai sáng sớm
                 if ($thoiGianChieu->format('Y-m-d') > $now->format('Y-m-d') && $thoiGianChieu->format('H:i') < '12:00') {
                     return response()->json([
                         'status' => false,
@@ -888,6 +879,7 @@ class ThanhToanController extends Controller
             ], 500);
         }
     }
+
 
     public function checkInDichVu($ma_hoa_don)
     {

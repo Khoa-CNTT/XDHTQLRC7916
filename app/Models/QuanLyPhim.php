@@ -20,7 +20,7 @@ class QuanLyPhim extends Model
         'trailer_ytb',
         'dien_vien',
         'nha_san_xuat',
-        'id_the_loai',
+        'id_chi_tiet_the_loai',
         'gioi_han_do_tuoi',
         'mo_ta',
         'danh_gia',

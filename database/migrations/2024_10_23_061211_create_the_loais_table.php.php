@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('ten_the_loai');
             $table->text('mo_ta')->nullable();
             $table->timestamps();
+
         });
     }
 
