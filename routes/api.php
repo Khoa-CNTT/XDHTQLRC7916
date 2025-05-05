@@ -235,8 +235,7 @@ Route::get('admin/dang-xuat', [NhanVienController::class, 'dangXuat']);
 Route::get('admin/dang-xuat-all', [NhanVienController::class, 'dangXuatAll']);
 
 //login with google
-Route::get('/auth/google', [LoginGoogleController::class, 'redirectToGoogle']);
-Route::get('/auth/google/callback', [LoginGoogleController::class, 'handleGoogleCallback']);
+
 
 // Thêm route mới để xử lý kết quả thanh toán
 Route::post('/thanh-toan/dat-dich-vu', [ThanhToanController::class, 'datDichVu']);
