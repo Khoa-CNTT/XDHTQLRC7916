@@ -19,138 +19,220 @@ class ThanhToanController extends Controller
 {
     public function thanhToan(Request $request)
     {
+
         try {
             $user = Auth::guard('sanctum')->user();
-
-            // Lấy thông tin vé đã chọn
-            $ve = ChiTietVe::where('id_khach_hang', $user->id)
-                ->where('id_suat', $request->id_suat)
-                ->where('tinh_trang', 1)
-                ->get();
-
-            if ($ve->isEmpty()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Không tìm thấy vé đã chọn!'
-                ]);
-            }
-
-            $tongTien = $request->tong_tien;
-
-            // Tạo mã hóa đơn
-            $maHoaDon = 'HD' . Str::random(8);
-
-            // Tạo hóa đơn mới
-            $hoaDon = HoaDon::create([
-                'ma_hoa_don' => $maHoaDon,
-                'id_khach_hang' => $user->id,
-                'id_suat' => $request->id_suat,
-                'tong_tien' => $tongTien,
-                'phuong_thuc_thanh_toan' => $request->phuong_thuc_thanh_toan,
-                'trang_thai' => 0, // Chờ thanh toán
-                'ngay_thanh_toan' => null,
-                'ghi_chu' => 'Đặt vé xem phim'
-            ]);
-
-            // Cập nhật id_hoa_don cho các chi tiết vé
-            foreach ($ve as $chiTietVe) {
-                $chiTietVe->id_hoa_don = $hoaDon->id;
-                $chiTietVe->save();
-            }
-
-            if ($request->phuong_thuc_thanh_toan === 'VNPAY') {
-                // Cấu hình VNPay
-                $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-                $vnp_Returnurl = "http://localhost:5173/thanh-toan/ket-qua";
-                $vnp_TmnCode = "APORNBE5"; // Lấy từ .env
-                $vnp_HashSecret = "1YPXRN7GRJHWCT3I8LPZ0K7GP9RVFSM8"; // Lấy từ .env
-                $vnp_TxnRef = $maHoaDon; // Mã đơn hàng
-                $vnp_OrderInfo = "Thanh toan ve xem phim";
-                $vnp_OrderType = "other";
-                $vnp_Amount = $tongTien * 100; // Số tiền * 100
-                $vnp_Locale = "vn";
-                $vnp_IpAddr = request()->ip();
-
-                $inputData = array(
-                    "vnp_Version" => "2.1.0",
-                    "vnp_TmnCode" => $vnp_TmnCode,
-                    "vnp_Amount" => $vnp_Amount,
-                    "vnp_Command" => "pay",
-                    "vnp_CreateDate" => date('YmdHis'),
-                    "vnp_CurrCode" => "VND",
-                    "vnp_IpAddr" => $vnp_IpAddr,
-                    "vnp_Locale" => $vnp_Locale,
-                    "vnp_OrderInfo" => $vnp_OrderInfo,
-                    "vnp_OrderType" => $vnp_OrderType,
-                    "vnp_ReturnUrl" => $vnp_Returnurl,
-                    "vnp_TxnRef" => $vnp_TxnRef,
-                );
-
-                if (isset($vnp_BankCode) && $vnp_BankCode != "") {
-                    $inputData['vnp_BankCode'] = $vnp_BankCode;
-                }
-
-                ksort($inputData);
-                $query = "";
-                $i = 0;
-                $hashdata = "";
-                foreach ($inputData as $key => $value) {
-                    if ($i == 1) {
-                        $hashdata .= '&' . urlencode($key) . "=" . urlencode($value);
-                    } else {
-                        $hashdata .= urlencode($key) . "=" . urlencode($value);
-                        $i = 1;
-                    }
-                    $query .= urlencode($key) . "=" . urlencode($value) . '&';
-                }
-
-                $vnp_Url = $vnp_Url . "?" . $query;
-                if (isset($vnp_HashSecret)) {
-                    $vnpSecureHash = hash_hmac('sha512', $hashdata, $vnp_HashSecret);
-                    $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
-                }
-
-                return response()->json([
-                    'status' => true,
-                    'payment_url' => $vnp_Url,
-                    'ma_hoa_don' => $maHoaDon
-                ]);
-            } else {
-                // Xử lý thanh toán tiền mặt
-                $hoaDon->trang_thai = 1; // Đã thanh toán
-                $hoaDon->ngay_thanh_toan = Carbon::now();
-
-                // Get suất chiếu details for direct payment
-                $suatChieu = DB::table('suat_chieus')
-                    ->join('quan_ly_phims', 'suat_chieus.phim_id', '=', 'quan_ly_phims.id')
-                    ->join('phongs', 'suat_chieus.phong_id', '=', 'phongs.id')
-                    ->where('suat_chieus.id', $hoaDon->id_suat)
-                    ->select(
-                        'suat_chieus.*',
-                        'quan_ly_phims.id as phim_id',
-                        'quan_ly_phims.ten_phim',
-                        'phongs.id as phong_id',
-                        'phongs.ten_phong'
-                    )
-                    ->first();
-
-                // Lấy tất cả vé trong hóa đơn
-                $chiTietVes = ChiTietVe::with(['ghe'])
-                    ->where('id_hoa_don', $hoaDon->id)
+            if ($user && $user instanceof \App\Models\KhachHang) {
+                // Lấy thông tin vé đã chọn
+                $ve = ChiTietVe::where('id_khach_hang', $user->id)
+                    ->where('id_suat', $request->id_suat)
+                    ->where('tinh_trang', 1)
                     ->get();
 
-                // Tạo một QR code duy nhất cho tất cả các vé
-                $qrResult = $this->generateGroupTicketQRData($hoaDon, $chiTietVes, $suatChieu);
+                if ($ve->isEmpty()) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Không tìm thấy vé đã chọn!'
+                    ]);
+                }
 
-                // Lưu mã QR vào hóa đơn
-                $hoaDon->ma_qr_checkin = $qrResult['qr_code'];
-                $hoaDon->save();
+                $tongTien = $request->tong_tien;
 
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Thanh toán tiền mặt thành công!',
-                    'ma_hoa_don' => $maHoaDon
+                // Tạo mã hóa đơn
+                $maHoaDon = 'HD' . Str::random(8);
+
+                // Tạo hóa đơn mới
+                $hoaDon = HoaDon::create([
+                    'ma_hoa_don' => $maHoaDon,
+                    'id_khach_hang' => $user->id,
+                    'id_suat' => $request->id_suat,
+                    'tong_tien' => $tongTien,
+                    'phuong_thuc_thanh_toan' => $request->phuong_thuc_thanh_toan,
+                    'trang_thai' => 0, // Chờ thanh toán
+                    'ngay_thanh_toan' => null,
+                    'ghi_chu' => 'Đặt vé xem phim'
                 ]);
+
+                // Cập nhật id_hoa_don cho các chi tiết vé
+                foreach ($ve as $chiTietVe) {
+                    $chiTietVe->id_hoa_don = $hoaDon->id;
+                    $chiTietVe->save();
+                }
+
+                if ($request->phuong_thuc_thanh_toan === 'VNPAY') {
+                    // Cấu hình VNPay
+                    $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+                    $vnp_Returnurl = "http://localhost:5173/thanh-toan/ket-qua";
+                    $vnp_TmnCode = "APORNBE5"; // Lấy từ .env
+                    $vnp_HashSecret = "1YPXRN7GRJHWCT3I8LPZ0K7GP9RVFSM8"; // Lấy từ .env
+                    $vnp_TxnRef = $maHoaDon; // Mã đơn hàng
+                    $vnp_OrderInfo = "Thanh toan ve xem phim";
+                    $vnp_OrderType = "other";
+                    $vnp_Amount = $tongTien * 100; // Số tiền * 100
+                    $vnp_Locale = "vn";
+                    $vnp_IpAddr = request()->ip();
+
+                    $inputData = array(
+                        "vnp_Version" => "2.1.0",
+                        "vnp_TmnCode" => $vnp_TmnCode,
+                        "vnp_Amount" => $vnp_Amount,
+                        "vnp_Command" => "pay",
+                        "vnp_CreateDate" => date('YmdHis'),
+                        "vnp_CurrCode" => "VND",
+                        "vnp_IpAddr" => $vnp_IpAddr,
+                        "vnp_Locale" => $vnp_Locale,
+                        "vnp_OrderInfo" => $vnp_OrderInfo,
+                        "vnp_OrderType" => $vnp_OrderType,
+                        "vnp_ReturnUrl" => $vnp_Returnurl,
+                        "vnp_TxnRef" => $vnp_TxnRef,
+                    );
+
+                    if (isset($vnp_BankCode) && $vnp_BankCode != "") {
+                        $inputData['vnp_BankCode'] = $vnp_BankCode;
+                    }
+
+                    ksort($inputData);
+                    $query = "";
+                    $i = 0;
+                    $hashdata = "";
+                    foreach ($inputData as $key => $value) {
+                        if ($i == 1) {
+                            $hashdata .= '&' . urlencode($key) . "=" . urlencode($value);
+                        } else {
+                            $hashdata .= urlencode($key) . "=" . urlencode($value);
+                            $i = 1;
+                        }
+                        $query .= urlencode($key) . "=" . urlencode($value) . '&';
+                    }
+
+                    $vnp_Url = $vnp_Url . "?" . $query;
+                    if (isset($vnp_HashSecret)) {
+                        $vnpSecureHash = hash_hmac('sha512', $hashdata, $vnp_HashSecret);
+                        $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
+                    }
+
+                    return response()->json([
+                        'status' => true,
+                        'payment_url' => $vnp_Url,
+                        'ma_hoa_don' => $maHoaDon
+                    ]);
+                } else {
+                    // Xử lý thanh toán tiền mặt
+                    $hoaDon->trang_thai = 1; // Đã thanh toán
+                    $hoaDon->ngay_thanh_toan = Carbon::now();
+                    $hoaDon->save();
+
+                    return response()->json([
+                        'status' => true,
+                        'message' => 'Thanh toán tiền mặt thành công!',
+                        'ma_hoa_don' => $maHoaDon
+                    ]);
+                }
+            } else {
+                // Lấy thông tin vé đã chọn
+                $ve = ChiTietVe::where('id_nhan_vien', $user->id)
+                    ->where('id_suat', $request->id_suat)
+                    ->where('tinh_trang', 1)
+                    ->get();
+
+                if ($ve->isEmpty()) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Không tìm thấy vé đã chọn!'
+                    ]);
+                }
+
+                $tongTien = $request->tong_tien;
+
+                // Tạo mã hóa đơn
+                $maHoaDon = 'HD' . Str::random(8);
+
+                // Tạo hóa đơn mới
+                $hoaDon = HoaDon::create([
+                    'ma_hoa_don' => $maHoaDon,
+                    'id_nhan_vien' => $user->id,
+                    'id_suat' => $request->id_suat,
+                    'tong_tien' => $tongTien,
+                    'phuong_thuc_thanh_toan' => $request->phuong_thuc_thanh_toan,
+                    'trang_thai' => 0, // Chờ thanh toán
+                    'ngay_thanh_toan' => null,
+                    'ghi_chu' => 'Đặt vé xem phim'
+                ]);
+                // Cập nhật id_hoa_don cho các chi tiết vé
+                foreach ($ve as $chiTietVe) {
+                    $chiTietVe->id_hoa_don = $hoaDon->id;
+                    $chiTietVe->save();
+                }
+
+                if ($request->phuong_thuc_thanh_toan === 'VNPAY') {
+                    // Cấu hình VNPay
+                    $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+                    $vnp_Returnurl = "http://localhost:5173/admin/thanh-toan/ket-qua";
+                    $vnp_TmnCode = "APORNBE5"; // Lấy từ .env
+                    $vnp_HashSecret = "1YPXRN7GRJHWCT3I8LPZ0K7GP9RVFSM8"; // Lấy từ .env
+                    $vnp_TxnRef = $maHoaDon; // Mã đơn hàng
+                    $vnp_OrderInfo = "Thanh toan ve xem phim";
+                    $vnp_OrderType = "other";
+                    $vnp_Amount = $tongTien * 100; // Số tiền * 100
+                    $vnp_Locale = "vn";
+                    $vnp_IpAddr = request()->ip();
+
+                    $inputData = array(
+                        "vnp_Version" => "2.1.0",
+                        "vnp_TmnCode" => $vnp_TmnCode,
+                        "vnp_Amount" => $vnp_Amount,
+                        "vnp_Command" => "pay",
+                        "vnp_CreateDate" => date('YmdHis'),
+                        "vnp_CurrCode" => "VND",
+                        "vnp_IpAddr" => $vnp_IpAddr,
+                        "vnp_Locale" => $vnp_Locale,
+                        "vnp_OrderInfo" => $vnp_OrderInfo,
+                        "vnp_OrderType" => $vnp_OrderType,
+                        "vnp_ReturnUrl" => $vnp_Returnurl,
+                        "vnp_TxnRef" => $vnp_TxnRef,
+                    );
+
+                    if (isset($vnp_BankCode) && $vnp_BankCode != "") {
+                        $inputData['vnp_BankCode'] = $vnp_BankCode;
+                    }
+
+                    ksort($inputData);
+                    $query = "";
+                    $i = 0;
+                    $hashdata = "";
+                    foreach ($inputData as $key => $value) {
+                        if ($i == 1) {
+                            $hashdata .= '&' . urlencode($key) . "=" . urlencode($value);
+                        } else {
+                            $hashdata .= urlencode($key) . "=" . urlencode($value);
+                            $i = 1;
+                        }
+                        $query .= urlencode($key) . "=" . urlencode($value) . '&';
+                    }
+
+                    $vnp_Url = $vnp_Url . "?" . $query;
+                    if (isset($vnp_HashSecret)) {
+                        $vnpSecureHash = hash_hmac('sha512', $hashdata, $vnp_HashSecret);
+                        $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
+                    }
+
+                    return response()->json([
+                        'status' => true,
+                        'payment_url' => $vnp_Url,
+                        'ma_hoa_don' => $maHoaDon
+                    ]);
+                } else {
+                    // Xử lý thanh toán tiền mặt
+                    $hoaDon->trang_thai = 1; // Đã thanh toán
+                    $hoaDon->ngay_thanh_toan = Carbon::now();
+                    $hoaDon->save();
+
+                    return response()->json([
+                        'status' => true,
+                        'message' => 'Thanh toán tiền mặt thành công!',
+                        'ma_hoa_don' => $maHoaDon
+                    ]);
+                }
             }
         } catch (\Exception $e) {
             return response()->json([
@@ -198,7 +280,7 @@ class ThanhToanController extends Controller
                 'so_luong_ve' => $chiTietVes->count(),
                 'tong_tien' => $hoaDon->tong_tien,
                 'check_in_url' => $checkInUrl,
-                'danh_sach_ve' => $chiTietVes->map(function($ve) {
+                'danh_sach_ve' => $chiTietVes->map(function ($ve) {
                     if (!$ve->ghe) {
                         throw new \Exception('Không tìm thấy thông tin ghế cho vé: ' . $ve->id);
                     }
@@ -216,7 +298,6 @@ class ThanhToanController extends Controller
                 'qr_code' => $qrCodeDataUri,
                 'ticket_info' => $groupTicketData
             ];
-
         } catch (\Exception $e) {
             Log::error('Lỗi tạo QR code: ' . $e->getMessage());
 
@@ -359,6 +440,7 @@ class ThanhToanController extends Controller
             ->update([
                 'tinh_trang' => 0,  // Đặt lại trạng thái thành chưa đặt
                 'id_khach_hang' => null,
+                'id_nhan_vien' => null,
                 'id_hoa_don' => null
             ]);
     }
@@ -366,82 +448,149 @@ class ThanhToanController extends Controller
     public function chiTietHoaDon($maHoaDon)
     {
         $user = Auth::guard('sanctum')->user();
+        if ($user && $user instanceof \App\Models\KhachHang) {
+            // Lấy thông tin hóa đơn
+            $hoaDon = HoaDon::where('ma_hoa_don', $maHoaDon)
+                ->where('id_khach_hang', $user->id)
+                ->first();
+            if (!$hoaDon) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Không tìm thấy hóa đơn!'
+                ]);
+            }
 
-        // Lấy thông tin hóa đơn
-        $hoaDon = HoaDon::where('ma_hoa_don', $maHoaDon)
-            ->where('id_khach_hang', $user->id)
-            ->first();
+            // Lấy thông tin chi tiết vé
+            $chiTietVes = ChiTietVe::join('ghes', 'chi_tiet_ves.id_ghe', 'ghes.id')
+                ->where('chi_tiet_ves.id_hoa_don', $hoaDon->id)
+                ->select(
+                    'chi_tiet_ves.*',
+                    'ghes.ten_ghe',
+                    'ghes.hang',
+                    'ghes.cot',
+                    'ghes.loai_ghe'
+                )
+                ->get();
 
-        if (!$hoaDon) {
+            // Lấy thông tin suất chiếu và phim
+            $suatChieu = DB::table('suat_chieus')
+                ->join('quan_ly_phims', 'suat_chieus.phim_id', '=', 'quan_ly_phims.id')
+                ->join('phongs', 'suat_chieus.phong_id', '=', 'phongs.id')
+                ->where('suat_chieus.id', $hoaDon->id_suat)
+                ->select(
+                    'suat_chieus.*',
+                    'quan_ly_phims.ten_phim',
+                    'quan_ly_phims.hinh_anh',
+                    'phongs.ten_phong',
+                    'phongs.id as phong_id',
+                    'quan_ly_phims.id as phim_id'
+                )
+                ->first();
+
+            // Tạo QR code cho hóa đơn
+            $qrResult = $this->generateGroupTicketQRData($hoaDon, $chiTietVes, $suatChieu);
+
+            $chiTietVesDichVu = ChiTietVeDichVu::join('chi_tiet_ves', 'chi_tiet_ve_dich_vus.id_chi_tiet_ve', 'chi_tiet_ves.id')
+                ->join('dich_vus', 'chi_tiet_ve_dich_vus.id_dich_vu', 'dich_vus.id')
+                ->join('hoa_dons', 'chi_tiet_ves.id_hoa_don', 'hoa_dons.id')
+                ->where('hoa_dons.id', $hoaDon->id)
+                ->select(
+                    'chi_tiet_ve_dich_vus.*',
+                    'dich_vus.*'
+                )
+                ->get();
+
             return response()->json([
-                'status' => false,
-                'message' => 'Không tìm thấy hóa đơn!'
+                'status' => true,
+                'data' => [
+                    'hoa_don' => [
+                        'ma_hoa_don' => $hoaDon->ma_hoa_don,
+                        'tong_tien' => $hoaDon->tong_tien,
+                        'phuong_thuc_thanh_toan' => $hoaDon->phuong_thuc_thanh_toan,
+                        'trang_thai' => $hoaDon->trang_thai,
+                        'ngay_thanh_toan' => $hoaDon->ngay_thanh_toan,
+                        'ghi_chu' => $hoaDon->ghi_chu
+                    ],
+                    'chi_tiet_ves' => $chiTietVes,
+                    'suat_chieu' => $suatChieu,
+                    'chi_tiet_ve_dich_vus' => $chiTietVesDichVu,
+                    'qr_code' => $qrResult['qr_code'],
+                    'qr_code_type' => 'data-url',
+                    'chi_tiet_qr' => $qrResult['ticket_info']
+                ]
+            ]);
+        } else {
+            // Lấy thông tin hóa đơn
+            $hoaDon = HoaDon::where('ma_hoa_don', $maHoaDon)
+                ->where('id_nhan_vien', $user->id)
+                ->first();
+            if (!$hoaDon) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Không tìm thấy hóa đơn!'
+                ]);
+            }
+
+            // Lấy thông tin chi tiết vé
+            $chiTietVes = ChiTietVe::join('ghes', 'chi_tiet_ves.id_ghe', 'ghes.id')
+                ->where('chi_tiet_ves.id_hoa_don', $hoaDon->id)
+                ->select(
+                    'chi_tiet_ves.*',
+                    'ghes.ten_ghe',
+                    'ghes.hang',
+                    'ghes.cot',
+                    'ghes.loai_ghe'
+                )
+                ->get();
+
+            // Lấy thông tin suất chiếu và phim
+            $suatChieu = DB::table('suat_chieus')
+                ->join('quan_ly_phims', 'suat_chieus.phim_id', '=', 'quan_ly_phims.id')
+                ->join('phongs', 'suat_chieus.phong_id', '=', 'phongs.id')
+                ->where('suat_chieus.id', $hoaDon->id_suat)
+                ->select(
+                    'suat_chieus.*',
+                    'quan_ly_phims.ten_phim',
+                    'quan_ly_phims.hinh_anh',
+                    'phongs.ten_phong',
+                    'phongs.id as phong_id',
+                    'quan_ly_phims.id as phim_id'
+                )
+                ->first();
+
+            // Tạo QR code cho hóa đơn
+            $qrResult = $this->generateGroupTicketQRData($hoaDon, $chiTietVes, $suatChieu);
+
+            $chiTietVesDichVu = ChiTietVeDichVu::join('chi_tiet_ves', 'chi_tiet_ve_dich_vus.id_chi_tiet_ve', 'chi_tiet_ves.id')
+                ->join('dich_vus', 'chi_tiet_ve_dich_vus.id_dich_vu', 'dich_vus.id')
+                ->join('hoa_dons', 'chi_tiet_ves.id_hoa_don', 'hoa_dons.id')
+                ->where('hoa_dons.id', $hoaDon->id)
+                ->select(
+                    'chi_tiet_ve_dich_vus.*',
+                    'dich_vus.*'
+                )
+                ->get();
+
+            return response()->json([
+                'status' => true,
+                'data' => [
+                    'hoa_don' => [
+                        'ma_hoa_don' => $hoaDon->ma_hoa_don,
+                        'tong_tien' => $hoaDon->tong_tien,
+                        'phuong_thuc_thanh_toan' => $hoaDon->phuong_thuc_thanh_toan,
+                        'trang_thai' => $hoaDon->trang_thai,
+                        'ngay_thanh_toan' => $hoaDon->ngay_thanh_toan,
+                        'ghi_chu' => $hoaDon->ghi_chu
+                    ],
+                    'chi_tiet_ves' => $chiTietVes,
+                    'suat_chieu' => $suatChieu,
+                    'chi_tiet_ve_dich_vus' => $chiTietVesDichVu,
+                    'qr_code' => $qrResult['qr_code'],
+                    'qr_code_type' => 'data-url',
+                    'chi_tiet_qr' => $qrResult['ticket_info']
+                ]
             ]);
         }
-
-        // Lấy thông tin chi tiết vé
-        $chiTietVes = ChiTietVe::join('ghes', 'chi_tiet_ves.id_ghe', 'ghes.id')
-            ->where('chi_tiet_ves.id_hoa_don', $hoaDon->id)
-            ->select(
-                'chi_tiet_ves.*',
-                'ghes.ten_ghe',
-                'ghes.hang',
-                'ghes.cot',
-                'ghes.loai_ghe'
-            )
-            ->get();
-
-        // Lấy thông tin suất chiếu và phim
-        $suatChieu = DB::table('suat_chieus')
-            ->join('quan_ly_phims', 'suat_chieus.phim_id', '=', 'quan_ly_phims.id')
-            ->join('phongs', 'suat_chieus.phong_id', '=', 'phongs.id')
-            ->where('suat_chieus.id', $hoaDon->id_suat)
-            ->select(
-                'suat_chieus.*',
-                'quan_ly_phims.ten_phim',
-                'quan_ly_phims.hinh_anh',
-                'phongs.ten_phong',
-                'phongs.id as phong_id',
-                'quan_ly_phims.id as phim_id'
-            )
-            ->first();
-
-        // Tạo QR code cho hóa đơn
-        $qrResult = $this->generateGroupTicketQRData($hoaDon, $chiTietVes, $suatChieu);
-
-        // Lưu mã QR vào hóa đơn
-        $hoaDon->ma_qr_checkin = $qrResult['qr_code'];
-        $hoaDon->save();
-
-        $chiTietVesDichVu = ChiTietVeDichVu::join('chi_tiet_ves', 'chi_tiet_ve_dich_vus.id_chi_tiet_ve', 'chi_tiet_ves.id')
-            ->join('dich_vus', 'chi_tiet_ve_dich_vus.id_dich_vu', 'dich_vus.id')
-            ->join('hoa_dons', 'chi_tiet_ves.id_hoa_don', 'hoa_dons.id')
-            ->where('hoa_dons.id', $hoaDon->id)
-            ->select(
-                'chi_tiet_ve_dich_vus.*',
-                'dich_vus.*'
-            )
-            ->get();
-
-        return response()->json([
-            'status' => true,
-            'data' => [
-                'hoa_don' => [
-                    'ma_hoa_don' => $hoaDon->ma_hoa_don,
-                    'tong_tien' => $hoaDon->tong_tien,
-                    'phuong_thuc_thanh_toan' => $hoaDon->phuong_thuc_thanh_toan,
-                    'trang_thai' => $hoaDon->trang_thai,
-                    'ngay_thanh_toan' => $hoaDon->ngay_thanh_toan,
-                    'ghi_chu' => $hoaDon->ghi_chu
-                ],
-                'chi_tiet_ves' => $chiTietVes,
-                'suat_chieu' => $suatChieu,
-                'chi_tiet_ve_dich_vus' => $chiTietVesDichVu,
-                'qr_code' => $qrResult['qr_code'],
-                'qr_code_type' => 'data-url',
-                'chi_tiet_qr' => $qrResult['ticket_info']
-            ]
-        ]);
     }
 
     // Hàm xử lý IPN (Instant Payment Notification) từ VNPAY
@@ -577,6 +726,9 @@ class ThanhToanController extends Controller
 
     public function checkInHoaDon($ma_hoa_don)
     {
+        return response()->json([
+            $ma_hoa_don
+        ]);
         try {
             // Tìm hóa đơn
             $hoaDon = HoaDon::where('ma_hoa_don', $ma_hoa_don)->first();
@@ -658,7 +810,7 @@ class ThanhToanController extends Controller
             // Kiểm tra thời gian check-in
             $allowCheckIn = $isNextDayEarlyMorning ||
                 ($now->format('Y-m-d') === $thoiGianChieu->format('Y-m-d') &&
-                $now->between($thoiGianBatDauCheckIn, $thoiGianKetThucCheckIn));
+                    $now->between($thoiGianBatDauCheckIn, $thoiGianKetThucCheckIn));
 
             if (!$allowCheckIn) {
                 // Nếu là suất chiếu ngày mai sáng sớm
@@ -720,7 +872,7 @@ class ThanhToanController extends Controller
                     'ma_hoa_don' => $hoaDon->ma_hoa_don,
                     'so_ve_check_in' => $chiTietVes->count(),
                     'thoi_gian_check_in' => Carbon::now()->format('Y-m-d H:i:s'),
-                    'danh_sach_ghe' => $chiTietVes->map(function($ve) {
+                    'danh_sach_ghe' => $chiTietVes->map(function ($ve) {
                         return [
                             'id_ve' => $ve->id,
                             'ten_ghe' => $ve->ghe->ten_ghe ?? 'Unknown'
@@ -728,7 +880,6 @@ class ThanhToanController extends Controller
                     })
                 ]
             ]);
-
         } catch (\Exception $e) {
             Log::error('Lỗi check-in hóa đơn: ' . $e->getMessage());
             return response()->json([
@@ -822,7 +973,7 @@ class ThanhToanController extends Controller
             // Kiểm tra thời gian check-in
             $allowCheckIn = $isNextDayEarlyMorning ||
                 ($now->format('Y-m-d') === $thoiGianChieu->format('Y-m-d') &&
-                $now->between($thoiGianBatDauCheckIn, $thoiGianKetThucCheckIn));
+                    $now->between($thoiGianBatDauCheckIn, $thoiGianKetThucCheckIn));
 
             if (!$allowCheckIn) {
                 // Nếu là suất chiếu ngày mai sáng sớm
@@ -857,7 +1008,7 @@ class ThanhToanController extends Controller
             }
 
             // Lấy thông tin chi tiết các dịch vụ đã check-in
-            $dichVuInfo = $dichVus->map(function($dv) {
+            $dichVuInfo = $dichVus->map(function ($dv) {
                 return [
                     'id_dich_vu' => $dv->id_dich_vu,
                     'ten_dich_vu' => $dv->dichVu->ten_dich_vu ?? 'Unknown',
@@ -877,7 +1028,6 @@ class ThanhToanController extends Controller
                     'danh_sach_dich_vu' => $dichVuInfo
                 ]
             ]);
-
         } catch (\Exception $e) {
             Log::error('Lỗi check-in dịch vụ: ' . $e->getMessage());
             return response()->json([

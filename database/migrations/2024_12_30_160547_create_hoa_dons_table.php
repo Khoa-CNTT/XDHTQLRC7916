@@ -11,7 +11,8 @@ return new class extends Migration
         Schema::create('hoa_dons', function (Blueprint $table) {
             $table->id();
             $table->string('ma_hoa_don')->unique();
-            $table->foreignId('id_khach_hang')->constrained('khach_hangs');
+            $table->foreignId('id_khach_hang')->nullable()->constrained('khach_hangs');
+            $table->string('id_nhan_vien')->nullable();
             $table->foreignId('id_suat')->constrained('suat_chieus');
             $table->decimal('tong_tien', 10, 0);
             $table->string('phuong_thuc_thanh_toan')->nullable();

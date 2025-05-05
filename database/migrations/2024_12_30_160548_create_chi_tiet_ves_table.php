@@ -28,7 +28,8 @@ return new class extends Migration
 
             // Khóa ngoại đến bảng khach_hangs (nullable vì ghế có thể chưa được đặt)
             $table->foreignId('id_khach_hang')->nullable()->constrained('khach_hangs')->nullOnDelete();
-
+            $table->string('ma_check')->nullable();
+            $table->string('id_nhan_vien')->nullable();
             // Khóa ngoại đến bảng chi_tiet_ve_dich_vus (nullable vì ghế có thể chưa được đặt)
             $table->string('id_chi_tiet_ve_dich_vu')->nullable();
 

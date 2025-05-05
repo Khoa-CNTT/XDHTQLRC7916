@@ -12,11 +12,14 @@ class HoaDonController extends Controller
 {
     public function getData()
     {
-        $data = HoaDon::join('khach_hangs', 'hoa_dons.id_khach_hang', 'khach_hangs.id')
-            ->join('suat_chieus', 'hoa_dons.id_suat', 'suat_chieus.id')
-            ->join('quan_ly_phims', 'suat_chieus.phim_id', 'quan_ly_phims.id') // Sửa lại id_phim thành phim_id
+        $data = HoaDon::leftJoin('nhan_viens', 'hoa_dons.id_nhan_vien', 'nhan_viens.id')
+            ->leftJoin('khach_hangs', 'hoa_dons.id_khach_hang', 'khach_hangs.id')
+            ->leftJoin('suat_chieus', 'hoa_dons.id_suat', 'suat_chieus.id')
+
+            ->leftJoin('quan_ly_phims', 'suat_chieus.phim_id', 'quan_ly_phims.id') // Sửa lại id_phim thành phim_id
             ->select(
                 'hoa_dons.*',
+                'nhan_viens.ten_nhan_vien',
                 'khach_hangs.ten_khach_hang',
                 'quan_ly_phims.ten_phim',
                 'suat_chieus.gio_bat_dau',

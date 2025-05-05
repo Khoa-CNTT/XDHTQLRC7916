@@ -17,6 +17,8 @@ class ChiTietVe extends Model
         'id_hoa_don',
         'gia_tien',
         'id_khach_hang',
+        'ma_check',
+        'id_nhan_vien',
         'ghi_chu',
         'tinh_trang',
         'checked_in'

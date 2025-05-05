@@ -110,6 +110,8 @@ Route::group(['middleware' => 'adminMiddle'], function () {
     Route::delete('/chi-tiet-ve/delete/{id}', [ChiTietVeController::class, 'destroy']);
     Route::put('/chi-tiet-ve/update', [ChiTietVeController::class, 'update']);
 
+    Route::get('/chi-tiet-ve/kiem-tra-dat-ve', [ChiTietVeController::class, 'kiemTraDatVe']);
+
 
     // Quản lý ghế
     Route::get('/ghe/data', [GheController::class, 'getData']);
@@ -195,7 +197,8 @@ Route::post('/lay-ve/doi-trang-thai-huy', [ChiTietVeController::class, 'chaneSta
 Route::post('/lay-ve/kiem-tra-trang-thai', [ChiTietVeController::class, 'kiemTraTrangThai']);
 Route::get('/ghe-client/data/{id}', [ChiTietVeController::class, 'getDataClient']);
 
-Route::get('/trang-chu/data', [TrangChuController::class, 'dataTrangChu']);
+Route::post('/trang-chu/data', [TrangChuController::class, 'dataTrangChu']);
+Route::post('/trang-chu/phim-sap-chieu/data', [TrangChuController::class, 'dataPhimSapChieu']);
 
 Route::get('/lay-danh-gia/data/{id}', [DanhGiaController::class, 'getDataChiTietPhim']);
 Route::get('/lay-dich-vu/data', [DichVuController::class, 'getDataDichVu']);
@@ -234,8 +237,7 @@ Route::get('admin/dang-xuat', [NhanVienController::class, 'dangXuat']);
 Route::get('admin/dang-xuat-all', [NhanVienController::class, 'dangXuatAll']);
 
 //login with google
-Route::get('/auth/google', [LoginGoogleController::class, 'redirectToGoogle']);
-Route::get('/auth/google/callback', [LoginGoogleController::class, 'handleGoogleCallback']);
+
 
 // Thêm route mới để xử lý kết quả thanh toán
 Route::post('/thanh-toan/dat-dich-vu', [ThanhToanController::class, 'datDichVu']);
@@ -270,4 +272,3 @@ Route::get('/suat-chieu/lay-suat/{id_phim}/{id_phong}', [SuatChieuController::cl
 Route::get('/chi-tiet-ve/lay-theo-suat/{id_suat}', [ChiTietVeController::class, 'layTheoSuat']);
 
 //kiểm tra admin
-
