@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CapNhatBanerRequest;
+use App\Http\Requests\DoiTrangThaiBanerRequest;
+use App\Http\Requests\ThemBanerRequest;
 use App\Models\Baner;
 use Illuminate\Http\Request;
 
@@ -16,7 +19,7 @@ class BanerController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(ThemBanerRequest $request)
     {
         $data   =   $request->all();
         Baner::create($data);
@@ -37,7 +40,7 @@ class BanerController extends Controller
         ]);
     }
 
-    public function update(Request $request)
+    public function update(CapNhatBanerRequest $request)
     {
         $data   = $request->all();
 
@@ -48,7 +51,7 @@ class BanerController extends Controller
             'message'   =>  'Đã cập nhật slide thành công!'
         ]);
     }
-    public function doiTrangThai(Request $request)
+    public function doiTrangThai(DoiTrangThaiBanerRequest $request)
     {
         $slide = Baner::find($request->id);
         if ($slide) {
