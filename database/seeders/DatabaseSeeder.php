@@ -29,7 +29,8 @@ class DatabaseSeeder extends Seeder
             BanerSeeder::class,
             ChucNangSeeder::class,
             GocDienAnhSeeder::class,
-            SuKienSeeder::class
+            SuKienSeeder::class,
+            ChiTietTheLoaiSeeder::class
 
         ]);
 

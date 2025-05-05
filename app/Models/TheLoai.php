@@ -14,4 +14,9 @@ class TheLoai extends Model
         'ten_the_loai',
         'mo_ta',
     ];
+
+    public function phims()
+    {
+        return $this->belongsToMany(QuanLyPhim::class, 'chi_tiet_the_loais', 'id_the_loai', 'id_phim');
+    }
 }

@@ -28,4 +28,9 @@ class QuanLyPhim extends Model
 
     ];
 
+    public function theLoais()
+    {
+        return $this->belongsToMany(TheLoai::class, 'chi_tiet_the_loais', 'id_phim', 'id_the_loai');
+    }
+
 }
