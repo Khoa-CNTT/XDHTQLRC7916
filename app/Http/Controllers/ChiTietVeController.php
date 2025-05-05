@@ -366,4 +366,16 @@ class ChiTietVeController extends Controller
             ]);
         }
     }
+
+    public function kiemTraDatVe(Request $request)
+{
+    $suatChieuId = $request->query('suat_chieu_id');
+    $daCoNguoiDat = \App\Models\ChiTietVe::where('id_suat', $suatChieuId)
+        ->where('tinh_trang', 1)
+        ->exists();
+
+    return response()->json([
+        'da_co_nguoi_dat' => $daCoNguoiDat
+    ]);
+}
 }

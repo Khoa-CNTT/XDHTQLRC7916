@@ -195,7 +195,7 @@ class SuatChieuController extends Controller
             // Tạo chi tiết vé cho tất cả ghế trong phòng
             $danhSachGhe = Ghe::where('phong_id', $request->phong_id)->get();
             foreach ($danhSachGhe as $ghe) {
-                if($ghe->loai_ghe == 1) {
+                if ($ghe->loai_ghe == 1) {
                     ChiTietVe::create([
                         'id_suat' => $suat->id,
                         'tinh_trang' => 0, // Ghế trống
@@ -205,7 +205,7 @@ class SuatChieuController extends Controller
                         'khach_hang_id' => null,
                         'ghi_chu' => null,
                     ]);
-                } elseif($ghe->loai_ghe == 2) {
+                } elseif ($ghe->loai_ghe == 2) {
                     ChiTietVe::create([
                         'id_suat' => $suat->id,
                         'tinh_trang' => 0, // Ghế trống
@@ -295,31 +295,31 @@ class SuatChieuController extends Controller
 
                 // Kiểm tra xung đột với các suất chiếu đã có trong DB
                 $suatChieuTrung = SuatChieu::where('phong_id', $suatData['phong_id'])
-                    ->where(function($q) use ($ngayChieu, $ngayKetThucThuc) {
+                    ->where(function ($q) use ($ngayChieu, $ngayKetThucThuc) {
                         $q->where('ngay_chieu', $ngayChieu)
-                          ->orWhere('ngay_chieu', $ngayKetThucThuc);
+                            ->orWhere('ngay_chieu', $ngayKetThucThuc);
                     })
                     ->where(function ($query) use ($thoiGianBatDau, $gioKetThucDonDep, $ngayChieu, $ngayKetThucThuc, $qua_ngay_moi) {
                         if ($qua_ngay_moi) {
                             // Nếu suất chiếu kéo dài qua ngày mới
-                            $query->where(function($q) use ($thoiGianBatDau, $ngayChieu) {
+                            $query->where(function ($q) use ($thoiGianBatDau, $ngayChieu) {
                                 // Kiểm tra xung đột trong ngày bắt đầu
                                 $q->where('ngay_chieu', $ngayChieu)
-                                  ->where('gio_bat_dau', '>=', $thoiGianBatDau);
-                            })->orWhere(function($q) use ($gioKetThucDonDep, $ngayKetThucThuc) {
+                                    ->where('gio_bat_dau', '>=', $thoiGianBatDau);
+                            })->orWhere(function ($q) use ($gioKetThucDonDep, $ngayKetThucThuc) {
                                 // Kiểm tra xung đột trong ngày kết thúc
                                 $q->where('ngay_chieu', $ngayKetThucThuc)
-                                  ->where('gio_bat_dau', '<=', $gioKetThucDonDep);
+                                    ->where('gio_bat_dau', '<=', $gioKetThucDonDep);
                             });
                         } else {
                             // Suất chiếu trong cùng một ngày
                             $query->where(function ($q) use ($thoiGianBatDau, $gioKetThucDonDep) {
                                 $q->where('gio_bat_dau', '<=', $thoiGianBatDau)
-                                  ->where('gio_ket_thuc', '>', $thoiGianBatDau)
-                                  ->orWhere(function($q) use ($thoiGianBatDau, $gioKetThucDonDep) {
-                                      $q->where('gio_bat_dau', '<', $gioKetThucDonDep)
-                                        ->where('gio_ket_thuc', '>=', $gioKetThucDonDep);
-                                  });
+                                    ->where('gio_ket_thuc', '>', $thoiGianBatDau)
+                                    ->orWhere(function ($q) use ($thoiGianBatDau, $gioKetThucDonDep) {
+                                        $q->where('gio_bat_dau', '<', $gioKetThucDonDep)
+                                            ->where('gio_ket_thuc', '>=', $gioKetThucDonDep);
+                                    });
                             });
                         }
                     })
@@ -368,7 +368,7 @@ class SuatChieuController extends Controller
                 // Tạo chi tiết vé cho tất cả ghế trong phòng
                 $danhSachGhe = Ghe::where('phong_id', $suatData['phong_id'])->get();
                 foreach ($danhSachGhe as $ghe) {
-                    if($ghe->loai_ghe == 1) {
+                    if ($ghe->loai_ghe == 1) {
                         ChiTietVe::create([
                             'id_suat' => $suat->id,
                             'tinh_trang' => 0,
@@ -378,7 +378,7 @@ class SuatChieuController extends Controller
                             'khach_hang_id' => null,
                             'ghi_chu' => null,
                         ]);
-                    } elseif($ghe->loai_ghe == 2) {
+                    } elseif ($ghe->loai_ghe == 2) {
                         ChiTietVe::create([
                             'id_suat' => $suat->id,
                             'tinh_trang' => 0,
@@ -499,7 +499,8 @@ class SuatChieuController extends Controller
             ->where('chuc_vus.tinh_trang', 1)
             ->where('id_quyen', $user->id_chuc_vu)
             ->where('id_chuc_nang', $id_chuc_nang)
-            ->exists()) {
+            ->exists()
+        ) {
 
             // Kiểm tra xem suất chiếu đã có người đặt vé chưa
             $daCoNguoiDat = ChiTietVe::where('id_suat', $request->id)
@@ -756,11 +757,11 @@ class SuatChieuController extends Controller
     {
         try {
             $phong = Phong::join('suat_chieus', 'phongs.id', '=', 'suat_chieus.phong_id')
-                         ->where('suat_chieus.phim_id', $id_phim)
-                         ->where('phongs.tinh_trang', 1)
-                         ->select('phongs.*')
-                         ->distinct()
-                         ->get();
+                ->where('suat_chieus.phim_id', $id_phim)
+                ->where('phongs.tinh_trang', 1)
+                ->select('phongs.*')
+                ->distinct()
+                ->get();
 
             return response()->json([
                 'status'    => true,
@@ -783,18 +784,18 @@ class SuatChieuController extends Controller
             $currentTime = $now->format('H:i:s');
 
             $suat = SuatChieu::where('phim_id', $id_phim)
-                            ->where('phong_id', $id_phong)
-                            ->where('trang_thai', '!=', 'Hủy')
-                            ->where(function($query) use ($currentDate, $currentTime) {
-                                $query->where('ngay_chieu', '>', $currentDate)
-                                    ->orWhere(function($q) use ($currentDate, $currentTime) {
-                                        $q->where('ngay_chieu', '=', $currentDate)
-                                          ->where('gio_bat_dau', '>', $currentTime);
-                                    });
-                            })
-                            ->orderBy('ngay_chieu', 'asc')
-                            ->orderBy('gio_bat_dau', 'asc')
-                            ->get();
+                ->where('phong_id', $id_phong)
+                ->where('trang_thai', '!=', 'Hủy')
+                ->where(function ($query) use ($currentDate, $currentTime) {
+                    $query->where('ngay_chieu', '>', $currentDate)
+                        ->orWhere(function ($q) use ($currentDate, $currentTime) {
+                            $q->where('ngay_chieu', '=', $currentDate)
+                                ->where('gio_bat_dau', '>', $currentTime);
+                        });
+                })
+                ->orderBy('ngay_chieu', 'asc')
+                ->orderBy('gio_bat_dau', 'asc')
+                ->get();
 
             return response()->json([
                 'status'    => true,
