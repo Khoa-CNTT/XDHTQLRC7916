@@ -110,6 +110,8 @@ Route::group(['middleware' => 'adminMiddle'], function () {
     Route::delete('/chi-tiet-ve/delete/{id}', [ChiTietVeController::class, 'destroy']);
     Route::put('/chi-tiet-ve/update', [ChiTietVeController::class, 'update']);
 
+    Route::get('/chi-tiet-ve/kiem-tra-dat-ve', [ChiTietVeController::class, 'kiemTraDatVe']);
+
 
     // Quản lý ghế
     Route::get('/ghe/data', [GheController::class, 'getData']);
@@ -270,4 +272,3 @@ Route::get('/suat-chieu/lay-suat/{id_phim}/{id_phong}', [SuatChieuController::cl
 Route::get('/chi-tiet-ve/lay-theo-suat/{id_suat}', [ChiTietVeController::class, 'layTheoSuat']);
 
 //kiểm tra admin
-
