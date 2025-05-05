@@ -167,10 +167,10 @@ class KhachHangController extends Controller
         if ($master->is_master) {
             $khach_hang = KhachHang::find($request->id);
             if ($khach_hang) {
-                if ($khach_hang->tinh_trang == 1) {
-                    $khach_hang->tinh_trang = 0;
+                if ($khach_hang->is_active == 1) {
+                    $khach_hang->is_active = 0;
                 } else {
-                    $khach_hang->tinh_trang = 1;
+                    $khach_hang->is_active = 1;
                 }
                 $khach_hang->save();
 
@@ -193,10 +193,10 @@ class KhachHangController extends Controller
             if ($check) {
                 $khach_hang = KhachHang::find($request->id);
                 if ($khach_hang) {
-                    if ($khach_hang->tinh_trang == 1) {
-                        $khach_hang->tinh_trang = 0;
+                    if ($khach_hang->is_active == 1) {
+                        $khach_hang->is_active = 0;
                     } else {
-                        $khach_hang->tinh_trang = 1;
+                        $khach_hang->is_active = 1;
                     }
                     $khach_hang->save();
 
