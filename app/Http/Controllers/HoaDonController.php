@@ -62,12 +62,14 @@ class HoaDonController extends Controller
     public function chiTietDatVe(Request $request)
     {
         try {
-            $data = ChiTietVe::where('id_hoa_don', $request->id)
+            $admin = Auth::guard('sanctum')->user();
+
+            // Common query
+            $query = ChiTietVe::where('id_hoa_don', $request->id)
                 ->join('ghes', 'chi_tiet_ves.id_ghe', '=', 'ghes.id')
                 ->join('suat_chieus', 'chi_tiet_ves.id_suat', '=', 'suat_chieus.id')
                 ->join('phongs', 'suat_chieus.phong_id', '=', 'phongs.id')
-                ->join('quan_ly_phims', 'suat_chieus.phim_id', '=', 'quan_ly_phims.id') // Sửa lại id_phim thành phim_id
-                ->join('khach_hangs', 'chi_tiet_ves.id_khach_hang', '=', 'khach_hangs.id')
+                ->join('quan_ly_phims', 'suat_chieus.phim_id', '=', 'quan_ly_phims.id') // Corrected field name
                 ->join('hoa_dons', 'chi_tiet_ves.id_hoa_don', '=', 'hoa_dons.id')
                 ->select(
                     'ghes.ten_ghe',
@@ -77,16 +79,30 @@ class HoaDonController extends Controller
                     'suat_chieus.dinh_dang',
                     'suat_chieus.ngon_ngu',
                     'phongs.ten_phong',
-                    'khach_hangs.ten_khach_hang',
                     'hoa_dons.ma_qr_checkin'
-                )
-                ->get();
+                );
+
+
+            // Adjust the query for authenticated user (admin)
+            if ($admin) {
+                $query->leftJoin('nhan_viens', 'chi_tiet_ves.id_nhan_vien', '=', 'nhan_viens.id')
+                    ->addSelect('nhan_viens.ten_nhan_vien');
+            } else {
+                $query->leftJoin('khach_hangs', 'chi_tiet_ves.id_khach_hang', '=', 'khach_hangs.id')
+                    ->addSelect('khach_hangs.ten_khach_hang');
+            }
+
+            // Execute query
+            $data = $query->get();
 
             return response()->json([
                 'status' => true,
                 'data' => $data
             ]);
         } catch (\Exception $e) {
+            // Log the exception for debugging purposes
+            Log::error('Error in chiTietDatVe: ' . $e->getMessage());
+
             return response()->json([
                 'status' => false,
                 'message' => 'Có lỗi xảy ra: ' . $e->getMessage()

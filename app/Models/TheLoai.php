@@ -14,5 +14,4 @@ class TheLoai extends Model
         'ten_the_loai',
         'mo_ta',
     ];
-    
 }
