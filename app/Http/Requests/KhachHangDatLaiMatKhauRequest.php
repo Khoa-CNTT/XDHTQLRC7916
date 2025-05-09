@@ -11,7 +11,7 @@ class KhachHangDatLaiMatKhauRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,20 @@ class KhachHangDatLaiMatKhauRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'password' => 'required|min:6|max:255',
+            're_password' => 'required|min:6|max:255|same:password',
+        ];
+    }
+    public function messages(): array
+    {
+        return [
+            'password.required' => 'Mật khẩu không được để trống',
+            'password.min' => 'Mật khẩu phải có ít nhất 6 ký tự',
+            'password.max' => 'Mật khẩu không được vượt quá 255 ký tự',
+            're_password.required' => 'Mật khẩu không được để trống',
+            're_password.min' => 'Mật khẩu phải có ít nhất 6 ký tự',
+            're_password.max' => 'Mật khẩu không được vượt quá 255 ký tự',
+            're_password.same' => 'Mật khẩu không khớp',
         ];
     }
 }
