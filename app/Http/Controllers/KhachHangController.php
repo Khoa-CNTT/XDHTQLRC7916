@@ -51,36 +51,47 @@ class KhachHangController extends Controller
     {
         $id_chuc_nang = 6;
         $user = Auth::guard('sanctum')->user();
-        $master = ChucVu::where('id', $user->id_chuc_vu)
-            ->first();
-        if ($master->is_master) {
-            $data   =   $request->all();
-            KhachHang::create($data);
+        $master = ChucVu::where('id', $user->id_chuc_vu)->first();
 
-            return response()->json([
-                'status'    =>  true,
-                'message'   =>  'Đã tạo mới Khach Hang thành công!'
-            ]);
-        } else {
-            $check = ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
-                ->where('chuc_vus.tinh_trang', 1)
-                ->where('id_quyen', $user->id_chuc_vu)
-                ->where('id_chuc_nang', $id_chuc_nang)
-                ->first();
-            if ($check) {
-                $data   =   $request->all();
+        if (
+            $master->is_master || ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
+            ->where('chuc_vus.tinh_trang', 1)
+            ->where('id_quyen', $user->id_chuc_vu)
+            ->where('id_chuc_nang', $id_chuc_nang)
+            ->exists()
+        ) {
+            try {
+                $data = $request->all();
+                if ($data['password'] !== $data['re_password']) {
+                    return response()->json([
+                        'status'  => false,
+                        'message' => 'Mật khẩu nhập lại không khớp!'
+                    ], 422);
+                }
+                if (isset($data['password'])) {
+                    $data['password'] = bcrypt($data['password']);
+                    $data['re_password'] = $data['password']; // Lưu giống password đã mã hóa
+                }
+
                 KhachHang::create($data);
 
                 return response()->json([
-                    'status'    =>  true,
-                    'message'   =>  'Đã tạo mới Khach Hang thành công!'
+                    'status'  => true,
+                    'message' => 'Đã tạo mới khách hàng thành công!'
                 ]);
-            } else {
+            } catch (\Exception $e) {
                 return response()->json([
-                    "message" => 'bạn không có quyền này'
-                ]);
+                    'status'  => false,
+                    'message' => 'Có lỗi xảy ra khi tạo khách hàng!',
+                    'error'   => $e->getMessage()
+                ], 500);
             }
         }
+
+        return response()->json([
+            'status'  => false,
+            'message' => 'Bạn không có quyền thực hiện chức năng này!'
+        ], 403);
     }
 
     public function thongTinCaNhan()
