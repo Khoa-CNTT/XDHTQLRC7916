@@ -6,22 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('chi_tiet_the_loais', function (Blueprint $table) {
+            // Cột auto_increment id
             $table->id();
-            $table->string('id_the_loai');
-            $table->string('id_phim');
+
+            // Cột ngoại khóa
+            $table->unsignedBigInteger('id_phim');
+            $table->unsignedBigInteger('id_the_loai');
+
+            // Cột timestamps
             $table->timestamps();
+
+            // Thêm foreign key
+            $table->foreign('id_phim')->references('id')->on('quan_ly_phims')->onDelete('cascade');
+            $table->foreign('id_the_loai')->references('id')->on('the_loais')->onDelete('cascade');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('chi_tiet_the_loais');
