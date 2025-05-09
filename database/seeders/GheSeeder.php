@@ -76,6 +76,19 @@ class GheSeeder extends Seeder
                 'updated_at' => now(),
             ];
         }
+        // Hàng E - Phòng 1
+        for ($i = 1; $i <= 6; $i++) {
+            $gheData[] = [
+                'ten_ghe' => 'E' . $i,
+                'phong_id' => 1,
+                'hang' => 4,
+                'cot' => $i,
+                'loai_ghe' => 2, // Tất cả ghế hàng D là ghế thường
+                'trang_thai' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
 
         // Hàng A - Phòng 2
         for ($i = 1; $i <= 10; $i++) {
@@ -113,6 +126,33 @@ class GheSeeder extends Seeder
                 'hang' => 3,
                 'cot' => $i,
                 'loai_ghe' => 0, // Tất cả ghế hàng C là ghế thường
+                'trang_thai' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+        // Hàng D - Phòng 2
+        for ($i = 1; $i <= 10; $i++) {
+            $gheData[] = [
+                'ten_ghe' => 'D' . $i,
+                'phong_id' => 2,
+                'hang' => 4,
+                'cot' => $i,
+                'loai_ghe' => 2, // Tất cả ghế hàng D là ghế đôi
+                'trang_thai' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        // Hàng E - Phòng 2
+        for ($i = 1; $i <= 5; $i++) {
+            $gheData[] = [
+                'ten_ghe' => 'E' . $i,
+                'phong_id' => 2,
+                'hang' => 4,
+                'cot' => $i,
+                'loai_ghe' => 2, // Tất cả ghế hàng D là ghế đôi
                 'trang_thai' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
