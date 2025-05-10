@@ -23,7 +23,7 @@ class ChiTietVeDichVuController extends Controller
             if ($dsVe->isEmpty()) {
                 return response()->json([
                     'status' => false,
-                    'message' => "Không tìm thấy vé cho suất chiếu này!"
+                    'message' => "Không tìm thấy vé cho suất chiếu này"
                 ]);
             }
 
