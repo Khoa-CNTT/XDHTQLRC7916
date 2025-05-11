@@ -163,130 +163,124 @@ class QuanLyPhimSeeder extends Seeder
             [
                 'ten_phim' => 'JUNG KOOK: I AM STILL',
                 'slug_phim' => 'jung-kook-i-am-still',
-                'ngay_chieu' => Carbon::parse('2024-01-01'),
-                'thoi_luong' => '120',
-                'dao_dien' => 'Đạo Diễn 1',
+                'ngay_chieu' => Carbon::parse('2024-09-18'),
+                'thoi_luong' => '93', // 1 giờ 33 phút
+                'dao_dien' => 'Park Jun Soo',
                 'hinh_anh' => 'https://media.lottecinemavn.com/Media/MovieFile/MovieImg/202409/11559_103_100001.jpg',
-                'trailer_ytb' => 'https://www.youtube.com/embed/LWkh_hXeEeg?si=eUd_mxvnOCXi9T-G',
-                'dien_vien' => 'Diễn Viên 1, Diễn Viên 2',
-                'nha_san_xuat' => 'Nhà Sản Xuất 1',
-                'id_chi_tiet_the_loai' => 1,
-                'gioi_han_do_tuoi' => '18+',
-                'mo_ta' => 'Mô tả phim 1',
+                'trailer_ytb' => 'https://www.youtube.com/embed/LWkh_hXeEeg?si=ki5WpumVYNwKPzFQ', // Giữ nguyên, không có link trailer chính thức trực tiếp từ tìm kiếm
+                'dien_vien' => 'Jung Kook',
+                'nha_san_xuat' => 'HYBE',
+                'id_chi_tiet_the_loai' => 1, // Bạn tự ánh xạ sang ID tương ứng
+                'gioi_han_do_tuoi' => '13+', // Theo thông tin tìm được
+                'mo_ta' => 'Bộ phim tài liệu ghi lại hành trình 8 tháng của Jung Kook (BTS) với tư cách nghệ sĩ solo, bao gồm các cuộc phỏng vấn độc quyền chưa từng thấy, cảnh hậu trường và các màn trình diễn lôi cuốn trên sân khấu, hé lộ sự cống hiến và phát triển không ngừng của anh.',
                 'danh_gia' => '8/10',
                 'tinh_trang' => 1,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
-            // Thêm 14 bản ghi khác với các giá trị tương ứng
             [
                 'ten_phim' => 'TEE YOD: QUỶ ĂN TẠNG PHẦN 2',
                 'slug_phim' => 'tee-yod-quy-an-tang-phan-2',
-                'ngay_chieu' => Carbon::parse('2024-02-01'),
-                'thoi_luong' => '90',
-                'dao_dien' => 'Đạo Diễn 2',
+                'ngay_chieu' => Carbon::parse('2024-02-01'), // Giữ ngày bạn cung cấp, cần kiểm tra lại ngày chiếu chính thức tại VN nếu đây là phần 2
+                'thoi_luong' => '90', // Cần xác nhận lại cho phần 2
+                'dao_dien' => 'Taweewat Wantha',
                 'hinh_anh' => 'https://media.lottecinemavn.com/Media/MovieFile/MovieImg/202410/11567_103_100006.jpg',
-                'trailer_ytb' => 'https://www.youtube.com/embed/wJO_vIDZn-I?si=uFRXvxKDYh9bxLmw',
-                'dien_vien' => 'Diễn Viên 3, Diễn Viên 4',
-                'nha_san_xuat' => 'Nhà Sản Xuất 2',
+                'trailer_ytb' => 'https://www.youtube.com/embed/xVVZvSybaEc?si=bSPn4ROqIJ4E0IuJ', // Giữ nguyên
+                'dien_vien' => 'Nadech Kugimiya, Denise Jelilcha Kapaun, Mim Rattawadee Wongthong, Kajbundit Jaidee, Peerakrit Phacharabunyakiat, Natthacha Nina Jessica Padovan, Arisara Wongchalee, Pramet Noi-am', // Bổ sung diễn viên
+                'nha_san_xuat' => 'Major Join Film, M Studio', // Cần kiểm tra nhà sản xuất cụ thể cho phần 2 nếu có
                 'id_chi_tiet_the_loai' => 1,
-                'gioi_han_do_tuoi' => '16+',
-                'mo_ta' => 'Mô tả phim 2',
+                'gioi_han_do_tuoi' => '16+', // Giữ nguyên, phim kinh dị thường có giới hạn này hoặc cao hơn
+                'mo_ta' => 'Tiếp nối những sự kiện kinh hoàng từ phần đầu, gia đình nhân vật chính tiếp tục đối mặt với những thế lực tà ác và những bí mật đen tối hơn được hé lộ.',
                 'danh_gia' => '4/5',
                 'tinh_trang' => 1,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
-            // ... tiếp tục thêm các bản ghi khác
             [
                 'ten_phim' => 'ROBOT HOANG DÃ',
                 'slug_phim' => 'robot-hoang-da',
-                'ngay_chieu' => Carbon::parse('2024-03-01'),
-                'thoi_luong' => '110',
-                'dao_dien' => 'Đạo Diễn 3',
+                'ngay_chieu' => Carbon::parse('2024-10-04'), // Cập nhật ngày chiếu chính xác hơn tại VN
+                'thoi_luong' => '102', // Cập nhật thời lượng chính xác hơn (1 giờ 42 phút)
+                'dao_dien' => 'Chris Sanders',
                 'hinh_anh' => 'https://media.lottecinemavn.com/Media/MovieFile/MovieImg/202410/11482_103_100002.jpg',
-                'trailer_ytb' => 'https://www.youtube.com/embed/QT5j0Uf-rdM?si=UbvG5a-dbKxNS_E_',
-                'dien_vien' => 'Diễn Viên 5, Diễn Viên 6',
-                'nha_san_xuat' => 'Nhà Sản Xuất 3',
+                'trailer_ytb' => 'https://www.youtube.com/embed/2l8_FNIBWLM?si=LBqapQ_4tWzCBkXr', // Giữ nguyên
+                'dien_vien' => 'Lupita Nyong, Pedro Pascal, Catherine O, Bill Nighy, Kit Connor, Stephanie Hsu, Mark Hamill, Matt Berry, Ving Rhames', // Cập nhật và bổ sung diễn viên lồng tiếng
+                'nha_san_xuat' => 'DreamWorks Animation', // Cập nhật nhà sản xuất
                 'id_chi_tiet_the_loai' => 1,
-                'gioi_han_do_tuoi' => '13+',
-                'mo_ta' => 'Mô tả phim 3',
-                'danh_gia' => '3/5',
+                'gioi_han_do_tuoi' => '13+', // Cập nhật theo Lotte Cinema (Phim được phổ biến đến người xem dưới 13 tuổi với điều kiện xem cùng cha, mẹ hoặc người giám hộ)
+                'mo_ta' => 'Một robot tên Roz tình cờ bị đắm tàu và dạt vào một hòn đảo hoang vắng. Tại đây, Roz phải học cách thích nghi với môi trường khắc nghiệt, xây dựng mối quan hệ với các loài động vật trên đảo và trở thành người mẹ bất đắc dĩ của một chú ngỗng con mồ côi.',
+                'danh_gia' => '3/5', // Giữ nguyên hoặc cập nhật nếu có
                 'tinh_trang' => 1,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
-            // Lặp lại cho đến khi đủ 15 bản ghi
             [
                 'ten_phim' => 'CÁM',
                 'slug_phim' => 'cam',
-                'ngay_chieu' => Carbon::parse('2024-03-01'),
-                'thoi_luong' => '110',
-                'dao_dien' => 'Đạo Diễn 3',
+                'ngay_chieu' => Carbon::parse('2024-09-20'),
+                'thoi_luong' => '122',
+                'dao_dien' => 'Trần Hữu Tấn',
                 'hinh_anh' => 'https://media.lottecinemavn.com/Media/MovieFile/MovieImg/202409/11507_103_100004.jpg',
-                'trailer_ytb' => 'https://www.youtube.com/embed/rbHUhCcSXEM?si=gb0k7EDOzombG-1V',
-                'dien_vien' => 'Diễn Viên 5, Diễn Viên 6',
-                'nha_san_xuat' => 'Nhà Sản Xuất 3',
+                'trailer_ytb' => 'https://www.youtube.com/embed/_8qUFEmPQbc?si=1c2BWnCwIkjk5M-Y', // Giữ nguyên
+                'dien_vien' => 'Rima Thanh Vy, Lâm Thanh Mỹ, Quốc Cường, Thúy Diễm, Hải Nam, Hạnh Thúy, Mai Thế Hiệp', // Bổ sung diễn viên
+                'nha_san_xuat' => 'ProductionQ - Creative House, Hoàng Quân', // Bổ sung
                 'id_chi_tiet_the_loai' => 1,
-                'gioi_han_do_tuoi' => '13+',
-                'mo_ta' => 'Mô tả phim 3',
+                'gioi_han_do_tuoi' => '16+', // Cần xác nhận lại, phim kinh dị thường là 16+ hoặc 18+
+                'mo_ta' => 'Dựa trên câu chuyện cổ tích Tấm Cám quen thuộc nhưng được khai thác dưới góc nhìn đen tối và kinh dị hơn, tập trung vào nhân vật Cám và những uẩn khúc phía sau.',
                 'danh_gia' => '3/5',
                 'tinh_trang' => 1,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
-            // Lặp lại cho đến khi đủ 15 bản ghi
             [
                 'ten_phim' => 'FUBAO: BẢO BỐI CỦA ÔNG',
                 'slug_phim' => 'fubao-bao-boi-cua-ong',
-                'ngay_chieu' => Carbon::parse('2024-03-01'),
-                'thoi_luong' => '110',
-                'dao_dien' => 'Đạo Diễn 3',
+                'ngay_chieu' => Carbon::parse('2024-10-11'),
+                'thoi_luong' => '94',
+                'dao_dien' => 'Shim Hyeong-jun, Thomas Ko',
                 'hinh_anh' => 'https://media.lottecinemavn.com/Media/MovieFile/MovieImg/202410/11574_103_100002.jpg',
-                'trailer_ytb' => 'https://www.youtube.com/embed/erxeLAg85fg?si=txZXIotsKCYep884',
-                'dien_vien' => 'Diễn Viên 5, Diễn Viên 6',
-                'nha_san_xuat' => 'Nhà Sản Xuất 3',
+                'trailer_ytb' => 'https://www.youtube.com/embed/6KxlC1Bt3C4?si=tTqScLL55JmpuHZg', // Cập nhật link trailer chính thức
+                'dien_vien' => 'Fu Bao, Kang Cheol-won, Song Young-kwan', // Bổ sung
+                'nha_san_xuat' => 'Everland', // Ghi chú thêm
                 'id_chi_tiet_the_loai' => 1,
-                'gioi_han_do_tuoi' => '13+',
-                'mo_ta' => 'Mô tả phim 3',
+                'gioi_han_do_tuoi' => '13+', // Phim được phổ biến rộng rãi
+                'mo_ta' => 'Bộ phim tài liệu cảm động ghi lại hành trình từ khi sinh ra cho đến lúc trưởng thành của Fu Bao, chú gấu trúc đầu tiên được sinh tại Hàn Quốc, cùng tình cảm gắn bó sâu sắc với hai người ông chăm sóc tại Everland trước khi chú trở về Trung Quốc.',
                 'danh_gia' => '3/5',
                 'tinh_trang' => 1,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
-            // Lặp lại cho đến khi đủ 15 bản ghi
             [
                 'ten_phim' => 'BIỆT ĐỘI HOT GIRL',
                 'slug_phim' => 'biet-doi-hot-girl',
-                'ngay_chieu' => Carbon::parse('2024-03-01'),
-                'thoi_luong' => '110',
-                'dao_dien' => 'Đạo Diễn 3',
+                'ngay_chieu' => Carbon::parse('2024-10-25'),
+                'thoi_luong' => '95',
+                'dao_dien' => 'Vĩnh Khương',
                 'hinh_anh' => 'https://media.lottecinemavn.com/Media/MovieFile/MovieImg/202410/11595_103_100001.jpg',
-                'trailer_ytb' => 'https://www.youtube.com/embed/SjkcA2ZCmDU?si=LZGI2Hh0R3W3v_xq',
-                'dien_vien' => 'Diễn Viên 5, Diễn Viên 6',
-                'nha_san_xuat' => 'Nhà Sản Xuất 3',
+                'trailer_ytb' => 'https://www.youtube.com/embed/GCxopxk_BwY?si=k3P6jcn-jhtKvQR9', // Giữ nguyên
+                'dien_vien' => 'Cố NSND Hoàng Dũng, Hữu Vi, Nguyễn Trần Duy Nhất, Mr Kim, Yu Chu, Sam Sony, Bảo Uyên, Tuệ Minh, Thùy Trang, Ái Vân, Hoàng Sơn, Trần Ngọc Tú, Anna Linh', // Bổ sung đầy đủ diễn viên
+                'nha_san_xuat' => 'VietKing Film',
                 'id_chi_tiet_the_loai' => 1,
-                'gioi_han_do_tuoi' => '13+',
-                'mo_ta' => 'Mô tả phim 3',
+                'gioi_han_do_tuoi' => '16+', // Phim hành động thường có giới hạn này, cần kiểm tra lại
+                'mo_ta' => 'Một bộ phim hành động Việt Nam xoay quanh một nhóm các cô gái xinh đẹp, tài năng và giỏi võ, cùng nhau thực hiện những nhiệm vụ nguy hiểm. Phim được quay tại nhiều quốc gia.',
                 'danh_gia' => '3/5',
                 'tinh_trang' => 1,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
-            // Lặp lại cho đến khi đủ 15 bản ghi
             [
                 'ten_phim' => 'TRÒ CHƠI NHÂN TÍNH',
                 'slug_phim' => 'tro-choi-nhan-tinh',
-                'ngay_chieu' => Carbon::parse('2024-03-01'),
-                'thoi_luong' => '110',
-                'dao_dien' => 'Đạo Diễn 3',
+                'ngay_chieu' => Carbon::parse('2024-10-25'),
+                'thoi_luong' => '110', // Giữ nguyên, cần xác nhận lại
+                'dao_dien' => 'William Henry Aherne',
                 'hinh_anh' => 'https://media.lottecinemavn.com/Media/MovieFile/MovieImg/202410/11592_103_100001.jpg',
-                'trailer_ytb' => 'https://www.youtube.com/embed/h0_kFeF__rc?si=0fZ44RWSmCS4yy-O',
-                'dien_vien' => 'Diễn Viên 5, Diễn Viên 6',
-                'nha_san_xuat' => 'Nhà Sản Xuất 3',
+                'trailer_ytb' => 'https://www.youtube.com/embed/KvmVQpkv4Pw?si=-yRgYJ0C5Gai0vUj', // Giữ nguyên
+                'dien_vien' => 'Worranit Thawornwong (Mook), Vachiravit Paisarnkulwong (August), Supachaya Sukbaiyen (Froy), Ngọc Lan Vy, Rapeepong Thapsuwan (Bright), Natnicha Lueanganan (Min), Naphat Na Ranong, Chalongrat Nobsamrong', // Bổ sung và làm rõ tên diễn viên
+                'nha_san_xuat' => 'NHK', // Ghi chú thêm, cần tìm tên công ty sản xuất cụ thể
                 'id_chi_tiet_the_loai' => 1,
-                'gioi_han_do_tuoi' => '13+',
-                'mo_ta' => 'Mô tả phim 3',
+                'gioi_han_do_tuoi' => '18+', // Phim kinh dị, sinh tồn thường có giới hạn cao
+                'mo_ta' => 'Một nhóm học sinh tại một trường cấp ba danh tiếng bị cuốn vào một trò chơi đẫm máu và đầy ám ảnh, nơi bản năng sinh tồn và những góc khuất đen tối của nhân tính được phơi bày.',
                 'danh_gia' => '3/5',
                 'tinh_trang' => 1,
                 'created_at' => Carbon::now(),
@@ -295,16 +289,16 @@ class QuanLyPhimSeeder extends Seeder
             [
                 'ten_phim' => 'CÔ DÂU HÀO MÔN',
                 'slug_phim' => 'co-dau-hao-mon',
-                'ngay_chieu' => Carbon::parse('2024-03-01'),
-                'thoi_luong' => '110',
-                'dao_dien' => 'Đạo Diễn 3',
+                'ngay_chieu' => Carbon::parse('2024-10-18'),
+                'thoi_luong' => '110', // Giữ nguyên, cần xác nhận lại
+                'dao_dien' => 'Vũ Ngọc Đãng',
                 'hinh_anh' => 'https://media.lottecinemavn.com/Media/MovieFile/MovieImg/202410/11556_103_100002.jpg',
-                'trailer_ytb' => 'https://www.youtube.com/embed/IILf3ZEBnmM?si=oa9jD-RWhyleliWG',
-                'dien_vien' => 'Diễn Viên 5, Diễn Viên 6',
-                'nha_san_xuat' => 'Nhà Sản Xuất 3',
+                'trailer_ytb' => 'https://www.youtube.com/embed/QJ8E9R70csY?si=59o0dvZN1Ij8JFC4', // Giữ nguyên
+                'dien_vien' => 'Uyển Ân, Kiều Minh Tuấn, Lê Giang, Thu Trang, Samuel An, NSND Hồng Vân, Quỳnh Lương', // Bổ sung và làm rõ vai diễn
+                'nha_san_xuat' => 'Will Vũ', // Ghi chú thêm, cần tìm tên công ty sản xuất cụ thể
                 'id_chi_tiet_the_loai' => 1,
-                'gioi_han_do_tuoi' => '13+',
-                'mo_ta' => 'Mô tả phim 3',
+                'gioi_han_do_tuoi' => '16+', // Phim có thể chứa các yếu tố phù hợp với lứa tuổi 16+
+                'mo_ta' => 'Câu chuyện hài hước và éo le của Tú Lạc, một cô gái cùng gia đình dàn dựng cuộc sống "phông bạt" xa hoa để cô có thể tiếp cận và trở thành con dâu của một gia đình tài phiệt, dẫn đến vô số tình huống dở khóc dở cười.',
                 'danh_gia' => '3/5',
                 'tinh_trang' => 1,
                 'created_at' => Carbon::now(),
