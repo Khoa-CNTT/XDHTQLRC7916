@@ -240,6 +240,12 @@ class NhanVienController extends Controller
 
         if ($check) {
             $user =  Auth::guard('nhan_vien')->user();
+            if ($user->tinh_trang == 0) {
+                return response()->json([
+                    'status'    =>  false,
+                    'message'   =>  'Tài khoản của bạn đã bị khoá!'
+                ]);
+            }
             return response()->json([
                 'status'        =>  true,
                 // tạo token
