@@ -116,15 +116,23 @@ class NhanVienController extends Controller
             }
         }
     }
-
     public function updateData(UpdateNhanVien $request)
     {
         $id_chuc_nang = 62;
         $user = Auth::guard('sanctum')->user();
         $master = ChucVu::where('id', $user->id_chuc_vu)
             ->first();
+
         if ($master->is_master) {
-            $data   = $request->all();
+            $data = $request->all();
+            // Mã hóa mật khẩu nếu có cập nhật mật khẩu mới
+            if (!empty($data['password'])) {
+                $data['password'] = bcrypt($data['password']);
+            } else {
+                // Nếu không cập nhật mật khẩu thì bỏ trường password
+                unset($data['password']);
+            }
+
             NhanVien::find($request->id)->update($data);
             return response()->json([
                 'status'    =>  true,
@@ -136,8 +144,15 @@ class NhanVienController extends Controller
                 ->where('id_quyen', $user->id_chuc_vu)
                 ->where('id_chuc_nang', $id_chuc_nang)
                 ->first();
+
             if ($check) {
-                $data   = $request->all();
+                $data = $request->all();
+                if (!empty($data['password'])) {
+                    $data['password'] = bcrypt($data['password']);
+                } else {
+                    unset($data['password']);
+                }
+
                 NhanVien::find($request->id)->update($data);
                 return response()->json([
                     'status'    =>  true,
