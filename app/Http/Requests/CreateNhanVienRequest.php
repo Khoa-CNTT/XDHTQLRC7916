@@ -11,7 +11,7 @@ class CreateNhanVienRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -29,9 +29,9 @@ class CreateNhanVienRequest extends FormRequest
             'password'      => 'required|string|min:6',
             'ngay_bat_dau'  => 'required|date|after_or_equal:ngay_sinh',
             'id_chuc_vu'    => 'required|exists:chuc_vus,id',
-            'avatar'        => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+            //'avatar'        => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
             'tinh_trang'    => 'required|boolean',
-            'is_master'     => 'required|boolean'
+            //  'is_master'     => 'required|boolean'
         ];
     }
     public function messages(): array
@@ -69,9 +69,8 @@ class CreateNhanVienRequest extends FormRequest
             'tinh_trang.required'    => 'Vui lòng chọn trạng thái.',
             'tinh_trang.boolean'     => 'Trạng thái phải là true hoặc false.',
 
-            'is_master.required'     => 'Vui lòng chọn quyền.',
-            'is_master.boolean'      => 'Quyền phải là true hoặc false.'
+            //  'is_master.required'     => 'Vui lòng chọn quyền.',
+            //  'is_master.boolean'      => 'Quyền phải là true hoặc false.'
         ];
     }
-
 }
