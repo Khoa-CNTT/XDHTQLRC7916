@@ -3,37 +3,29 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateNhanVien extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
             'ten_nhan_vien' => 'required|string|max:100',
             'ngay_sinh'     => 'required|date|before:today',
             'sdt'           => 'required|regex:/^0[0-9]{9}$/',
-            'email'         => 'required|email|max:255',
+            'email'         => ['required', 'email', 'max:255', Rule::unique('nhan_viens')->ignore($this->id)],
             'password'      => 'nullable|string|min:6',
             'ngay_bat_dau'  => 'required|date',
             'id_chuc_vu'    => 'required|exists:chuc_vus,id',
-            'avatar'        => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'tinh_trang'    => 'required|boolean',
-            'is_master'     => 'required|boolean',
         ];
     }
+
     public function messages(): array
     {
         return [
@@ -51,6 +43,7 @@ class UpdateNhanVien extends FormRequest
             'email.required'         => 'Vui lòng nhập email.',
             'email.email'            => 'Email không đúng định dạng.',
             'email.max'              => 'Email không được vượt quá 255 ký tự.',
+            'email.unique'           => 'Email này đã được sử dụng trong hệ thống.',
 
             'password.min'           => 'Mật khẩu phải có ít nhất 6 ký tự.',
 
@@ -60,16 +53,8 @@ class UpdateNhanVien extends FormRequest
             'id_chuc_vu.required'    => 'Vui lòng chọn chức vụ.',
             'id_chuc_vu.exists'      => 'Chức vụ không tồn tại.',
 
-            'avatar.image'           => 'Avatar phải là tệp hình ảnh.',
-            'avatar.mimes'           => 'Avatar phải có định dạng jpg, jpeg hoặc png.',
-            'avatar.max'             => 'Avatar không được vượt quá 2MB.',
-
             'tinh_trang.required'    => 'Vui lòng chọn tình trạng.',
             'tinh_trang.boolean'     => 'Tình trạng phải là true hoặc false.',
-
-            'is_master.required'     => 'Vui lòng xác định quyền quản trị.',
-            'is_master.boolean'      => 'Quyền quản trị phải là true hoặc false.',
         ];
     }
-
 }
