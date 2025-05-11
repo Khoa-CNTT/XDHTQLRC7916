@@ -20,17 +20,14 @@ class QuanLyPhim extends Model
         'trailer_ytb',
         'dien_vien',
         'nha_san_xuat',
-        'id_chi_tiet_the_loai',
         'gioi_han_do_tuoi',
         'mo_ta',
         'danh_gia',
         'tinh_trang',
-
     ];
 
     public function theLoais()
     {
         return $this->belongsToMany(TheLoai::class, 'chi_tiet_the_loais', 'id_phim', 'id_the_loai');
     }
-
 }
