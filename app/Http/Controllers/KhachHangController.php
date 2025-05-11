@@ -9,6 +9,8 @@ use App\Models\KhachHang;
 use Illuminate\Http\Request;
 use App\Http\Requests\KhachHangDatLaiMatKhauRequest;
 use App\Http\Requests\KhachHangQuenMatKhauRequest;
+use App\Http\Requests\KhachHangUpdateRequest;
+use App\Http\Requests\KhachHangRequest;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SendMail;
@@ -47,7 +49,7 @@ class KhachHangController extends Controller
             }
         }
     }
-    public function createData(Request $request)
+    public function createData(KhachHangRequest $request)
     {
         $id_chuc_nang = 6;
         $user = Auth::guard('sanctum')->user();
@@ -136,7 +138,7 @@ class KhachHangController extends Controller
         }
     }
 
-    public function updateData(Request $request)
+    public function updateData(KhachHangUpdateRequest $request)
     {
         $id_chuc_nang = 62;
         $user = Auth::guard('sanctum')->user();
@@ -160,7 +162,7 @@ class KhachHangController extends Controller
                 KhachHang::find($request->id)->update($data);
                 return response()->json([
                     'status'    =>  true,
-                    'message'   =>  'Đã cập nhật  thành công!'
+                    'message'   =>  'Đã cập nhật thành công!'
                 ]);
             } else {
                 return response()->json([
