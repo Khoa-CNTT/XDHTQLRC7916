@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateChucVu;
+use App\Http\Requests\UpdateChucVu;
 use App\Models\ChiTietPhanQuyen;
 use App\Models\ChucVu;
 use Illuminate\Http\Request;
@@ -46,7 +48,7 @@ class ChucVuController extends Controller
             'data'  =>  $data
         ]);
     }
-    public function createData(Request $request){
+    public function createData(CreateChucVu $request){
         $id_chuc_nang = 26;
         $user = Auth::guard('sanctum')->user();
         $master = ChucVu::where('id', $user->id_chuc_vu)
@@ -118,7 +120,7 @@ class ChucVuController extends Controller
 
     }
 
-    public function updateData(Request $request)
+    public function updateData(UpdateChucVu $request)
     {
         $id_chuc_nang = 66;
         $user = Auth::guard('sanctum')->user();

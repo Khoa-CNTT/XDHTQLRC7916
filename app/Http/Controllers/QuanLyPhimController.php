@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateQuanLyPhim;
 use App\Http\Requests\themMoiQuanLyPhim;
+use App\Http\Requests\UpdateQuanLyPhim;
 use App\Models\ChiTietTheLoai;
 use App\Models\QuanLyPhim;
 use Exception;
@@ -13,7 +15,9 @@ class QuanLyPhimController extends Controller
 {
     public function getData()
     {
-        $data = QuanLyPhim::with('theLoais')->get();
+        $data = QuanLyPhim::with('theLoais')
+            ->where('tinh_trang', 1)
+        ->get();
         return response()->json([
             'quan_ly_phim' => $data,
         ]);
@@ -27,7 +31,7 @@ class QuanLyPhimController extends Controller
             'quan_ly_phim' => $data,
         ]);
     }
-    public function themMoiQuanLyPhim(Request $request)
+    public function themMoiQuanLyPhim(CreateQuanLyPhim $request)
     {
         try {
             $phim = QuanLyPhim::create([
@@ -111,7 +115,7 @@ class QuanLyPhimController extends Controller
             ], 500);
         }
     }
-    public function createQuanLyPhim(Request $request)
+    public function createQuanLyPhim(UpdateQuanLyPhim $request)
     {
         try {
             $phim = QuanLyPhim::find($request->id);

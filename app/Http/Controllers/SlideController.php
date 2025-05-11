@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CapNhatBanerRequest;
+use App\Http\Requests\ThemBanerRequest;
 use App\Models\Slide;
 use Illuminate\Http\Request;
 
@@ -16,7 +18,7 @@ class SlideController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(ThemBanerRequest $request)
     {
         $data   =   $request->all();
         Slide::create($data);
@@ -37,7 +39,7 @@ class SlideController extends Controller
         ]);
     }
 
-    public function update(Request $request)
+    public function update(CapNhatBanerRequest $request)
     {
         $data   = $request->all();
 

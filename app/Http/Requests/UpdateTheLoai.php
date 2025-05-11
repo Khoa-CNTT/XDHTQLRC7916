@@ -11,7 +11,7 @@ class UpdateTheLoai extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -26,7 +26,7 @@ class UpdateTheLoai extends FormRequest
             'mo_ta'        => 'nullable|string|max:500', // Cho phép mô tả rỗng nếu không cập nhật
         ];
     }
-    
+
 public function messages(): array
 {
     return [

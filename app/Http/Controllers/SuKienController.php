@@ -28,7 +28,7 @@ class SuKienController extends Controller
         ]);
     }
 
-    public function createData(Request $request){
+    public function createData(cr $request){
         $data   =   $request->all();
         SuKien::create($data);
 

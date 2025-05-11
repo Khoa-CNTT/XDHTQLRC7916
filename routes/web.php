@@ -11,9 +11,5 @@ Route::get('/', function () {
 
 Route::get('/admin/phim', [QuanLyPhimController::class, 'index']);
 
-// Sự kiện routes
-Route::prefix('admin')->name('admin.')->group(function () {
-    Route::resource('sukien', SuKienController::class);
-});
 Route::get('/auth/google', [LoginGoogleController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [LoginGoogleController::class, 'handleGoogleCallback']);

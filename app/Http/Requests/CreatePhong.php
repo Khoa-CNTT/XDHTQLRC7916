@@ -11,7 +11,7 @@ class CreatePhong extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,6 @@ class CreatePhong extends FormRequest
     {
         return [
             'ten_phong'   => 'required|string|max:100',
-            'id_phim'     => 'required|exists:phims,id',
             'tinh_trang'  => 'required|boolean',
         ];
     }
@@ -33,9 +32,6 @@ class CreatePhong extends FormRequest
             'ten_phong.required'  => 'Vui lòng nhập tên phòng.',
             'ten_phong.string'    => 'Tên phòng phải là chuỗi.',
             'ten_phong.max'       => 'Tên phòng không được vượt quá 100 ký tự.',
-
-            'id_phim.required'    => 'Vui lòng chọn phim.',
-            'id_phim.exists'      => 'Phim không tồn tại.',
 
             'tinh_trang.required' => 'Vui lòng chọn tình trạng.',
             'tinh_trang.boolean'  => 'Tình trạng phải là true hoặc false.'

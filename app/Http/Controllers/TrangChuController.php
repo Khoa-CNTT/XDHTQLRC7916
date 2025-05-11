@@ -14,6 +14,7 @@ class TrangChuController extends Controller
         $date = $request->date;
 
         $listPhim = QuanLyPhim::with('theLoais')
+            ->where('tinh_trang', 1)
             ->where('ngay_chieu', '<=', $date)
             ->get();
 
@@ -26,6 +27,7 @@ class TrangChuController extends Controller
     {
         $date = $request->date;
         $listPhim = QuanLyPhim::with('theLoais')
+            ->where('tinh_trang', 1)
             ->where('ngay_chieu', '>', $date)
             ->get();
 

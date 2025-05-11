@@ -13,17 +13,15 @@ class ThemBanerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'ten_baner' => 'required',
-            'hinh_anh' => 'required',
             'link' => 'required',
+            'tinh_trang' => 'required',
         ];
     }
     public function messages(): array
     {
         return [
-            'ten_baner.required' => 'Vui lòng nhập tên slide.',
-            'hinh_anh.required' => 'Vui lòng nhập hình ảnh.',
             'link.required' => 'Vui lòng nhập link.',
+            'tinh_trang.required' => 'Vui lòng chọn trạng thái.',
         ];
     }
 }
