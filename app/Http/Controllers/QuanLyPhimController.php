@@ -116,26 +116,42 @@ class QuanLyPhimController extends Controller
         try {
             $phim = QuanLyPhim::find($request->id);
             if ($phim) {
-                $phim->update($request->except('the_loai_ids'));
+                // Update all fields except id_the_loai
+                $phim->update([
+                    'ten_phim'              => $request->ten_phim,
+                    'ngay_chieu'            => $request->ngay_chieu,
+                    'thoi_luong'            => $request->thoi_luong,
+                    'slug_phim'             => $request->slug_phim,
+                    'dao_dien'              => $request->dao_dien,
+                    'hinh_anh'              => $request->hinh_anh,
+                    'trailer_ytb'           => $request->trailer_ytb,
+                    'dien_vien'             => $request->dien_vien,
+                    'nha_san_xuat'          => $request->nha_san_xuat,
+                    'gioi_han_do_tuoi'      => $request->gioi_han_do_tuoi,
+                    'mo_ta'                 => $request->mo_ta,
+                    'danh_gia'              => $request->danh_gia,
+                    'tinh_trang'            => $request->tinh_trang,
+                ]);
 
-                if ($request->has('the_loai_ids')) {
-                    $phim->theLoais()->sync($request->the_loai_ids);
+                // Update the genres using sync
+                if ($request->has('id_the_loai')) {
+                    $phim->theLoais()->sync($request->id_the_loai);
                 }
 
                 return response()->json([
-                    'status' => true,
-                    'message' => 'Đã cập nhật thành công phim',
+                    'status'    => true,
+                    'message'   => 'Đã cập nhật thành công phim',
                 ]);
             }
             return response()->json([
-                'status' => false,
-                'message' => 'Không tìm thấy phim!',
+                'status'    => false,
+                'message'   => 'Không tìm thấy phim!',
             ], 404);
         } catch (Exception $e) {
             Log::error("Lỗi cập nhật phim: " . $e->getMessage());
             return response()->json([
-                'status' => false,
-                'message' => 'Có lỗi xảy ra khi cập nhật phim!',
+                'status'    => false,
+                'message'   => 'Có lỗi xảy ra khi cập nhật phim!',
             ], 500);
         }
     }
