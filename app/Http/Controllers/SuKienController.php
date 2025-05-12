@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateSuKienRequest;
+use App\Http\Requests\UpdateSuKienRequest;
 use App\Models\SuKien;
 use Illuminate\Http\Request;
 
@@ -28,7 +30,7 @@ class SuKienController extends Controller
         ]);
     }
 
-    public function createData(cr $request){
+    public function createData(CreateSuKienRequest $request){
         $data   =   $request->all();
         SuKien::create($data);
 
@@ -48,7 +50,7 @@ class SuKienController extends Controller
         ]);
     }
 
-    public function updateData(Request $request)
+    public function updateData(UpdateSuKienRequest $request)
     {
         $data   = $request->all();
         SuKien::find($request->id)->update($data);
