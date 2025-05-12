@@ -16,7 +16,6 @@ class QuanLyPhimController extends Controller
     public function getData()
     {
         $data = QuanLyPhim::with('theLoais')
-            ->where('tinh_trang', 1)
         ->get();
         return response()->json([
             'quan_ly_phim' => $data,

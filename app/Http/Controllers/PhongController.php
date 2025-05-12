@@ -19,7 +19,7 @@ class PhongController extends Controller
         $master = ChucVu::where('id', $user->id_chuc_vu)
             ->first();
         if ($master->is_master) {
-            $data   =   Phong::where('tinh_trang', 1)->get();
+            $data   =   Phong::all();
 
         return response()->json([
             'phong'  =>  $data
