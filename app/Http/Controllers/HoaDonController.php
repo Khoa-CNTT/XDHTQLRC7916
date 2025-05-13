@@ -110,8 +110,6 @@ class HoaDonController extends Controller
             ]);
         } catch (\Exception $e) {
             // Log the exception for debugging purposes
-            Log::error('Error in chiTietDatVe: ' . $e->getMessage());
-
             return response()->json([
                 'status' => false,
                 'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
