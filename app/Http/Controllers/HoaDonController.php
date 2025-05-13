@@ -6,6 +6,7 @@ use App\Models\HoaDon;
 use App\Models\ChiTietVe;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class HoaDonController extends Controller
@@ -69,8 +70,10 @@ class HoaDonController extends Controller
                 ->join('ghes', 'chi_tiet_ves.id_ghe', '=', 'ghes.id')
                 ->join('suat_chieus', 'chi_tiet_ves.id_suat', '=', 'suat_chieus.id')
                 ->join('phongs', 'suat_chieus.phong_id', '=', 'phongs.id')
-                ->join('quan_ly_phims', 'suat_chieus.phim_id', '=', 'quan_ly_phims.id') // Corrected field name
+                ->join('quan_ly_phims', 'suat_chieus.phim_id', '=', 'quan_ly_phims.id')
                 ->join('hoa_dons', 'chi_tiet_ves.id_hoa_don', '=', 'hoa_dons.id')
+                ->join('chi_tiet_ve_dich_vus', 'chi_tiet_ves.id', '=', 'chi_tiet_ve_dich_vus.id_chi_tiet_ve')
+                ->join('dich_vus', 'chi_tiet_ve_dich_vus.id_dich_vu', '=', 'dich_vus.id')
                 ->select(
                     'ghes.ten_ghe',
                     'quan_ly_phims.ten_phim',
@@ -79,8 +82,14 @@ class HoaDonController extends Controller
                     'suat_chieus.dinh_dang',
                     'suat_chieus.ngon_ngu',
                     'phongs.ten_phong',
-                    'hoa_dons.ma_qr_checkin'
+                    'hoa_dons.ma_qr_checkin',
+                    'hoa_dons.ma_hoa_don',
+                    'chi_tiet_ve_dich_vus.so_luong',
+                    'dich_vus.ten_dich_vu',
+                    'hoa_dons.tong_tien',
+                    DB::raw('chi_tiet_ve_dich_vus.so_luong AS so_luong_dich_vu')
                 );
+
 
 
             // Adjust the query for authenticated user (admin)
