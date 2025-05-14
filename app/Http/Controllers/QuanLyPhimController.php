@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateQuanLyPhim;
 use App\Http\Requests\themMoiQuanLyPhim;
+use App\Http\Requests\UpdateQuanLyPhim;
+use App\Models\ChiTietTheLoai;
 use App\Models\QuanLyPhim;
 use Exception;
 use Illuminate\Http\Request;
@@ -12,126 +15,171 @@ class QuanLyPhimController extends Controller
 {
     public function getData()
     {
-        $data = QuanLyPhim::all();
+        $data = QuanLyPhim::with('theLoais')
+        ->get();
         return response()->json([
             'quan_ly_phim' => $data,
         ]);
     }
     public function searchQuanLyPhim(Request $request)
     {
-        $data = QuanLyPhim::select("id", 'ten_phim', 'ngay_chieu', 'thoi_luong', 'dao_dien', 'hinh_anh', 'dien_vien', 'nha_san_xuat', 'id_the_loai', 'gioi_han_do_tuoi', "mo_ta", "danh_gia", "tinh_trang")
-            ->where('ten_phim', $request->abc)
+        $data = QuanLyPhim::with('theLoais')
+            ->where('ten_phim', 'like', '%' . $request->abc . '%')
             ->get();
         return response()->json([
             'quan_ly_phim' => $data,
         ]);
     }
-    public function themMoiQuanLyPhim(Request $request)
+    public function themMoiQuanLyPhim(CreateQuanLyPhim $request)
     {
-        // $data = $request->all();
-        // QuanLyPhim::create($data);
-        QuanLyPhim::create([
-            'ten_phim'              => $request->ten_phim,
-            'ngay_chieu'            => $request->ngay_chieu,
-            'thoi_luong'            => $request->thoi_luong,
-            'slug_phim'             => $request->slug_phim,
-            'dao_dien'              => $request->dao_dien,
-            'hinh_anh'              => $request->hinh_anh,
-            'trailer_ytb'           => $request->trailer_ytb,
-            'dien_vien'             => $request->dien_vien,
-            'nha_san_xuat'          => $request->nha_san_xuat,
-            'id_the_loai'           => $request->id_the_loai,
-            'gioi_han_do_tuoi'      => $request->gioi_han_do_tuoi,
-            'mo_ta'                 => $request->mo_ta,
-            'danh_gia'              => $request->danh_gia,
-            'tinh_trang'            => $request->tinh_trang,
-        ]);
-        return response()->json([
-            'status'            =>   true,
-            'message'           =>   'Đã tạo mới phim thành công!',
-        ]);
+        try {
+            $phim = QuanLyPhim::create([
+                'ten_phim'              => $request->ten_phim,
+                'ngay_chieu'            => $request->ngay_chieu,
+                'thoi_luong'            => $request->thoi_luong,
+                'slug_phim'             => $request->slug_phim,
+                'dao_dien'              => $request->dao_dien,
+                'hinh_anh'              => $request->hinh_anh,
+                'trailer_ytb'           => $request->trailer_ytb,
+                'dien_vien'             => $request->dien_vien,
+                'nha_san_xuat'          => $request->nha_san_xuat,
+                'gioi_han_do_tuoi'      => $request->gioi_han_do_tuoi,
+                'mo_ta'                 => $request->mo_ta,
+                'danh_gia'              => $request->danh_gia,
+                'tinh_trang'            => $request->tinh_trang,
+            ]);
+
+            if ($request->has('the_loai_ids')) {
+                $phim->theLoais()->attach($request->the_loai_ids);
+            }
+
+            return response()->json([
+                'status'            =>   true,
+                'message'           =>   'Đã tạo mới phim thành công!',
+            ]);
+        } catch (Exception $e) {
+            Log::error("Lỗi thêm mới phim: " . $e->getMessage());
+            return response()->json([
+                'status'            =>   false,
+                'message'           =>   'Có lỗi xảy ra khi thêm mới phim!',
+            ], 500);
+        }
     }
     public function xoaQuanLyPhim($id)
     {
         try {
-            QuanLyPhim::where('id', $id)->delete();
-            return response()->json([
-                'status'            =>   true,
-                'message'           =>   'Xóa phim thành công!',
-            ]);
-        } catch (Exception $e) {
-            Log::info("Lỗi", $e);
+            $phim = QuanLyPhim::find($id);
+            if ($phim) {
+                $phim->theLoais()->detach(); // Xóa các liên kết thể loại trước
+                $phim->delete();
+                return response()->json([
+                    'status'            =>   true,
+                    'message'           =>   'Xóa phim thành công!',
+                ]);
+            }
             return response()->json([
                 'status'            =>   false,
-                'message'           =>   'Có lỗi',
-            ]);
+                'message'           =>   'Không tìm thấy phim!',
+            ], 404);
+        } catch (Exception $e) {
+            Log::error("Lỗi xóa phim: " . $e->getMessage());
+            return response()->json([
+                'status'            =>   false,
+                'message'           =>   'Có lỗi xảy ra khi xóa phim!',
+            ], 500);
         }
     }
     public function doiTrangThaiQuanLyPhim(Request $request)
     {
         try {
-            if ($request->tinh_trang == 1) {
-                $tinh_trang_moi = 0;
-            } else {
-                $tinh_trang_moi = 1;
-            }
-            QuanLyPhim::where('id', $request->id)
-                ->update([
-                    'tinh_trang'  => $tinh_trang_moi,
+            $tinh_trang_moi = $request->tinh_trang == 1 ? 0 : 1;
+
+            $phim = QuanLyPhim::find($request->id);
+            if ($phim) {
+                $phim->update(['tinh_trang' => $tinh_trang_moi]);
+                return response()->json([
+                    'status'            =>   true,
+                    'message'           =>   'Đã đổi trạng thái thành công',
                 ]);
-            return response()->json([
-                'status'            =>   true,
-                'message'           =>   'Đã đổi trạng thái thành công',
-            ]);
-        } catch (Exception $e) {
-            Log::info("Lỗi", $e);
+            }
             return response()->json([
                 'status'            =>   false,
-                'message'           =>   'Có lỗi',
-            ]);
+                'message'           =>   'Không tìm thấy phim!',
+            ], 404);
+        } catch (Exception $e) {
+            Log::error("Lỗi đổi trạng thái: " . $e->getMessage());
+            return response()->json([
+                'status'            =>   false,
+                'message'           =>   'Có lỗi xảy ra khi đổi trạng thái!',
+            ], 500);
         }
     }
-    public function createQuanLyPhim(Request $request)
+    public function createQuanLyPhim(UpdateQuanLyPhim $request)
     {
-        $data = $request->all();
-        QuanLyPhim::find($request->id)->update($data);
-        return response()->json([
-            'status' => true,
-            'message' => 'Đã cập nhật thành công Quan Ly Phim',
-        ]);
-        // $data = $request->all();
-        // $qlFilm = QuanLyPhim::find($request->id);
-        // if ($qlFilm) {
-        //     $qlFilm->update($data);
-        //     return response()->json([
-        //         'status' => true,
-        //         'message' => 'Đã cập nhật thành công Quan Ly Phim',
-        //     ]);
-        // } else {
-        //     return response()->json([
-        //         'status' => false,
-        //         'message' => 'Không tìm thấy Quan Ly Phim',
-        //     ]);
-        // }
+        try {
+            $phim = QuanLyPhim::find($request->id);
+            if ($phim) {
+                // Update all fields except id_the_loai
+                $phim->update([
+                    'ten_phim'              => $request->ten_phim,
+                    'ngay_chieu'            => $request->ngay_chieu,
+                    'thoi_luong'            => $request->thoi_luong,
+                    'slug_phim'             => $request->slug_phim,
+                    'dao_dien'              => $request->dao_dien,
+                    'hinh_anh'              => $request->hinh_anh,
+                    'trailer_ytb'           => $request->trailer_ytb,
+                    'dien_vien'             => $request->dien_vien,
+                    'nha_san_xuat'          => $request->nha_san_xuat,
+                    'gioi_han_do_tuoi'      => $request->gioi_han_do_tuoi,
+                    'mo_ta'                 => $request->mo_ta,
+                    'danh_gia'              => $request->danh_gia,
+                    'tinh_trang'            => $request->tinh_trang,
+                ]);
+
+                // Update the genres using sync
+                if ($request->has('id_the_loai')) {
+                    $phim->theLoais()->sync($request->id_the_loai);
+                }
+
+                return response()->json([
+                    'status'    => true,
+                    'message'   => 'Đã cập nhật thành công phim',
+                ]);
+            }
+            return response()->json([
+                'status'    => false,
+                'message'   => 'Không tìm thấy phim!',
+            ], 404);
+        } catch (Exception $e) {
+            Log::error("Lỗi cập nhật phim: " . $e->getMessage());
+            return response()->json([
+                'status'    => false,
+                'message'   => 'Có lỗi xảy ra khi cập nhật phim!',
+            ], 500);
+        }
     }
 
     public function phimChiTiet($id)
     {
-        $phim = QuanLyPhim::join('the_loais', 'quan_ly_phims.id_the_loai', 'the_loais.id')
-            ->where('quan_ly_phims.id', $id)
-            ->select('quan_ly_phims.*', 'the_loais.ten_the_loai')
-            ->first();
+        try {
+            $phim = QuanLyPhim::with('theLoais')->find($id);
 
-        if ($phim) {
-            return response()->json([
-                'status' => true,
-                'data' => $phim
-            ]);
-        } else {
+            if ($phim) {
+                return response()->json([
+                    'status' => true,
+                    'data' => $phim
+                ]);
+            }
             return response()->json([
                 'status' => false,
-                'message' => "Không có phim!"
-            ]);
+                'message' => "Không tìm thấy phim!"
+            ], 404);
+        } catch (Exception $e) {
+            Log::error("Lỗi lấy chi tiết phim: " . $e->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => "Có lỗi xảy ra khi lấy chi tiết phim!"
+            ], 500);
         }
     }
 }

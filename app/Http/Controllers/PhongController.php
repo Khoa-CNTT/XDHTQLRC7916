@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Http\Requests\CreatePhong;
+use App\Http\Requests\UpdatePhong;
 use App\Models\ChiTietPhanQuyen;
 use App\Models\ChucVu;
 use App\Models\Phong;
@@ -40,10 +43,10 @@ class PhongController extends Controller
             }
         }
 
-       
+
     }
 
-    public function store(Request $request)
+    public function store(CreatePhong $request)
     {
         $id_chuc_nang = 48;
         $user = Auth::guard('sanctum')->user();
@@ -66,7 +69,7 @@ class PhongController extends Controller
             if ($check) {
                 $data   =   $request->all();
                 Phong::create($data);
-        
+
                 return response()->json([
                     'status'    =>  true,
                     'message'   =>  'Đã tạo mới phòng thành công!'
@@ -78,7 +81,7 @@ class PhongController extends Controller
             }
         }
 
-       
+
     }
 
     public function destroy($id)
@@ -114,10 +117,10 @@ class PhongController extends Controller
             }
         }
 
-        
+
     }
 
-    public function update(Request $request)
+    public function update(UpdatePhong $request)
     {
         $id_chuc_nang = 70;
         $user = Auth::guard('sanctum')->user();
@@ -154,7 +157,7 @@ class PhongController extends Controller
             }
         }
 
-        
+
     }
     public function doiTrangThai(Request $request)
     {
@@ -215,6 +218,6 @@ class PhongController extends Controller
             }
         }
 
-        
+
     }
 }

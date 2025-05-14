@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('ten_the_loai');
             $table->text('mo_ta')->nullable();
+            $table->unsignedBigInteger('id_chi_tiet_the_loai');
             $table->timestamps();
         });
     }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateGocDienAnhRequest;
+use App\Http\Requests\UpdateGocDienAnhRequest;
 use App\Models\GocDienAnh;
 use Illuminate\Http\Request;
 
@@ -15,7 +17,7 @@ class GocDienAnhController extends Controller
         ]);
     }
 
-    public function createData(Request $request)
+    public function createData(CreateGocDienAnhRequest $request)
     {
         $data = $request->all();
         $data['ngay_dang'] = now();
@@ -28,16 +30,26 @@ class GocDienAnhController extends Controller
         ]);
     }
 
-    public function updateData(Request $request)
+    public function updateData(UpdateGocDienAnhRequest $request)
     {
-        $data = $request->all();
-        GocDienAnh::find($request->id)->update($data);
+        $gocDienAnh = GocDienAnh::find($request->id);
+
+        if (!$gocDienAnh) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Không tìm thấy góc điện ảnh!'
+            ]);
+        }
+
+        $data = $request->except('id'); // Bỏ id ra khỏi dữ liệu cập nhật
+        $gocDienAnh->update($data);
 
         return response()->json([
             'status' => true,
             'message' => 'Đã cập nhật góc điện ảnh thành công!'
         ]);
     }
+
 
     public function deleteData($id)
     {

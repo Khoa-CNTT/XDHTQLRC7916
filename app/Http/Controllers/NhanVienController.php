@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ThemMoiNhanVienRequest;
+use App\Http\Requests\CreateNhanVienRequest;
+use App\Http\Requests\UpdateNhanVien;
 use App\Models\ChiTietPhanQuyen;
 use App\Models\ChucVu;
 use App\Models\NhanVien;
@@ -45,7 +46,7 @@ class NhanVienController extends Controller
             }
         }
     }
-    public function createData(Request $request)
+    public function createData(CreateNhanVienRequest $request)
     {
         $id_chuc_nang = 11;
         $user = Auth::guard('sanctum')->user();
@@ -91,10 +92,10 @@ class NhanVienController extends Controller
         if ($master->is_master) {
             NhanVien::find($id)->delete();
 
-        return response()->json([
-            'status'    =>  true,
-            'message'   =>  'Đã xoá nhân viên thành công!'
-        ]);
+            return response()->json([
+                'status'    =>  true,
+                'message'   =>  'Đã xoá nhân viên thành công!'
+            ]);
         } else {
             $check = ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
                 ->where('chuc_vus.tinh_trang', 1)
@@ -114,44 +115,55 @@ class NhanVienController extends Controller
                 ]);
             }
         }
-
-
     }
-
-    public function updateData(Request $request)
+    public function updateData(UpdateNhanVien $request)
     {
         $id_chuc_nang = 62;
         $user = Auth::guard('sanctum')->user();
         $master = ChucVu::where('id', $user->id_chuc_vu)
             ->first();
+
         if ($master->is_master) {
-            $data   = $request->all();
-        NhanVien::find($request->id)->update($data);
-        return response()->json([
-            'status'    =>  true,
-            'message'   =>  'Đã cập nhật nhân viên thành công!'
-        ]);
+            $data = $request->all();
+            // Mã hóa mật khẩu nếu có cập nhật mật khẩu mới
+            if (!empty($data['password'])) {
+                $data['password'] = bcrypt($data['password']);
+            } else {
+                // Nếu không cập nhật mật khẩu thì bỏ trường password
+                unset($data['password']);
+            }
+
+            NhanVien::find($request->id)->update($data);
+            return response()->json([
+                'status'    =>  true,
+                'message'   =>  'Đã cập nhật nhân viên thành công!'
+            ]);
         } else {
             $check = ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
                 ->where('chuc_vus.tinh_trang', 1)
                 ->where('id_quyen', $user->id_chuc_vu)
                 ->where('id_chuc_nang', $id_chuc_nang)
                 ->first();
+
             if ($check) {
-                $data   = $request->all();
-        NhanVien::find($request->id)->update($data);
-        return response()->json([
-            'status'    =>  true,
-            'message'   =>  'Đã cập nhật nhân viên thành công!'
-        ]);
+                $data = $request->all();
+                if (!empty($data['password'])) {
+                    $data['password'] = bcrypt($data['password']);
+                } else {
+                    unset($data['password']);
+                }
+
+                NhanVien::find($request->id)->update($data);
+                return response()->json([
+                    'status'    =>  true,
+                    'message'   =>  'Đã cập nhật nhân viên thành công!'
+                ]);
             } else {
                 return response()->json([
                     "message" => 'bạn không có quyền này'
                 ]);
             }
         }
-
-
     }
     public function doiTrangThai(Request $request)
     {
@@ -211,8 +223,6 @@ class NhanVienController extends Controller
                 ]);
             }
         }
-
-
     }
 
     // danng nhap
@@ -230,6 +240,12 @@ class NhanVienController extends Controller
 
         if ($check) {
             $user =  Auth::guard('nhan_vien')->user();
+            if ($user->tinh_trang == 0) {
+                return response()->json([
+                    'status'    =>  false,
+                    'message'   =>  'Tài khoản của bạn đã bị khoá!'
+                ]);
+            }
             return response()->json([
                 'status'        =>  true,
                 // tạo token

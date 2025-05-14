@@ -9,6 +9,8 @@ use App\Models\KhachHang;
 use Illuminate\Http\Request;
 use App\Http\Requests\KhachHangDatLaiMatKhauRequest;
 use App\Http\Requests\KhachHangQuenMatKhauRequest;
+use App\Http\Requests\KhachHangUpdateRequest;
+use App\Http\Requests\KhachHangRequest;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SendMail;
@@ -47,40 +49,51 @@ class KhachHangController extends Controller
             }
         }
     }
-    public function createData(Request $request)
+    public function createData(KhachHangRequest $request)
     {
         $id_chuc_nang = 6;
         $user = Auth::guard('sanctum')->user();
-        $master = ChucVu::where('id', $user->id_chuc_vu)
-            ->first();
-        if ($master->is_master) {
-            $data   =   $request->all();
-            KhachHang::create($data);
+        $master = ChucVu::where('id', $user->id_chuc_vu)->first();
 
-            return response()->json([
-                'status'    =>  true,
-                'message'   =>  'Đã tạo mới Khach Hang thành công!'
-            ]);
-        } else {
-            $check = ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
-                ->where('chuc_vus.tinh_trang', 1)
-                ->where('id_quyen', $user->id_chuc_vu)
-                ->where('id_chuc_nang', $id_chuc_nang)
-                ->first();
-            if ($check) {
-                $data   =   $request->all();
+        if (
+            $master->is_master || ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
+            ->where('chuc_vus.tinh_trang', 1)
+            ->where('id_quyen', $user->id_chuc_vu)
+            ->where('id_chuc_nang', $id_chuc_nang)
+            ->exists()
+        ) {
+            try {
+                $data = $request->all();
+                if ($data['password'] !== $data['re_password']) {
+                    return response()->json([
+                        'status'  => false,
+                        'message' => 'Mật khẩu nhập lại không khớp!'
+                    ], 422);
+                }
+                if (isset($data['password'])) {
+                    $data['password'] = bcrypt($data['password']);
+                    $data['re_password'] = $data['password']; // Lưu giống password đã mã hóa
+                }
+
                 KhachHang::create($data);
 
                 return response()->json([
-                    'status'    =>  true,
-                    'message'   =>  'Đã tạo mới Khach Hang thành công!'
+                    'status'  => true,
+                    'message' => 'Đã tạo mới khách hàng thành công!'
                 ]);
-            } else {
+            } catch (\Exception $e) {
                 return response()->json([
-                    "message" => 'bạn không có quyền này'
-                ]);
+                    'status'  => false,
+                    'message' => 'Có lỗi xảy ra khi tạo khách hàng!',
+                    'error'   => $e->getMessage()
+                ], 500);
             }
         }
+
+        return response()->json([
+            'status'  => false,
+            'message' => 'Bạn không có quyền thực hiện chức năng này!'
+        ], 403);
     }
 
     public function thongTinCaNhan()
@@ -125,7 +138,7 @@ class KhachHangController extends Controller
         }
     }
 
-    public function updateData(Request $request)
+    public function updateData(KhachHangUpdateRequest $request)
     {
         $id_chuc_nang = 62;
         $user = Auth::guard('sanctum')->user();
@@ -149,7 +162,7 @@ class KhachHangController extends Controller
                 KhachHang::find($request->id)->update($data);
                 return response()->json([
                     'status'    =>  true,
-                    'message'   =>  'Đã cập nhật  thành công!'
+                    'message'   =>  'Đã cập nhật thành công!'
                 ]);
             } else {
                 return response()->json([
@@ -167,10 +180,10 @@ class KhachHangController extends Controller
         if ($master->is_master) {
             $khach_hang = KhachHang::find($request->id);
             if ($khach_hang) {
-                if ($khach_hang->tinh_trang == 1) {
-                    $khach_hang->tinh_trang = 0;
+                if ($khach_hang->is_active == 1) {
+                    $khach_hang->is_active = 0;
                 } else {
-                    $khach_hang->tinh_trang = 1;
+                    $khach_hang->is_active = 1;
                 }
                 $khach_hang->save();
 
@@ -193,10 +206,10 @@ class KhachHangController extends Controller
             if ($check) {
                 $khach_hang = KhachHang::find($request->id);
                 if ($khach_hang) {
-                    if ($khach_hang->tinh_trang == 1) {
-                        $khach_hang->tinh_trang = 0;
+                    if ($khach_hang->is_active == 1) {
+                        $khach_hang->is_active = 0;
                     } else {
-                        $khach_hang->tinh_trang = 1;
+                        $khach_hang->is_active = 1;
                     }
                     $khach_hang->save();
 

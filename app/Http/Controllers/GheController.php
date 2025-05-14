@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Http\Requests\CreateGhe;
+use App\Http\Requests\UpdateGhe;
 use App\Models\ChiTietPhanQuyen;
 use App\Models\ChiTietVe;
 use App\Models\ChucVu;
@@ -12,7 +15,7 @@ use Illuminate\Support\Facades\Auth;
 class GheController extends Controller
 {
     // Lấy tất cả ghế
-    public function getData(Request $request)
+    public function getData()
     {
         $id_chuc_nang = 30;
         $user = Auth::guard('sanctum')->user();
@@ -52,7 +55,7 @@ class GheController extends Controller
 
 
     // Tạo ghế mới
-    public function createData(Request $request)
+    public function createData(CreateGhe $request)
     {
         $request->validate([
             'ten_ghe' => 'required|string',
@@ -103,7 +106,7 @@ class GheController extends Controller
     }
 
     // Tạo nhiều ghế cùng lúc cho một phòng
-    public function createMultipleGhe(Request $request)
+    public function createMultipleGhe(CreateGhe $request)
     {
         $request->validate([
             'phong_id' => 'required|exists:phongs,id',
@@ -150,7 +153,7 @@ class GheController extends Controller
     }
 
     // Cập nhật ghế
-    public function updateData(Request $request)
+    public function updateData(UpdateGhe $request)
     {
         $request->validate([
             'id' => 'required|exists:ghes,id',

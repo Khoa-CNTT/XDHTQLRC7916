@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateTheLoai;
+use App\Http\Requests\UpdateTheLoai;
 use App\Models\TheLoai;
 use Exception;
 use Illuminate\Http\Request;
@@ -23,7 +25,7 @@ class TheLoaiController extends Controller
             'the_loai' => $data,
         ]);
     }
-    public function createTheLoai(Request $request){
+    public function createTheLoai(CreateTheLoai $request){
             TheLoai::create([
             'ten_the_loai'       => $request->ten_the_loai,
             'mo_ta'              => $request->mo_ta,
@@ -41,7 +43,7 @@ class TheLoaiController extends Controller
                 'message'           =>   'Xóa Thể Loại thành công!',
             ]);
     }
-     public function updateTheLoai(Request $request){
+     public function updateTheLoai(UpdateTheLoai $request){
         $data = $request->all();
         TheLoai::find($request->id)->update($data);
         return response()->json([

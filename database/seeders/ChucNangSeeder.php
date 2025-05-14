@@ -18,7 +18,7 @@ class ChucNangSeeder extends Seeder
         DB::table('chuc_nangs')->truncate();
 
         DB::table('chuc_nangs')->insert([
-            
+
                 // Loại phòng
                 ["id" => 1, "ten_chuc_nang" => "Xem Thông Tin Loại Phòng"],
                 ["id" => 2, "ten_chuc_nang" => "Tạo Mới Loại Phòng"],

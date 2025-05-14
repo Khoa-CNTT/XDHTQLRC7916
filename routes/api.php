@@ -247,6 +247,7 @@ Route::post('/thanh-toan/ket-qua', [ThanhToanController::class, 'ketQuaThanhToan
 Route::get('/thanh-toan/ipn', [ThanhToanController::class, 'ipnVnpay']); // Thêm route cho IPN
 Route::get('/thanh-toan/chi-tiet-hoa-don/{maHoaDon}', [ThanhToanController::class, 'chiTietHoaDon']);
 Route::get('/hoa-don/check-in/{ma_hoa_don}', [ThanhToanController::class, 'checkInHoaDon']);
+Route::post('/thanh-toan/tien-mat', [ThanhToanController::class, 'thanhToanTienMat']);
 
 // Chatbot API routes
 
