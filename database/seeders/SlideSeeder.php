@@ -17,15 +17,15 @@ class SlideSeeder extends Seeder
         DB::table('slides')->truncate();
         DB::table('slides')->insert([
             [
-                'link_hinh_anh' => 'https://media.lottecinemavn.com/Media/WebAdmin/d3c9eea3982c46a09c9d9073cb6d2c17.jpg',
+                'link_hinh_anh' => 'https://res.cloudinary.com/dfff9gqxw/image/upload/v1745073231/1440x548_c7ead1055e_q7eabi.jpg',
                 'tinh_trang' => 1,
             ],
             [
-                'link_hinh_anh' => 'https://media.lottecinemavn.com/Media/Event/44d6f79e22974014b17275f0c6251372.jpg',
+                'link_hinh_anh' => 'https://res.cloudinary.com/dfff9gqxw/image/upload/v1745072904/eeb56db285a145c894c6c9d090d43376_bxxxnl.jpg',
                 'tinh_trang' => 1,
             ],
             [
-                'link_hinh_anh' => 'https://dskb4mmeexzvj.cloudfront.net/cinema-shop/product-management/image/1440x548_c7ead1055e.jpg',
+                'link_hinh_anh' => 'https://res.cloudinary.com/dfff9gqxw/image/upload/v1745073328/f3c79fb3147a4060af45dbf5dd4022bb_vuvnzh.jpg',
                 'tinh_trang' => 1,
             ],
         ]);

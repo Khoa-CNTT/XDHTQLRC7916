@@ -28,13 +28,15 @@ return new class extends Migration
 
             // Khóa ngoại đến bảng khach_hangs (nullable vì ghế có thể chưa được đặt)
             $table->foreignId('id_khach_hang')->nullable()->constrained('khach_hangs')->nullOnDelete();
+            $table->string('ma_check')->nullable();
+            $table->string('id_nhan_vien')->nullable();
+            // Khóa ngoại đến bảng chi_tiet_ve_dich_vus (nullable vì ghế có thể chưa được đặt)
+            $table->string('id_chi_tiet_ve_dich_vu')->nullable();
 
             // Trạng thái ghế (0: Còn trống, 1: Đã đặt, 2: Đang tạm giữ)
             $table->tinyInteger('tinh_trang')->default(0);
-
-            // Thời gian đặt và hết hạn (cho tính năng tạm giữ ghế)
-            $table->timestamp('thoi_gian_dat')->nullable();
-            $table->timestamp('thoi_gian_het_han')->nullable();
+            // Trạng thái đã check in (0: Chưa check in, 1: Đã check in)
+            $table->tinyInteger('checked_in')->default(0);
 
             // Ghi chú
             $table->text('ghi_chu')->nullable();

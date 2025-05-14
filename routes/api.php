@@ -20,7 +20,10 @@ use App\Http\Controllers\LoginGoogleController;
 use App\Http\Controllers\ThanhToanController;
 
 use App\Http\Controllers\ChatbotController;
+use App\Http\Controllers\ChiTietVeDichVuController;
 use App\Http\Controllers\GocDienAnhController;
+use App\Http\Controllers\SuKienController;
+use App\Http\Controllers\ThongKeController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -75,6 +78,7 @@ Route::group(['middleware' => 'adminMiddle'], function () {
 
     Route::get('/suat-chieu/data', [SuatChieuController::class, 'getData']);
     Route::post('/suat-chieu/create', [SuatChieuController::class, 'store']);
+    Route::post('/suat-chieu/create-multiple', [SuatChieuController::class, 'storeMultiple']);
     Route::delete('/suat-chieu/delete/{id}', [SuatChieuController::class, 'destroy']);
     Route::put('/suat-chieu/update', [SuatChieuController::class, 'update']);
     Route::put('/suat-chieu/doi-trang-thai', [SuatChieuController::class, 'doiTrangThai']);
@@ -82,6 +86,7 @@ Route::group(['middleware' => 'adminMiddle'], function () {
     Route::get('/suat-chieu/so-ghe-trong/{id}', [SuatChieuController::class, 'getSoGheTrong']);
     Route::get('/suat-chieu/cap-nhat-trang-thai-tu-dong', [SuatChieuController::class, 'capNhatTrangThaiTuDong']);
     Route::get('/suat-chieu/open-data', [SuatChieuController::class, 'openData']);
+    Route::get('/suat-chieu/lay-phong/{id_phim}', [SuatChieuController::class, 'layPhong']);
 
 
 
@@ -105,6 +110,8 @@ Route::group(['middleware' => 'adminMiddle'], function () {
     Route::delete('/chi-tiet-ve/delete/{id}', [ChiTietVeController::class, 'destroy']);
     Route::put('/chi-tiet-ve/update', [ChiTietVeController::class, 'update']);
 
+    Route::get('/chi-tiet-ve/kiem-tra-dat-ve', [ChiTietVeController::class, 'kiemTraDatVe']);
+
 
     // Quản lý ghế
     Route::get('/ghe/data', [GheController::class, 'getData']);
@@ -118,6 +125,8 @@ Route::group(['middleware' => 'adminMiddle'], function () {
     Route::put('/ghe/doi-trang-thai', [GheController::class, 'doiTrangThai']);
     Route::put('/ghe/doi-loai-ghe', [GheController::class, 'doiLoaiGhe']);
 
+    Route::post('/hoa-don/check-in/{ma_hoa_don}', [ThanhToanController::class, 'checkInHoaDon']);
+    Route::post('/hoa-don/check-in-dich-vu/{ma_hoa_don}', [ThanhToanController::class, 'checkInDichVu']);
 
     Route::get('/user', function (Request $request) {
         return $request->user();
@@ -139,12 +148,28 @@ Route::group(['middleware' => 'adminMiddle'], function () {
             Route::delete('/delete/{id}', [TheLoaiController::class, 'deleteTheLoai']);
             Route::put('/update', [TheLoaiController::class, 'updateTheLoai']);
         });
+        // Thống kê routes
+        Route::get('/thong-ke/doanh-thu', [ThongKeController::class, 'thongKeDoanhThu']);
+        Route::get('/thong-ke/theo-ngay', [ThongKeController::class, 'thongKeTheoNgay']);
+        Route::get('/thong-ke/theo-tuan', [ThongKeController::class, 'thongKeTheoTuan']);
+        Route::get('/thong-ke/theo-thang', [ThongKeController::class, 'thongKeTheoThang']);
+        Route::get('/thong-ke/theo-quy', [ThongKeController::class, 'thongKeTheoQuy']);
+        Route::get('/thong-ke/theo-nam', [ThongKeController::class, 'thongKeTheoNam']);
+
+
+        // Su kien
+        Route::get('/su-kien/data', [SuKienController::class, 'getData']);
+        Route::post('/su-kien/create', [SuKienController::class, 'createData']);
+        Route::put('/su-kien/update', [SuKienController::class, 'updateData']);
+        Route::delete('/su-kien/delete/{id}', [SuKienController::class, 'deleteData']);
+        Route::put('/su-kien/doi-trang-thai', [SuKienController::class, 'doiTrangThai']);
     });
 });
 
 
 //client
 Route::get('/hoa-don/data', [HoaDonController::class, 'getData']);
+Route::get('/hoa-don/data-client', [HoaDonController::class, 'getDataClient']);
 Route::post('/hoa-don/create', [HoaDonController::class, 'create']);
 Route::post('/hoa-don/chi-tiet-dat-ve', [HoaDonController::class, 'chiTietDatVe']);
 
@@ -161,6 +186,7 @@ Route::post('/dang-ky', [KhachHangController::class, 'dangKy']);
 Route::post("/khach-hang/kich-hoat", [KhachHangController::class, 'kichHoat']);
 Route::post("/khach-hang/thong-tin-ca-nhan", [KhachHangController::class, 'thongTinCaNhan']);
 Route::post("/khach-hang/doi-mat-khau", [KhachHangController::class, 'doiMatKhau']);
+Route::get("/khach-hang/hoa-don", [KhachHangController::class, 'loadHD']);
 
 
 
@@ -168,13 +194,22 @@ Route::get('/lay-ve/data', [ChiTietVeController::class, 'getDataOpen']);
 Route::get('/lay-ve/data-1/{id}', [ChiTietVeController::class, 'getData1']);
 Route::post('/lay-ve/doi-trang-thai-dat', [ChiTietVeController::class, 'chaneStatusDat']);
 Route::post('/lay-ve/doi-trang-thai-huy', [ChiTietVeController::class, 'chaneStatusHuy']);
+Route::post('/lay-ve/kiem-tra-trang-thai', [ChiTietVeController::class, 'kiemTraTrangThai']);
 Route::get('/ghe-client/data/{id}', [ChiTietVeController::class, 'getDataClient']);
 
-Route::get('/trang-chu/data', [TrangChuController::class, 'dataTrangChu']);
+Route::post('/trang-chu/data', [TrangChuController::class, 'dataTrangChu']);
+Route::post('/trang-chu/phim-sap-chieu/data', [TrangChuController::class, 'dataPhimSapChieu']);
 
 Route::get('/lay-danh-gia/data/{id}', [DanhGiaController::class, 'getDataChiTietPhim']);
 Route::get('/lay-dich-vu/data', [DichVuController::class, 'getDataDichVu']);
 Route::get('/lay-dich-vu-khuyen-mai/data', [DichVuController::class, 'getDataDichVuKhuyenMai']);
+Route::post('/dat-dich-vu', [ChiTietVeDichVuController::class, 'datDichVu']);
+Route::post('/huy-dich-vu', [ChiTietVeDichVuController::class, 'huyDichVu']);
+Route::post('/tang-dich-vu', [ChiTietVeDichVuController::class, 'tangDichVu']);
+Route::post('/giam-dich-vu', [ChiTietVeDichVuController::class, 'giamDichVu']);
+Route::get('/danh-sach-dich-vu/{id_suat}', [ChiTietVeDichVuController::class, 'getDanhSachDichVu']);
+Route::get('/danh-sach-dich-vu-theo-ve/{id_chi_tiet_ve}', [ChiTietVeDichVuController::class, 'getDanhSachDichVuTheoVe']);
+
 
 
 
@@ -195,24 +230,29 @@ Route::put('/slide/doi-trang-thai', [SlideController::class, 'doiTrangThai']);
 Route::get('khach-hang/dang-xuat', [KhachHangController::class, 'dangXuat']);
 Route::get('khach-hang/dang-xuat-all', [KhachHangController::class, 'dangXuatAll']);
 Route::post('khach-hang/danh-gia', [DanhGiaController::class, 'danhGia']);
+Route::delete('khach-hang/danh-gia/delete/{id}', [DanhGiaController::class, 'deleteDataClient']);
+Route::put('khach-hang/danh-gia/update', [DanhGiaController::class, 'updateDataClient']);
 
 Route::get('admin/dang-xuat', [NhanVienController::class, 'dangXuat']);
 Route::get('admin/dang-xuat-all', [NhanVienController::class, 'dangXuatAll']);
 
 //login with google
-Route::get('/auth/google', [LoginGoogleController::class, 'redirectToGoogle']);
-Route::get('/auth/google/callback', [LoginGoogleController::class, 'handleGoogleCallback']);
+
 
 // Thêm route mới để xử lý kết quả thanh toán
+Route::post('/thanh-toan/dat-dich-vu', [ThanhToanController::class, 'datDichVu']);
+Route::post('/thanh-toan/huy-dich-vu', [ThanhToanController::class, 'huyDichVu']);
 Route::post('/thanh-toan', [ThanhToanController::class, 'thanhToan']);
 Route::post('/thanh-toan/ket-qua', [ThanhToanController::class, 'ketQuaThanhToan']); // Đổi từ GET sang POST
 Route::get('/thanh-toan/ipn', [ThanhToanController::class, 'ipnVnpay']); // Thêm route cho IPN
 Route::get('/thanh-toan/chi-tiet-hoa-don/{maHoaDon}', [ThanhToanController::class, 'chiTietHoaDon']);
+Route::get('/hoa-don/check-in/{ma_hoa_don}', [ThanhToanController::class, 'checkInHoaDon']);
 
 // Chatbot API routes
 
 Route::post('/chatbot/query', [ChatbotController::class, 'query']);
 Route::get('/chatbot/suggest-movies', [ChatbotController::class, 'suggestMovies']);
+Route::post('/chatbot/bill-history', [ChatbotController::class, 'viewBillHistory']);
 
 Route::prefix('goc-dien-anh')->group(function () {
     Route::get('/data', [GocDienAnhController::class, 'getData']);
@@ -220,4 +260,15 @@ Route::prefix('goc-dien-anh')->group(function () {
     Route::post('/update', [GocDienAnhController::class, 'updateData']);
     Route::delete('/delete/{id}', [GocDienAnhController::class, 'deleteData']);
     Route::post('/doi-trang-thai', [GocDienAnhController::class, 'doiTrangThai']);
+    Route::get('/data-by-id/{id}', [GocDienAnhController::class, 'getDataById']);
 });
+
+Route::get('/su-kien/client/data', [SuKienController::class, 'getDataSuKien']);
+// Su kien client chi tiet
+Route::get('/su-kien/client/chi-tiet/{id}', [SuKienController::class, 'getChiTietSuKien']);
+
+Route::get('/suat-chieu/lay-suat/{id_phim}/{id_phong}', [SuatChieuController::class, 'laySuat']);
+
+Route::get('/chi-tiet-ve/lay-theo-suat/{id_suat}', [ChiTietVeController::class, 'layTheoSuat']);
+
+//kiểm tra admin

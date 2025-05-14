@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Http\Requests\DoiMatKhauRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\KhachHang;
@@ -12,6 +14,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\SendMail;
 use App\Models\ChiTietPhanQuyen;
 use App\Models\ChucVu;
+use App\Models\HoaDon;
 
 class KhachHangController extends Controller
 {
@@ -80,7 +83,8 @@ class KhachHangController extends Controller
         }
     }
 
-    public function thongTinCaNhan(){
+    public function thongTinCaNhan()
+    {
         $user = Auth::guard('sanctum')->user();
         return response()->json([
             'data' => $user
@@ -142,19 +146,17 @@ class KhachHangController extends Controller
                 ->first();
             if ($check) {
                 $data   = $request->all();
-        KhachHang::find($request->id)->update($data);
-        return response()->json([
-            'status'    =>  true,
-            'message'   =>  'Đã cập nhật  thành công!'
-        ]);
+                KhachHang::find($request->id)->update($data);
+                return response()->json([
+                    'status'    =>  true,
+                    'message'   =>  'Đã cập nhật  thành công!'
+                ]);
             } else {
                 return response()->json([
                     "message" => 'bạn không có quyền này'
                 ]);
             }
         }
-
-
     }
     public function doiTrangThai(Request $request)
     {
@@ -164,24 +166,24 @@ class KhachHangController extends Controller
             ->first();
         if ($master->is_master) {
             $khach_hang = KhachHang::find($request->id);
-        if ($khach_hang) {
-            if ($khach_hang->tinh_trang == 1) {
-                $khach_hang->tinh_trang = 0;
-            } else {
-                $khach_hang->tinh_trang = 1;
-            }
-            $khach_hang->save();
+            if ($khach_hang) {
+                if ($khach_hang->tinh_trang == 1) {
+                    $khach_hang->tinh_trang = 0;
+                } else {
+                    $khach_hang->tinh_trang = 1;
+                }
+                $khach_hang->save();
 
-            return response()->json([
-                'status' => true,
-                'message' => "Đổi trạng thái khách hàng thành công!"
-            ]);
-        } else {
-            return response()->json([
-                'status' => false,
-                'message' => "Đã có lỗi xảy ra!"
-            ]);
-        }
+                return response()->json([
+                    'status' => true,
+                    'message' => "Đổi trạng thái khách hàng thành công!"
+                ]);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => "Đã có lỗi xảy ra!"
+                ]);
+            }
         } else {
             $check = ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
                 ->where('chuc_vus.tinh_trang', 1)
@@ -214,20 +216,10 @@ class KhachHangController extends Controller
                 ]);
             }
         }
-
-
     }
 
     public function dangNhap(Request $request)
     {
-
-        // $check = NhanVien::where('email',$request->email)
-        //                   ->where('password',$request->password)
-        //                   ->first();
-
-        // Câu lệnh này cố gắng xác thực người dùng với guard nhan_vien bằng cách kiểm tra email và mật khẩu được cung cấp. Nếu thông tin đăng nhập đúng,
-        // người dùng sẽ được xác thực và phương thức attempt sẽ trả về true. Nếu thông tin đăng nhập không đúng, nó sẽ trả về false.
-        // khi mật khẩu mã hóa ở database khi người dùng nhập câu lệnh này xác thực người dùng nhập có đúng với mk trước khi mã hóa
         $check  = Auth::guard('khach_hang')->attempt(['email' => $request->email, 'password' =>  $request->password]);
         if ($check) {
             $user =  Auth::guard('khach_hang')->user();
@@ -290,21 +282,26 @@ class KhachHangController extends Controller
         ]);
     }
 
-    public function doiMatKhau(Request $request){
+    public function doiMatKhau(DoiMatKhauRequest $request)
+    {
         $check  = Auth::guard('khach_hang')->attempt(['email' => $request->email, 'password' =>  $request->password]);
 
         $kh = KhachHang::where('email', $request->email)->first();
-        if($check){
+        if ($check) {
             $kh['password'] = bcrypt($request->moi);
             $kh->save();
+            $ds_token = $kh->tokens;
+            foreach ($ds_token as $k => $v) {
+                $v->delete();
+            }
             return response()->json([
                 'status' => true,
-                'message'=> "Đổi mật khẩu thành công"
+                'message' => "Đổi mật khẩu thành công"
             ]);
-        }else{
+        } else {
             return response()->json([
                 'status' => false,
-                'message'=> "Đổi mật khẩu thất bại"
+                'message' => "Đổi mật khẩu thất bại"
             ]);
         }
     }
@@ -420,5 +417,19 @@ class KhachHangController extends Controller
                 'message' => "Vui lòng đăng nhập"
             ]);
         }
+    }
+    public function loadHD()
+    {
+        $khach_hang = Auth::guard('sanctum')->user();
+        $data = HoaDon::where('id_khach_hang', $khach_hang->id)
+            ->where('trang_thai', '1')
+            ->get();
+        $tong_tien_da_thanh_toan = HoaDon::where('id_khach_hang', $khach_hang->id)
+            ->where('trang_thai', '1')
+            ->sum('tong_tien');
+        return response()->json([
+            'data' => $data,
+            'tong_tien_da_thanh_toan' => $tong_tien_da_thanh_toan
+        ]);
     }
 }

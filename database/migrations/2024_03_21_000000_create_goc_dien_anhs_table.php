@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class GocDienAnh extends Model
+return new class extends Migration
 {
-    public function up(): void
+    public function up()
     {
         Schema::create('goc_dien_anhs', function (Blueprint $table) {
             $table->id();
@@ -21,11 +19,8 @@ class GocDienAnh extends Model
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('goc_dien_anhs');
     }
-}
+};

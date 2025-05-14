@@ -1,0 +1,156 @@
+<template>
+    <div class="check-qr">
+        <div class="card">
+            <div class="header">
+                <i class="fas fa-ticket-alt ticket-icon"></i>
+                <h1>Trang Check-in Hóa Đơn</h1>
+            </div>
+
+            <div class="content">
+                <div v-if="maHoaDon" class="invoice-info">
+                    <span class="label">Mã hóa đơn:</span>
+                    <span class="value">{{ maHoaDon }}</span>
+                </div>
+                <div v-else class="error-message">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>Không tìm thấy mã hóa đơn trên URL.</p>
+                </div>
+
+                <div v-if="maHoaDon" class="button-group">
+                    <button class="btn btn-primary" @click="checkInVe">
+                        <i class="fas fa-check-circle"></i>
+                        Check-in Vé
+                    </button>
+                    <button class="btn btn-secondary" @click="checkInDichVu">
+                        <i class="fas fa-concierge-bell"></i>
+                        Check-in Dịch Vụ
+                    </button>
+                </div>
+
+                <div v-if="message" :class="['message', message.includes('❌') ? 'error' : 'success']">
+                    {{ message }}
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+import { createToaster } from "@meforma/vue-toaster";
+const toaster = createToaster({ position: "top-right" });
+import axios from 'axios';
+
+export default {
+    name: 'CheckQR',
+    data() {
+        return {
+            maHoaDon: '',
+            message: '',
+            token: null
+        };
+    },
+    mounted() {
+        const params = new URLSearchParams(window.location.search);
+        this.maHoaDon = params.get('ma_hoa_don') || '';
+        this.token = localStorage.getItem("token_admin");
+
+        if (!this.token) {
+            this.message = "❌ Bạn cần đăng nhập để thực hiện chức năng này";
+            toaster.error(this.message);
+        }
+    },
+    methods: {
+        getHeaders() {
+            return {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json'
+                }
+            };
+        },
+
+        verifyToken() {
+            if (!this.token) {
+                this.message = "❌ Bạn cần đăng nhập để thực hiện chức năng này";
+                toaster.error(this.message);
+                return false;
+            }
+            return true;
+        },
+
+        async checkInVe() {
+            if (!this.verifyToken()) return;
+            if (!this.maHoaDon) {
+                this.message = "❌ Mã hóa đơn không hợp lệ";
+                toaster.error(this.message);
+                return;
+            }
+
+            try {
+                const response = await axios.post(
+                    `http://127.0.0.1:8000/api/hoa-don/check-in/${this.maHoaDon}`,
+                    {},
+                    this.getHeaders()
+                );
+
+                if (response.data.status) {
+                    this.message = response.data.message;
+                    toaster.success(this.message);
+                } else {
+                    this.message = response.data.message;
+                    toaster.error(this.message);
+                }
+            } catch (err) {
+                if (err.response?.status === 401) {
+                    this.message = "❌ Token không hợp lệ hoặc đã hết hạn";
+                    localStorage.removeItem("token_admin");
+                    this.token = null;
+                } else {
+                    this.message = err.response?.data?.message || "❌ Có lỗi xảy ra";
+                }
+                toaster.error(this.message);
+                console.error('Lỗi:', err);
+            }
+        },
+
+        async checkInDichVu() {
+            if (!this.verifyToken()) return;
+            if (!this.maHoaDon) {
+                this.message = "❌ Mã hóa đơn không hợp lệ";
+                toaster.error(this.message);
+                return;
+            }
+
+            try {
+                const response = await axios.post(
+                    `http://127.0.0.1:8000/api/hoa-don/check-in-dich-vu/${this.maHoaDon}`,
+                    {},
+                    this.getHeaders()
+                );
+
+                if (response.data.status) {
+                    this.message = response.data.message;
+                    toaster.success(this.message);
+                } else {
+                    this.message = response.data.message;
+                    toaster.error(this.message);
+                }
+            } catch (err) {
+                if (err.response?.status === 401) {
+                    this.message = "❌ Token không hợp lệ hoặc đã hết hạn";
+                    localStorage.removeItem("token_admin");
+                    this.token = null;
+                } else {
+                    this.message = err.response?.data?.message || "❌ Có lỗi xảy ra";
+                }
+                toaster.error(this.message);
+                console.error('Lỗi:', err);
+            }
+        }
+    }
+}
+</script>
+
+<style scoped>
+// ... existing code ...
+</style>

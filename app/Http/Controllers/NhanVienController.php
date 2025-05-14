@@ -236,6 +236,7 @@ class NhanVienController extends Controller
                 'token'         => $user->createToken('token')->plainTextToken,
 
                 'ho_ten_admin'  => $user->ten_nhan_vien,
+                'id_nhan_vien'  => $user->id,
 
                 'avatar_admin'  => $user->avatar,
                 'message'       =>  'Đã đăng nhập thành công'

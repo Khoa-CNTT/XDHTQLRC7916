@@ -2,70 +2,75 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DichVu;
+use App\Models\SuKien;
 use Illuminate\Http\Request;
 
-class DichVuController extends Controller
+class SuKienController extends Controller
 {
     public function getData(){
-        $data   =   DichVu::all();
+        $data   =   SuKien::all();
         return response()->json([
             'data'  =>  $data
         ]);
     }
-    public function getDataDichVu(){
-        $data   =   DichVu::where('tinh_trang', 1)->get();
+
+    public function getDataSuKien(){
+        $data   =   SuKien::where('tinh_trang', 1)->get();
         return response()->json([
             'data'  =>  $data
         ]);
     }
-    public function getDataDichVuKhuyenMai(){
-        $data   =   DichVu::take(8)->get();
+
+    public function getChiTietSuKien($id){
+        $data   =   SuKien::find($id);
         return response()->json([
             'data'  =>  $data
         ]);
     }
+
     public function createData(Request $request){
         $data   =   $request->all();
-        DichVu::create($data);
+        SuKien::create($data);
 
         return response()->json([
             'status'    =>  true,
-            'message'   =>  'Đã tạo mới dịch vụ thành công!'
+            'message'   =>  'Đã tạo mới sự kiện thành công!'
         ]);
     }
+
     public function deleteData($id)
     {
-        DichVu::find($id)->delete();
+        SuKien::find($id)->delete();
 
         return response()->json([
             'status'    =>  true,
-            'message'   =>  'Đã xoá dịch vụ thành công!'
+            'message'   =>  'Đã xoá sự kiện thành công!'
         ]);
     }
 
     public function updateData(Request $request)
     {
         $data   = $request->all();
-        DichVu::find($request->id)->update($data);
+        SuKien::find($request->id)->update($data);
         return response()->json([
             'status'    =>  true,
-            'message'   =>  'Đã cập nhật dịch vụ thành công!'
+            'message'   =>  'Đã cập nhật sự kiện thành công!'
         ]);
     }
+
     public function doiTrangThai(Request $request){
-        $dich_vu = DichVu::find($request->id);
-        if($dich_vu) {
-            if($dich_vu->tinh_trang == 1) {
-                $dich_vu->tinh_trang = 0;
+        $su_kien = SuKien::find($request->id);
+        if($su_kien) {
+            if($su_kien->tinh_trang == 1) {
+                $su_kien->tinh_trang = 0;
             } else {
-                $dich_vu->tinh_trang = 1;
+                $su_kien->tinh_trang = 1;
             }
-            $dich_vu->save();
+            $su_kien->save();
 
             return response()->json([
                 'status' => true,
-                'message' => "Đổi trạng thái dịch vụ thành công!"
+                'message' => "Đổi trạng thái sự kiện thành công!"
             ]);
         } else {
             return response()->json([
