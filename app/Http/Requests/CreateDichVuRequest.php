@@ -23,7 +23,7 @@ class CreateDichVuRequest extends FormRequest
     {
         return [
             'ten_dich_vu' => 'required|string|max:255',
-            'gia_dich_vu' => 'required|numeric|min:0',
+            'gia_tien' => 'required|numeric|min:0',
             'hinh_anh' => 'required|string|max:255',
             'tinh_trang' => 'required|boolean',
         ];
@@ -34,9 +34,9 @@ class CreateDichVuRequest extends FormRequest
             'ten_dich_vu.required' => 'Vui lòng nhập tên dịch vụ.',
             'ten_dich_vu.string' => 'Tên dịch vụ phải là chuỗi ký tự.',
             'ten_dich_vu.max' => 'Tên dịch vụ không được vượt quá 255 ký tự.',
-            'gia_dich_vu.required' => 'Vui lòng nhập giá dịch vụ.',
-            'gia_dich_vu.numeric' => 'Giá dịch vụ phải là số.',
-            'gia_dich_vu.min' => 'Giá dịch vụ không được nhỏ hơn 0.',
+            'gia_tien.required' => 'Vui lòng nhập giá dịch vụ.',
+            'gia_tien.numeric' => 'Giá dịch vụ phải là số.',
+            'gia_tien.min' => 'Giá dịch vụ không được nhỏ hơn 0.',
             'hinh_anh.required' => 'Vui lòng nhập hình ảnh.',
             'hinh_anh.string' => 'Hình ảnh phải là chuỗi ký tự.',
             'hinh_anh.max' => 'Hình ảnh không được vượt quá 255 ký tự.',

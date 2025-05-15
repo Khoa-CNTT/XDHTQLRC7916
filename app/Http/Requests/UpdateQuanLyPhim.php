@@ -23,18 +23,18 @@ class UpdateQuanLyPhim extends FormRequest
     {
         return [
             'ten_phim'           => 'required|string|max:255',
-            'slug_phim'          => 'required|string|max:255|unique:quan_ly_phims,slug_phim,' . $this->route('phim'),
+            'slug_phim'          => 'required|string|max:255|unique:quan_ly_phims,slug_phim,' . $this->id . ',id',
             'ngay_chieu'         => 'required|date',
             'thoi_luong'         => 'required|integer|min:1',
             'dao_dien'           => 'required|string|max:100',
             'hinh_anh'           => 'required|string|max:255',
-            'trailer_ytb'        => 'required|url|max:255',
+            'trailer_ytb'        => 'required|string|max:255',
             'dien_vien'          => 'required|string|max:255',
             'nha_san_xuat'       => 'required|string|max:255',
             'id_the_loai'        => 'required|exists:the_loais,id',
             'gioi_han_do_tuoi'   => 'required|integer|min:0',
             'mo_ta'              => 'required|string',
-            'danh_gia'           => 'required|numeric|min:0|max:10',
+            'danh_gia'           => 'required|string',
             'tinh_trang'         => 'required|boolean',
         ];
     }
@@ -47,6 +47,7 @@ class UpdateQuanLyPhim extends FormRequest
             'slug_phim.required'        => 'Vui lòng nhập slug phim.',
             'slug_phim.unique'          => 'Slug phim đã tồn tại.',
             'slug_phim.max'             => 'Slug phim không được vượt quá 255 ký tự.',
+            'slug_phim.string'          => 'Slug phim phải là chuỗi ký tự.',
 
             'ngay_chieu.required'       => 'Vui lòng nhập ngày chiếu.',
             'ngay_chieu.date'           => 'Ngày chiếu không hợp lệ.',
@@ -62,7 +63,7 @@ class UpdateQuanLyPhim extends FormRequest
             'hinh_anh.max'              => 'Hình ảnh không được vượt quá 255 ký tự',
             'hinh_anh.required'         => 'Vui lòng nhập hình ảnh.',
 
-            'trailer_ytb.url'           => 'Trailer phải là URL hợp lệ.',
+            'trailer_ytb.string'        => 'Trailer phải là chuỗi ký tự',
             'trailer_ytb.max'           => 'Link trailer không được quá 255 ký tự.',
             'trailer_ytb.required'      => 'Vui lòng nhập link trailer.',
 
@@ -79,10 +80,9 @@ class UpdateQuanLyPhim extends FormRequest
             'gioi_han_do_tuoi.integer'  => 'Giới hạn độ tuổi phải là số nguyên.',
             'gioi_han_do_tuoi.min'      => 'Giới hạn độ tuổi không được âm.',
 
-            'danh_gia.numeric'          => 'Đánh giá phải là số.',
-            'danh_gia.min'              => 'Đánh giá không được nhỏ hơn 0.',
-            'danh_gia.max'              => 'Đánh giá không được lớn hơn 10.',
+
             'danh_gia.required'         => 'Vui lòng nhập đánh giá.',
+            'danh_gia.string'           => 'Đánh giá phải là chuỗi ký tự',
             'tinh_trang.required'       => 'Vui lòng chọn tình trạng.',
             'tinh_trang.boolean'        => 'Tình trạng phải là true hoặc false.',
         ];

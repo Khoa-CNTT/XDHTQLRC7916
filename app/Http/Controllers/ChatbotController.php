@@ -555,7 +555,6 @@ class ChatbotController extends Controller
                  "2. Sử dụng ngôn ngữ tự nhiên, thân thiện\n" .
                  "3. Thêm emoji phù hợp\n" .
                  "4. Nếu không có đủ thông tin, gợi ý các chủ đề liên quan\n" .
-                 "5. Nếu có link phim, giữ nguyên thẻ HTML <a>\n" .
                  "6. Với suất chiếu, luôn hiển thị giờ và ngày theo định dạng HH:mm dd/MM/yyyy\n" .
                  "7. Với số tiền, format theo định dạng việt nam (VD: 100.000 VNĐ)\n" .
                  "8. Với dịch vụ, nhóm theo loại (đồ ăn, đồ uống, combo) và hiển thị giá\n" .

@@ -30,7 +30,7 @@ class QuanLyPhimController extends Controller
             'quan_ly_phim' => $data,
         ]);
     }
-    public function themMoiQuanLyPhim(Request $request)
+    public function themMoiQuanLyPhim(createQuanLyPhim $request)
     {
         try {
             $phim = QuanLyPhim::create([
@@ -114,7 +114,7 @@ class QuanLyPhimController extends Controller
             ], 500);
         }
     }
-    public function createQuanLyPhim(Request $request)
+    public function createQuanLyPhim(UpdateQuanLyPhim $request)
     {
         try {
             $phim = QuanLyPhim::find($request->id);

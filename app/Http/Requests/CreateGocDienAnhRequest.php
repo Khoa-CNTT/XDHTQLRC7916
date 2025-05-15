@@ -24,8 +24,9 @@ class CreateGocDienAnhRequest extends FormRequest
         return [
             'tieu_de' => 'required|string|max:255',
             'hinh_anh' => 'required|string|max:255',
-            'mo_ta' => 'required|string|max:255',
-            'tinh_trang' => 'required|boolean',
+            'noi_dung' => 'required|string|max:255',
+            'ngay_dang' => 'required|date',
+            'trang_thai' => 'required|boolean',
         ];
     }
     public function messages(): array
@@ -37,11 +38,13 @@ class CreateGocDienAnhRequest extends FormRequest
             'hinh_anh.required' => 'Vui lòng nhập hình ảnh.',
             'hinh_anh.string' => 'Hình ảnh phải là chuỗi.',
             'hinh_anh.max' => 'Hình ảnh không được vượt quá 255 ký tự.',
-            'mo_ta.required' => 'Vui lòng nhập mô tả.',
-            'mo_ta.string' => 'Mô tả phải là chuỗi.',
-            'mo_ta.max' => 'Mô tả không được vượt quá 255 ký tự.',
-            'tinh_trang.required' => 'Vui lòng chọn trạng thái.',
-            'tinh_trang.boolean' => 'Trạng thái phải là true hoặc false.',
+            'noi_dung.required' => 'Vui lòng nhập nội dung.',
+            'noi_dung.string' => 'Nội dung phải là chuỗi.',
+            'noi_dung.max' => 'Nội dung không được vượt quá 255 ký tự.',
+            'ngay_dang.required' => 'Vui lòng chọn ngày đăng.',
+            'ngay_dang.date' => 'Ngày đăng phải là ngày.',
+            'trang_thai.required' => 'Vui lòng chọn trạng thái.',
+            'trang_thai.boolean' => 'Trạng thái phải là true hoặc false.',
         ];
     }
 }
