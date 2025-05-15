@@ -28,16 +28,13 @@ class CreateQuanLyPhim extends FormRequest
             'thoi_luong'        => 'required|string|max:50',
             'dao_dien'          => 'required|string|max:50',
             'hinh_anh'          => 'required|string|max:255',
-            'baner1'          => 'required|string|max:255',
-            'baner2'          => 'required|string|max:255',
-            'baner3'          => 'required|string|max:255',
             'dien_vien'         => 'required|string|max:50',
             'nha_san_xuat'      => 'required|string|max:50',
-            'id_the_loai'       => 'required|string|max:50',
             'gioi_han_do_tuoi'  => 'required|string|max:50',
             'mo_ta'             => 'required|string|max:255',
             'danh_gia'          => 'required|string|max:255',
             'tinh_trang'        => 'required|boolean',
+            'trailer_ytb'       => 'required|string|max:255',
         ];
     }
     public function messages()
@@ -63,7 +60,6 @@ class CreateQuanLyPhim extends FormRequest
             'nha_san_xuat.required'             => 'Nhà sản xuất yêu cầu phải nhập',
             'nha_san_xuat.string'              => 'Nhà sản xuất phải là chuỗi ký tự',
             'nha_san_xuat.max'                 => 'Nhà sản xuất không quá 50 ký tự',
-            'id_the_loai.required'              => 'Thể loại yêu cầu phải nhập',
             'gioi_han_do_tuoi.required'         => 'Giới hạn độ tuổi yêu cầu phải nhập',
             'gioi_han_do_tuoi.string'           => 'Giới hạn độ tuổi phải là chuỗi ký tự',
             'gioi_han_do_tuoi.max'              => 'Giới hạn độ tuổi không quá 50 ký tự',
@@ -75,26 +71,12 @@ class CreateQuanLyPhim extends FormRequest
             'danh_gia.max'                     => 'Đánh giá không quá 255 kí tự',
             'tinh_trang.required'               => 'Tình Trạng bắt buộc phải nhập',
             'tinh_trang.boolean'               => 'Tình Trạng phải là true hoặc false',
-            'baner1.required'                   => 'Banner 1 yêu cầu phải nhập',
-            'baner1.string'                     => 'Banner 1 phải là chuỗi ký tự',
-            'baner1.max'                        => 'Banner 1 không quá 255 ký tự',
-            'baner2.required'                   => 'Banner 2 yêu cầu phải nhập',
-            'baner2.string'                     => 'Banner 2 phải là chuỗi ký tự',
-            'baner2.max'                        => 'Banner 2 không quá 255 ký tự',
-            'baner3.required'                   => 'Banner 3 yêu cầu phải nhập',
-            'baner3.string'                     => 'Banner 3 phải là chuỗi ký tự',
-            'baner3.max'                        => 'Banner 3 không quá 255 ký tự',
             'trailer_ytb.required'               => 'Trailer yêu cầu phải nhập',
             'trailer_ytb.string'                 => 'Trailer phải là chuỗi ký tự',
             'trailer_ytb.max'                    => 'Trailer không quá 255 ký tự',
             'slug_phim.required'                 => 'Slug phim yêu cầu phải nhập',
             'slug_phim.string'                   => 'Slug phim phải là chuỗi ký tự',
             'slug_phim.max'                      => 'Slug phim không quá 50 ký tự',
-            'id_the_loai.required'               => 'Thể loại yêu cầu phải nhập',
-            'id_the_loai.string'                 => 'Thể loại phải là chuỗi ký tự',
-            'id_the_loai.max'                    => 'Thể loại không quá 50 ký tự',
-            'id_the_loai.exists'                 => 'Thể loại không tồn tại',
-            
         ];
     }
 

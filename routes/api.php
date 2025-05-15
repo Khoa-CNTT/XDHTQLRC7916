@@ -90,6 +90,7 @@ Route::group(['middleware' => 'adminMiddle'], function () {
 
 
 
+
     Route::post('/chuc-nang/data', [ChiTietPhanQuyenController::class, 'getDataCN']);
     Route::post('/chi-tiet-quyen/data', [ChiTietPhanQuyenController::class, 'getData']);
     Route::post('/chi-tiet-quyen/cap-quyen', [ChiTietPhanQuyenController::class, 'capQuyen']);
@@ -115,14 +116,8 @@ Route::group(['middleware' => 'adminMiddle'], function () {
 
     // Quản lý ghế
     Route::get('/ghe/data', [GheController::class, 'getData']);
-    Route::post('/ghe/create', [GheController::class, 'createData']);
-    Route::put('/ghe/update', [GheController::class, 'updateData']);
-    Route::delete('/ghe/delete/{id}', [GheController::class, 'deleteData']);
-    Route::post('/ghe/create-multiple', [GheController::class, 'createMultipleGhe']);
-
-
+    Route::get('/ghe/search', [GheController::class, 'search']);
     Route::get('/ghe/theo-phong/{phongId}', [GheController::class, 'getGheTheoPhong']);
-    Route::put('/ghe/doi-trang-thai', [GheController::class, 'doiTrangThai']);
     Route::put('/ghe/doi-loai-ghe', [GheController::class, 'doiLoaiGhe']);
 
     Route::post('/hoa-don/check-in/{ma_hoa_don}', [ThanhToanController::class, 'checkInHoaDon']);
