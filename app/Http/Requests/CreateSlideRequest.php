@@ -4,14 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CapNhatBanerRequest extends FormRequest
+class CreateSlideRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-            return true;
+        return true ;
     }
 
     /**
@@ -22,13 +22,17 @@ class CapNhatBanerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'link' => 'required',
+            'link_hinh_anh' => 'required|string',
+            'tinh_trang' => 'required|boolean',
         ];
     }
     public function messages(): array
     {
         return [
-            'link.required' => 'Vui lòng nhập link.',
+            'link_hinh_anh.required' => 'Vui lòng nhập hình ảnh.',
+            'link_hinh_anh.string' => 'Hình ảnh phải là chuỗi ký tự.',
+            'tinh_trang.required' => 'Vui lòng chọn tình trạng.',
+            'tinh_trang.boolean' => 'Tình trạng phải là true hoặc false.',
         ];
     }
 }

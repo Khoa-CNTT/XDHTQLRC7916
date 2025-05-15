@@ -166,7 +166,7 @@ COMBO C = 01 ly LẬT MẶT 8 + 02 nước ngọt + 01 bắp lớn
                 'hinh_anh' => 'https://media.lottecinemavn.com/Media/Event/fe85760122524f44be62bda6f814edcf.jpg',
             ],
             [
-                'ten_su_kien' => 'TDIỆN ĐỒ CHẤT VIỆT - NHẬN QUÀ CỰC CHẤT',
+                'ten_su_kien' => 'DIỆN ĐỒ CHẤT VIỆT - NHẬN QUÀ CỰC CHẤT',
                 'ngay_bat_dau' => '2024-08-15',
                 'ngay_ket_thuc' => '2024-08-30',
                 'tinh_trang' => 1,

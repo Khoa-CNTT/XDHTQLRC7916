@@ -26,7 +26,6 @@ class QuanLyPhimSeeder extends Seeder
                 'trailer_ytb'      => 'https://www.youtube.com/embed/zKMOgOWn8lQ?si=Z9vaeQU9zvxcSIHy',
                 'dien_vien'        => 'Tran Thành, Le Duong Bao Lam, Le Giang, Uyen An, Quoc Anh, Tieu Vi, Ky Duyen',
                 'nha_san_xuat'     => '3388 Films',
-                'id_chi_tiet_the_loai' => 1,
                 'gioi_han_do_tuoi' => '13+',
                 'mo_ta'            => 'Bộ tứ báo thủ xoay quanh mối tình tay ba đầy trớ trêu nhưng cũng lắm chiêu trò giữa ba nhân vật chính.',
                 'danh_gia'         => '9.5/10',
@@ -44,7 +43,6 @@ class QuanLyPhimSeeder extends Seeder
                 'trailer_ytb'      => 'https://www.youtube.com/embed/T6H8dxaoyI8?si=Z9vaeQU9zvxcSIHy',
                 'dien_vien'        => 'Thu Trang, Đoàn Thiên Ân, Lê Xuân Tiền, Ma Ran Đô, Tiến Luật',
                 'nha_san_xuat'     => 'Thu Trang',
-                'id_chi_tiet_the_loai' => 1,
                 'gioi_han_do_tuoi' => '16+',
                 'mo_ta'            => 'Vân – cô gái bán bánh mì – vô tình gặp hai chàng trai trong một tai nạn, tạo nên mối tình tay ba đầy kịch tính và hài hước.',
                 'danh_gia'         => '9.3/10',
@@ -62,7 +60,6 @@ class QuanLyPhimSeeder extends Seeder
                 'trailer_ytb'      => 'https://www.youtube.com/embed/Z7AbUpnfcW8?si=GXcIQOuNXxq7XC-q',
                 'dien_vien'        => 'Kaity Nguyễn, Trần Ngọc Vàng, Thanh Sơn',
                 'nha_san_xuat'     => 'HK Film, Galaxy Studio',
-                'id_chi_tiet_the_loai' => 1,
                 'gioi_han_do_tuoi' => '16+',
                 'mo_ta'            => 'Bình An – cô gái đang hạnh phúc với bạn trai – bỗng rơi vào tình thế “friend zone” với người bạn thân Toàn, tạo nên chuỗi tình huống dở khóc dở cười.',
                 'danh_gia'         => '8.5/10',
@@ -80,7 +77,6 @@ class QuanLyPhimSeeder extends Seeder
                 'trailer_ytb'      => 'https://www.youtube.com/embed/VQOOUxTah0w?si=SQ2DAWz5M6H4dwEz',
                 'dien_vien'        => 'Jirayu La‑ongmani, Sananthachat Thanapatpisal, Chinawut Indracusin, Supathat Opas, Auttawut Inthong',
                 'nha_san_xuat'     => '',
-                'id_chi_tiet_the_loai' => 1,
                 'gioi_han_do_tuoi' => '16+',
                 'mo_ta'            => 'San mơ trở lại với sự nghiệp, bất ngờ “trượt chân” vào lưới tình với Momo, khiến bao tình huống dở khóc dở cười xảy ra.',
                 'danh_gia'         => '7.8/10',
@@ -98,7 +94,6 @@ class QuanLyPhimSeeder extends Seeder
                 'trailer_ytb'      => 'https://www.youtube.com/embed/a0XdUK9Onvc?si=KcpZeecpSCYNnL7m',
                 'dien_vien'        => 'Putthipong Assaratanakul, Krit Amnuaydechkorn, Goy Arachaporn Pokinpakorn, Piyamas Monayakul, Jaturong Mokjok',
                 'nha_san_xuat'     => 'Weerachai Yaikwawong, Banjong Pisanthanakun',
-                'id_chi_tiet_the_loai' => 1,
                 'gioi_han_do_tuoi' => '18+',
                 'mo_ta'            => 'Menn – chàng trai thẳng – bỗng bị ràng buộc bởi phong tục minh hôn với hồn ma, tạo nên phiêu lưu vừa lầy lội vừa cảm động.',
                 'danh_gia'         => '8.5/10',
@@ -116,7 +111,6 @@ class QuanLyPhimSeeder extends Seeder
                 'trailer_ytb'      => 'https://www.youtube.com/embed/sdV_dQiyG1s?si=tULeRwvNkGRihq9a"',
                 'dien_vien'        => 'Hooman Hajabdollahi, Javad Pezeshkian, Hedayat Hashemi, Mir Taher Mazloomi, Tooraj Nasr',
                 'nha_san_xuat'     => 'Hamed Jafari',
-                'id_chi_tiet_the_loai' => 1,
                 'gioi_han_do_tuoi' => '13+',
                 'mo_ta'            => 'Cậu bé mơ làm siêu anh hùng bỗng bước vào cuộc phiêu lưu giải cứu chú hổ trước nhóm thợ săn dữ tợn.',
                 'danh_gia'         => '6.6/10',
@@ -134,7 +128,6 @@ class QuanLyPhimSeeder extends Seeder
                 'trailer_ytb'      => 'https://www.youtube.com/embed/O1f6L1Pqu28?si=FeCMKaUuNSwC26X9',
                 'dien_vien'        => 'Jason Momoa, Jack Black, Emma Myers, Sebastian Eugene Hansen, Danielle Brooks',
                 'nha_san_xuat'     => 'Roy Lee, Jill Messick',
-                'id_chi_tiet_the_loai' => 1,
                 'gioi_han_do_tuoi' => '13+',
                 'mo_ta'            => 'Bốn người bị kéo vào thế giới Minecraft, phải học cách sinh tồn và trở về nhà qua hành trình đầy khối lập phương kỳ ảo.',
                 'danh_gia'         => '8.7/10',
@@ -152,7 +145,6 @@ class QuanLyPhimSeeder extends Seeder
                 'trailer_ytb'      => 'https://www.youtube.com/embed/rTsV2tzDv6Y?si=1FoIFcIPMDOjjNTe',
                 'dien_vien'        => 'Lee Sun, Lee Mi-ja, Ham Su-jung, Hong So-young, Jung Mi-sook',
                 'nha_san_xuat'     => 'Kim Hyun-ho, Park Hyun-kuk',
-                'id_chi_tiet_the_loai' => 1,
                 'gioi_han_do_tuoi' => '13+',
                 'mo_ta'            => 'Pororo và bạn bè khám phá đại dương, đối mặt quái vật Seatus và học bài học về biển cả.',
                 'danh_gia'         => '8.5/10',
@@ -170,7 +162,6 @@ class QuanLyPhimSeeder extends Seeder
                 'trailer_ytb' => 'https://www.youtube.com/embed/LWkh_hXeEeg?si=ki5WpumVYNwKPzFQ', // Giữ nguyên, không có link trailer chính thức trực tiếp từ tìm kiếm
                 'dien_vien' => 'Jung Kook',
                 'nha_san_xuat' => 'HYBE',
-                'id_chi_tiet_the_loai' => 1, // Bạn tự ánh xạ sang ID tương ứng
                 'gioi_han_do_tuoi' => '13+', // Theo thông tin tìm được
                 'mo_ta' => 'Bộ phim tài liệu ghi lại hành trình 8 tháng của Jung Kook (BTS) với tư cách nghệ sĩ solo, bao gồm các cuộc phỏng vấn độc quyền chưa từng thấy, cảnh hậu trường và các màn trình diễn lôi cuốn trên sân khấu, hé lộ sự cống hiến và phát triển không ngừng của anh.',
                 'danh_gia' => '8/10',
@@ -188,7 +179,6 @@ class QuanLyPhimSeeder extends Seeder
                 'trailer_ytb' => 'https://www.youtube.com/embed/xVVZvSybaEc?si=bSPn4ROqIJ4E0IuJ', // Giữ nguyên
                 'dien_vien' => 'Nadech Kugimiya, Denise Jelilcha Kapaun, Mim Rattawadee Wongthong, Kajbundit Jaidee, Peerakrit Phacharabunyakiat, Natthacha Nina Jessica Padovan, Arisara Wongchalee, Pramet Noi-am', // Bổ sung diễn viên
                 'nha_san_xuat' => 'Major Join Film, M Studio', // Cần kiểm tra nhà sản xuất cụ thể cho phần 2 nếu có
-                'id_chi_tiet_the_loai' => 1,
                 'gioi_han_do_tuoi' => '16+', // Giữ nguyên, phim kinh dị thường có giới hạn này hoặc cao hơn
                 'mo_ta' => 'Tiếp nối những sự kiện kinh hoàng từ phần đầu, gia đình nhân vật chính tiếp tục đối mặt với những thế lực tà ác và những bí mật đen tối hơn được hé lộ.',
                 'danh_gia' => '4/5',
@@ -206,7 +196,6 @@ class QuanLyPhimSeeder extends Seeder
                 'trailer_ytb' => 'https://www.youtube.com/embed/2l8_FNIBWLM?si=LBqapQ_4tWzCBkXr', // Giữ nguyên
                 'dien_vien' => 'Lupita Nyong, Pedro Pascal, Catherine O, Bill Nighy, Kit Connor, Stephanie Hsu, Mark Hamill, Matt Berry, Ving Rhames', // Cập nhật và bổ sung diễn viên lồng tiếng
                 'nha_san_xuat' => 'DreamWorks Animation', // Cập nhật nhà sản xuất
-                'id_chi_tiet_the_loai' => 1,
                 'gioi_han_do_tuoi' => '13+', // Cập nhật theo Lotte Cinema (Phim được phổ biến đến người xem dưới 13 tuổi với điều kiện xem cùng cha, mẹ hoặc người giám hộ)
                 'mo_ta' => 'Một robot tên Roz tình cờ bị đắm tàu và dạt vào một hòn đảo hoang vắng. Tại đây, Roz phải học cách thích nghi với môi trường khắc nghiệt, xây dựng mối quan hệ với các loài động vật trên đảo và trở thành người mẹ bất đắc dĩ của một chú ngỗng con mồ côi.',
                 'danh_gia' => '3/5', // Giữ nguyên hoặc cập nhật nếu có
@@ -224,7 +213,6 @@ class QuanLyPhimSeeder extends Seeder
                 'trailer_ytb' => 'https://www.youtube.com/embed/_8qUFEmPQbc?si=1c2BWnCwIkjk5M-Y', // Giữ nguyên
                 'dien_vien' => 'Rima Thanh Vy, Lâm Thanh Mỹ, Quốc Cường, Thúy Diễm, Hải Nam, Hạnh Thúy, Mai Thế Hiệp', // Bổ sung diễn viên
                 'nha_san_xuat' => 'ProductionQ - Creative House, Hoàng Quân', // Bổ sung
-                'id_chi_tiet_the_loai' => 1,
                 'gioi_han_do_tuoi' => '16+', // Cần xác nhận lại, phim kinh dị thường là 16+ hoặc 18+
                 'mo_ta' => 'Dựa trên câu chuyện cổ tích Tấm Cám quen thuộc nhưng được khai thác dưới góc nhìn đen tối và kinh dị hơn, tập trung vào nhân vật Cám và những uẩn khúc phía sau.',
                 'danh_gia' => '3/5',
@@ -242,7 +230,6 @@ class QuanLyPhimSeeder extends Seeder
                 'trailer_ytb' => 'https://www.youtube.com/embed/6KxlC1Bt3C4?si=tTqScLL55JmpuHZg', // Cập nhật link trailer chính thức
                 'dien_vien' => 'Fu Bao, Kang Cheol-won, Song Young-kwan', // Bổ sung
                 'nha_san_xuat' => 'Everland', // Ghi chú thêm
-                'id_chi_tiet_the_loai' => 1,
                 'gioi_han_do_tuoi' => '13+', // Phim được phổ biến rộng rãi
                 'mo_ta' => 'Bộ phim tài liệu cảm động ghi lại hành trình từ khi sinh ra cho đến lúc trưởng thành của Fu Bao, chú gấu trúc đầu tiên được sinh tại Hàn Quốc, cùng tình cảm gắn bó sâu sắc với hai người ông chăm sóc tại Everland trước khi chú trở về Trung Quốc.',
                 'danh_gia' => '3/5',
@@ -260,7 +247,6 @@ class QuanLyPhimSeeder extends Seeder
                 'trailer_ytb' => 'https://www.youtube.com/embed/GCxopxk_BwY?si=k3P6jcn-jhtKvQR9', // Giữ nguyên
                 'dien_vien' => 'Cố NSND Hoàng Dũng, Hữu Vi, Nguyễn Trần Duy Nhất, Mr Kim, Yu Chu, Sam Sony, Bảo Uyên, Tuệ Minh, Thùy Trang, Ái Vân, Hoàng Sơn, Trần Ngọc Tú, Anna Linh', // Bổ sung đầy đủ diễn viên
                 'nha_san_xuat' => 'VietKing Film',
-                'id_chi_tiet_the_loai' => 1,
                 'gioi_han_do_tuoi' => '16+', // Phim hành động thường có giới hạn này, cần kiểm tra lại
                 'mo_ta' => 'Một bộ phim hành động Việt Nam xoay quanh một nhóm các cô gái xinh đẹp, tài năng và giỏi võ, cùng nhau thực hiện những nhiệm vụ nguy hiểm. Phim được quay tại nhiều quốc gia.',
                 'danh_gia' => '3/5',
@@ -278,7 +264,6 @@ class QuanLyPhimSeeder extends Seeder
                 'trailer_ytb' => 'https://www.youtube.com/embed/KvmVQpkv4Pw?si=-yRgYJ0C5Gai0vUj', // Giữ nguyên
                 'dien_vien' => 'Worranit Thawornwong (Mook), Vachiravit Paisarnkulwong (August), Supachaya Sukbaiyen (Froy), Ngọc Lan Vy, Rapeepong Thapsuwan (Bright), Natnicha Lueanganan (Min), Naphat Na Ranong, Chalongrat Nobsamrong', // Bổ sung và làm rõ tên diễn viên
                 'nha_san_xuat' => 'NHK', // Ghi chú thêm, cần tìm tên công ty sản xuất cụ thể
-                'id_chi_tiet_the_loai' => 1,
                 'gioi_han_do_tuoi' => '18+', // Phim kinh dị, sinh tồn thường có giới hạn cao
                 'mo_ta' => 'Một nhóm học sinh tại một trường cấp ba danh tiếng bị cuốn vào một trò chơi đẫm máu và đầy ám ảnh, nơi bản năng sinh tồn và những góc khuất đen tối của nhân tính được phơi bày.',
                 'danh_gia' => '3/5',
@@ -296,7 +281,6 @@ class QuanLyPhimSeeder extends Seeder
                 'trailer_ytb' => 'https://www.youtube.com/embed/QJ8E9R70csY?si=59o0dvZN1Ij8JFC4', // Giữ nguyên
                 'dien_vien' => 'Uyển Ân, Kiều Minh Tuấn, Lê Giang, Thu Trang, Samuel An, NSND Hồng Vân, Quỳnh Lương', // Bổ sung và làm rõ vai diễn
                 'nha_san_xuat' => 'Will Vũ', // Ghi chú thêm, cần tìm tên công ty sản xuất cụ thể
-                'id_chi_tiet_the_loai' => 1,
                 'gioi_han_do_tuoi' => '16+', // Phim có thể chứa các yếu tố phù hợp với lứa tuổi 16+
                 'mo_ta' => 'Câu chuyện hài hước và éo le của Tú Lạc, một cô gái cùng gia đình dàn dựng cuộc sống "phông bạt" xa hoa để cô có thể tiếp cận và trở thành con dâu của một gia đình tài phiệt, dẫn đến vô số tình huống dở khóc dở cười.',
                 'danh_gia' => '3/5',

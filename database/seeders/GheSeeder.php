@@ -81,7 +81,7 @@ class GheSeeder extends Seeder
             $gheData[] = [
                 'ten_ghe' => 'E' . $i,
                 'phong_id' => 1,
-                'hang' => 4,
+                'hang' => 5,
                 'cot' => $i,
                 'loai_ghe' => 2, // Tất cả ghế hàng D là ghế thường
                 'trang_thai' => 1,
@@ -138,7 +138,7 @@ class GheSeeder extends Seeder
                 'phong_id' => 2,
                 'hang' => 4,
                 'cot' => $i,
-                'loai_ghe' => 2, // Tất cả ghế hàng D là ghế đôi
+                'loai_ghe' => 0, // Tất cả ghế hàng D là ghế đôi
                 'trang_thai' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -150,7 +150,7 @@ class GheSeeder extends Seeder
             $gheData[] = [
                 'ten_ghe' => 'E' . $i,
                 'phong_id' => 2,
-                'hang' => 4,
+                'hang' => 5,
                 'cot' => $i,
                 'loai_ghe' => 2, // Tất cả ghế hàng D là ghế đôi
                 'trang_thai' => 1,

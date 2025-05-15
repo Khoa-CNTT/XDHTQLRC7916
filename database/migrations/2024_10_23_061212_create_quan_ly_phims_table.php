@@ -23,7 +23,6 @@ return new class extends Migration
             $table->text('mo_ta');
             $table->string('danh_gia');
             $table->integer('tinh_trang')->default(1);
-            $table->unsignedBigInteger('id_chi_tiet_the_loai');
             $table->timestamps();
 
         });
