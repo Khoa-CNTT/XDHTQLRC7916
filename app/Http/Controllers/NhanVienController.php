@@ -246,6 +246,7 @@ class NhanVienController extends Controller
                     'message'   =>  'Tài khoản của bạn đã bị khoá!'
                 ]);
             }
+            $ten_chuc_vu = ChucVu::where('id', $user->id_chuc_vu)->first();
             return response()->json([
                 'status'        =>  true,
                 // tạo token
@@ -253,6 +254,9 @@ class NhanVienController extends Controller
 
                 'ho_ten_admin'  => $user->ten_nhan_vien,
                 'id_nhan_vien'  => $user->id,
+                'id_chuc_vu'    => $user->id_chuc_vu,
+                'ten_chuc_vu'   => $ten_chuc_vu->ten_chuc_vu,
+                'is_master'     => $ten_chuc_vu->is_master,
 
                 'avatar_admin'  => $user->avatar,
                 'message'       =>  'Đã đăng nhập thành công'

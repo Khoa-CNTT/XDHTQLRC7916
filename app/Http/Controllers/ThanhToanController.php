@@ -16,6 +16,7 @@ use Endroid\QrCode\Writer\PngWriter;
 use Endroid\QrCode\ErrorCorrectionLevel;
 use App\Mail\SendMail;
 use Illuminate\Support\Facades\Mail;
+use App\Models\ChucVu;
 
 class ThanhToanController extends Controller
 {
@@ -796,6 +797,32 @@ class ThanhToanController extends Controller
     public function checkInHoaDon($ma_hoa_don)
     {
         try {
+            // Kiểm tra quyền người dùng
+            $user = Auth::guard('sanctum')->user();
+            if (!$user) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Bạn chưa đăng nhập!'
+                ], 401);
+            }
+
+            // Kiểm tra quyền check-in
+            $chucVu = ChucVu::find($user->id_chuc_vu);
+            if (!$chucVu) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Không tìm thấy thông tin chức vụ!'
+                ], 404);
+            }
+
+            // Nếu không phải master và không có chức vụ check-in vé
+            if (!$chucVu->is_master && $chucVu->ten_chuc_vu !== 'Check-in vé') {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Bạn không có quyền check-in vé!'
+                ], 403);
+            }
+
             // Tìm hóa đơn
             $hoaDon = HoaDon::where('ma_hoa_don', $ma_hoa_don)->first();
 
@@ -949,10 +976,35 @@ class ThanhToanController extends Controller
         }
     }
 
-
     public function checkInDichVu($ma_hoa_don)
     {
         try {
+            // Kiểm tra quyền người dùng
+            $user = Auth::guard('sanctum')->user();
+            if (!$user) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Bạn chưa đăng nhập!'
+                ], 401);
+            }
+
+            // Kiểm tra quyền check-in
+            $chucVu = ChucVu::find($user->id_chuc_vu);
+            if (!$chucVu) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Không tìm thấy thông tin chức vụ!'
+                ], 404);
+            }
+
+            // Nếu không phải master và không có chức vụ check-in dịch vụ
+            if (!$chucVu->is_master && $chucVu->ten_chuc_vu !== 'Check-in dịch vụ') {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Bạn không có quyền check-in dịch vụ!'
+                ], 403);
+            }
+
             // Tìm hóa đơn
             $hoaDon = HoaDon::where('ma_hoa_don', $ma_hoa_don)->first();
 

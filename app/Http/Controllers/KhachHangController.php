@@ -445,4 +445,24 @@ class KhachHangController extends Controller
             'tong_tien_da_thanh_toan' => $tong_tien_da_thanh_toan
         ]);
     }
+
+    public function capNhatThongTin(Request $request)
+    {
+        $data = $request->all();
+        $khachHang = KhachHang::find($request->id);
+
+        if (!$khachHang) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Không tìm thấy khách hàng!'
+            ], 404);
+        }
+
+        $khachHang->update($data);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Đã cập nhật thành công!'
+        ]);
+    }
 }
