@@ -61,7 +61,10 @@ class ChucNangSeeder extends Seeder
                 // Chức vụ
                 ["id" => 25, "ten_chuc_nang" => "Xem Thông Tin Chức Vụ"],
                 ["id" => 26, "ten_chuc_nang" => "Tạo Mới Chức Vụ"],
+<<<<<<< HEAD
                 //["id" => 27, "ten_chuc_nang" => "Tìm Kiếm Chức Vụ"], //không có
+=======
+>>>>>>> duyet2
                 ["id" => 28, "ten_chuc_nang" => "Xóa Chức Vụ"],
                 ["id" => 29, "ten_chuc_nang" => "Đổi Trạng Thái Chức Vụ"],
                 ["id" => 60, "ten_chuc_nang" => "Đổi Trạng Thái Master Cho Chức Vụ"],
@@ -78,10 +81,13 @@ class ChucNangSeeder extends Seeder
 
                 // Vé
                 ["id" => 36, "ten_chuc_nang" => "Xem Thông Tin Vé"], //check lại
+<<<<<<< HEAD
                 ["id" => 37, "ten_chuc_nang" => "Tạo Mới Vé"], //check lại
                 ["id" => 38, "ten_chuc_nang" => "Tìm Kiếm Vé"], //check lại
                 ["id" => 39, "ten_chuc_nang" => "Xóa Vé"], //check lại
                 ["id" => 68, "ten_chuc_nang" => "Cập Nhật Vé"], //check lại
+=======
+>>>>>>> duyet2
 
                 // Suất chiếu
                 ["id" => 40, "ten_chuc_nang" => "Xem Thông Tin Suất Chiếu"],

@@ -30,7 +30,7 @@ class QuanLyPhimController extends Controller
             'quan_ly_phim' => $data,
         ]);
     }
-    public function themMoiQuanLyPhim(createQuanLyPhim $request)
+    public function themMoiQuanLyPhim(CreateQuanLyPhim $request)
     {
         try {
             $phim = QuanLyPhim::create([
