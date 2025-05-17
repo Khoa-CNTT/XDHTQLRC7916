@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateGocDienAnhRequest;
 use App\Http\Requests\UpdateGocDienAnhRequest;
+use App\Models\ChiTietPhanQuyen;
+use App\Models\ChucVu;
 use App\Models\GocDienAnh;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class GocDienAnhController extends Controller
 {
@@ -19,64 +22,183 @@ class GocDienAnhController extends Controller
 
     public function createData(CreateGocDienAnhRequest $request)
     {
-        $data = $request->all();
-        $data['ngay_dang'] = now();
+        $id_chuc_nang = 73;
+        $user = Auth::guard('sanctum')->user();
+        $master = ChucVu::where('id', $user->id_chuc_vu)
+            ->first();
+        if ($master->is_master) {
+            $data = $request->all();
+            $data['ngay_dang'] = now();
 
-        GocDienAnh::create($data);
+            GocDienAnh::create($data);
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Đã tạo mới góc điện ảnh thành công!'
-        ]);
+            return response()->json([
+                'status' => true,
+                'message' => 'Đã tạo mới góc điện ảnh thành công!'
+            ]);
+        } else {
+            $check = ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
+                ->where('chuc_vus.tinh_trang', 1)
+                ->where('id_quyen', $user->id_chuc_vu)
+                ->where('id_chuc_nang', $id_chuc_nang)
+                ->first();
+            if ($check) {
+                $data = $request->all();
+                $data['ngay_dang'] = now();
+
+                GocDienAnh::create($data);
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Đã tạo mới góc điện ảnh thành công!'
+                ]);
+            } else {
+                return response()->json([
+                    "message" => 'bạn không có quyền này'
+                ]);
+            }
+        }
     }
 
     public function updateData(UpdateGocDienAnhRequest $request)
     {
-        $gocDienAnh = GocDienAnh::find($request->id);
+        $id_chuc_nang = 75;
+        $user = Auth::guard('sanctum')->user();
+        $master = ChucVu::where('id', $user->id_chuc_vu)
+            ->first();
+        if ($master->is_master) {
+            $gocDienAnh = GocDienAnh::find($request->id);
 
-        if (!$gocDienAnh) {
+            if (!$gocDienAnh) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Không tìm thấy góc điện ảnh!'
+                ]);
+            }
+
+            $data = $request->except('id'); // Bỏ id ra khỏi dữ liệu cập nhật
+            $gocDienAnh->update($data);
+
             return response()->json([
-                'status' => false,
-                'message' => 'Không tìm thấy góc điện ảnh!'
+                'status' => true,
+                'message' => 'Đã cập nhật góc điện ảnh thành công!'
             ]);
+        } else {
+            $check = ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
+                ->where('chuc_vus.tinh_trang', 1)
+                ->where('id_quyen', $user->id_chuc_vu)
+                ->where('id_chuc_nang', $id_chuc_nang)
+                ->first();
+            if ($check) {
+                $gocDienAnh = GocDienAnh::find($request->id);
+
+                if (!$gocDienAnh) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Không tìm thấy góc điện ảnh!'
+                    ]);
+                }
+
+                $data = $request->except('id'); // Bỏ id ra khỏi dữ liệu cập nhật
+                $gocDienAnh->update($data);
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Đã cập nhật góc điện ảnh thành công!'
+                ]);
+            } else {
+                return response()->json([
+                    "message" => 'bạn không có quyền này'
+                ]);
+            }
         }
-
-        $data = $request->except('id'); // Bỏ id ra khỏi dữ liệu cập nhật
-        $gocDienAnh->update($data);
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Đã cập nhật góc điện ảnh thành công!'
-        ]);
     }
 
 
     public function deleteData($id)
     {
-        GocDienAnh::find($id)->delete();
+        $id_chuc_nang = 74;
+        $user = Auth::guard('sanctum')->user();
+        $master = ChucVu::where('id', $user->id_chuc_vu)
+            ->first();
+        if ($master->is_master) {
+            GocDienAnh::find($id)->delete();
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Đã xoá góc điện ảnh thành công!'
-        ]);
+            return response()->json([
+                'status' => true,
+                'message' => 'Đã xoá góc điện ảnh thành công!'
+            ]);
+        } else {
+            $check = ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
+                ->where('chuc_vus.tinh_trang', 1)
+                ->where('id_quyen', $user->id_chuc_vu)
+                ->where('id_chuc_nang', $id_chuc_nang)
+                ->first();
+            if ($check) {
+                GocDienAnh::find($id)->delete();
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Đã xoá góc điện ảnh thành công!'
+                ]);
+            } else {
+                return response()->json([
+                    "message" => 'bạn không có quyền này'
+                ]);
+            }
+        }
     }
 
     public function doiTrangThai(Request $request)
     {
-        $goc_dien_anh = GocDienAnh::find($request->id);
-        if ($goc_dien_anh) {
-            $goc_dien_anh->trang_thai = !$goc_dien_anh->trang_thai;
-            $goc_dien_anh->save();
 
-            return response()->json([
-                'status' => true,
-                'message' => "Đổi trạng thái góc điện ảnh thành công!"
-            ]);
+        $id_chuc_nang = 76;
+        $user = Auth::guard('sanctum')->user();
+        $master = ChucVu::where('id', $user->id_chuc_vu)
+            ->first();
+        if ($master->is_master) {
+            $goc_dien_anh = GocDienAnh::find($request->id);
+            if ($goc_dien_anh) {
+                $goc_dien_anh->trang_thai = !$goc_dien_anh->trang_thai;
+                $goc_dien_anh->save();
+
+                return response()->json([
+                    'status' => true,
+                    'message' => "Đổi trạng thái góc điện ảnh thành công!"
+                ]);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => "Đã có lỗi xảy ra!"
+                ]);
+            }
         } else {
-            return response()->json([
-                'status' => false,
-                'message' => "Đã có lỗi xảy ra!"
-            ]);
+            $check = ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
+                ->where('chuc_vus.tinh_trang', 1)
+                ->where('id_quyen', $user->id_chuc_vu)
+                ->where('id_chuc_nang', $id_chuc_nang)
+                ->first();
+            if ($check) {
+                $goc_dien_anh = GocDienAnh::find($request->id);
+                if ($goc_dien_anh) {
+                    $goc_dien_anh->trang_thai = !$goc_dien_anh->trang_thai;
+                    $goc_dien_anh->save();
+
+                    return response()->json([
+                        'status' => true,
+                        'message' => "Đổi trạng thái góc điện ảnh thành công!"
+                    ]);
+                } else {
+                    return response()->json([
+                        'status' => false,
+                        'message' => "Đã có lỗi xảy ra!"
+                    ]);
+                }
+            } else {
+                return response()->json([
+                    "message" => 'bạn không có quyền này'
+                ]);
+            }
         }
     }
 

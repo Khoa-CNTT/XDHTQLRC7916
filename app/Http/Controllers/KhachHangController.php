@@ -180,16 +180,16 @@ class KhachHangController extends Controller
         if ($master->is_master) {
             $khach_hang = KhachHang::find($request->id);
             if ($khach_hang) {
-                if ($khach_hang->is_active == 1) {
-                    $khach_hang->is_active = 0;
+                if ($khach_hang->is_block == 1) {
+                    $khach_hang->is_block = 0;
                 } else {
-                    $khach_hang->is_active = 1;
+                    $khach_hang->is_block = 1;
                 }
                 $khach_hang->save();
 
                 return response()->json([
                     'status' => true,
-                    'message' => "Đổi trạng thái khách hàng thành công!"
+                    'message' => "Đổi tình trạng khách hàng thành công!"
                 ]);
             } else {
                 return response()->json([
@@ -206,16 +206,16 @@ class KhachHangController extends Controller
             if ($check) {
                 $khach_hang = KhachHang::find($request->id);
                 if ($khach_hang) {
-                    if ($khach_hang->is_active == 1) {
-                        $khach_hang->is_active = 0;
+                    if ($khach_hang->is_block == 1) {
+                        $khach_hang->is_block = 0;
                     } else {
-                        $khach_hang->is_active = 1;
+                        $khach_hang->is_block = 1;
                     }
                     $khach_hang->save();
 
                     return response()->json([
                         'status' => true,
-                        'message' => "Đổi trạng thái khách hàng thành công!"
+                        'message' => "Đổi tình trạng khách hàng thành công!"
                     ]);
                 } else {
                     return response()->json([
@@ -269,7 +269,7 @@ class KhachHangController extends Controller
     {
         // Lấy thông tin từ Authorization : 'Bearer ' gửi lên
         $user = Auth::guard('sanctum')->user();
-        if ($user && $user instanceof \App\Models\KhachHang) {
+        if ($user && $user instanceof \App\Models\KhachHang && $user->is_block==0) {
             return response()->json([
                 'status'    =>  true,
                 'message'   =>  "Oke, bạn có thể đi qua",
@@ -443,6 +443,26 @@ class KhachHangController extends Controller
         return response()->json([
             'data' => $data,
             'tong_tien_da_thanh_toan' => $tong_tien_da_thanh_toan
+        ]);
+    }
+
+    public function capNhatThongTin(Request $request)
+    {
+        $data = $request->all();
+        $khachHang = KhachHang::find($request->id);
+
+        if (!$khachHang) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Không tìm thấy khách hàng!'
+            ], 404);
+        }
+
+        $khachHang->update($data);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Đã cập nhật thành công!'
         ]);
     }
 }

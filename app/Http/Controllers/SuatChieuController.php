@@ -136,110 +136,233 @@ class SuatChieuController extends Controller
     // Tạo suất chiếu mới
     public function store(Request $request)
     {
-        // Kiểm tra dữ liệu đầu vào
-        $request->validate([
-            'phim_id' => 'required|exists:quan_ly_phims,id',
-            'phong_id' => 'required|exists:phongs,id',
-            'ngay_chieu' => 'required|date|after_or_equal:today',
-            'gio_bat_dau' => 'required',
-            'gia_ve' => 'required|numeric',
-            'gia_ve_vip' => 'required|numeric',
-            'gia_ve_doi' => 'required|numeric',
-            'dinh_dang' => 'required|in:2D,3D,IMAX',
-            'ngon_ngu' => 'required|in:Phụ đề,Lồng tiếng,Nguyên bản',
-            'trang_thai' => 'required|in:Sắp chiếu,Đang chiếu,Hết vé,Hủy',
-        ]);
-
-        // Lấy thông tin phim để tính thời gian kết thúc
-        $phim = QuanLyPhim::find($request->phim_id);
-        if (!$phim) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Không tìm thấy thông tin phim!'
+        $id_chuc_nang = 41;
+        $user = Auth::guard('sanctum')->user();
+        $master = ChucVu::where('id', $user->id_chuc_vu)
+            ->first();
+        if ($master->is_master) {
+            // Kiểm tra dữ liệu đầu vào
+            $request->validate([
+                'phim_id' => 'required|exists:quan_ly_phims,id',
+                'phong_id' => 'required|exists:phongs,id',
+                'ngay_chieu' => 'required|date|after_or_equal:today',
+                'gio_bat_dau' => 'required',
+                'gia_ve' => 'required|numeric',
+                'gia_ve_vip' => 'required|numeric',
+                'gia_ve_doi' => 'required|numeric',
+                'dinh_dang' => 'required|in:2D,3D,IMAX',
+                'ngon_ngu' => 'required|in:Phụ đề,Lồng tiếng,Nguyên bản',
+                'trang_thai' => 'required|in:Sắp chiếu,Đang chiếu,Hết vé,Hủy',
             ]);
-        }
 
-        // Tính giờ kết thúc dựa trên thời lượng phim
-        $gioBatDau = $request->gio_bat_dau;
-        $gioKetThuc = date('H:i:s', strtotime($gioBatDau . ' + ' . $phim->thoi_luong . ' minutes'));
-
-        // Kiểm tra xung đột lịch chiếu trong cùng phòng
-        $suatChieuTrung = SuatChieu::where('phong_id', $request->phong_id)
-            ->where('ngay_chieu', $request->ngay_chieu)
-            ->where(function ($query) use ($gioBatDau, $gioKetThuc) {
-                $query->whereBetween('gio_bat_dau', [$gioBatDau, $gioKetThuc])
-                    ->orWhereBetween('gio_ket_thuc', [$gioBatDau, $gioKetThuc])
-                    ->orWhere(function ($q) use ($gioBatDau, $gioKetThuc) {
-                        $q->where('gio_bat_dau', '<=', $gioBatDau)
-                            ->where('gio_ket_thuc', '>=', $gioKetThuc);
-                    });
-            })
-            ->exists();
-
-        if ($suatChieuTrung) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Đã có suất chiếu khác trong cùng thời gian và phòng này!'
-            ]);
-        }
-
-        // Tạo suất chiếu mới
-        $data = $request->all();
-        $data['gio_ket_thuc'] = $gioKetThuc;
-
-        DB::beginTransaction();
-        try {
-            // Tạo suất chiếu
-            $suat = SuatChieu::create($data);
-
-            // Tạo chi tiết vé cho tất cả ghế trong phòng
-            $danhSachGhe = Ghe::where('phong_id', $request->phong_id)->get();
-            foreach ($danhSachGhe as $ghe) {
-                if ($ghe->loai_ghe == 1) {
-                    ChiTietVe::create([
-                        'id_suat' => $suat->id,
-                        'tinh_trang' => 0, // Ghế trống
-                        'id_ghe' => $ghe->id,
-                        'hoa_don_id' => null,
-                        'gia_tien' => $request->gia_ve_vip,
-                        'khach_hang_id' => null,
-                        'ghi_chu' => null,
-                    ]);
-                } elseif ($ghe->loai_ghe == 2) {
-                    ChiTietVe::create([
-                        'id_suat' => $suat->id,
-                        'tinh_trang' => 0, // Ghế trống
-                        'id_ghe' => $ghe->id,
-                        'hoa_don_id' => null,
-                        'gia_tien' => $request->gia_ve_doi,
-                        'khach_hang_id' => null,
-                        'ghi_chu' => null,
-                    ]);
-                } else {
-                    ChiTietVe::create([
-                        'id_suat' => $suat->id,
-                        'tinh_trang' => 0, // Ghế trống
-                        'id_ghe' => $ghe->id,
-                        'hoa_don_id' => null,
-                        'gia_tien' => $request->gia_ve,
-                        'khach_hang_id' => null,
-                        'ghi_chu' => null,
-                    ]);
-                }
+            // Lấy thông tin phim để tính thời gian kết thúc
+            $phim = QuanLyPhim::find($request->phim_id);
+            if (!$phim) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Không tìm thấy thông tin phim!'
+                ]);
             }
 
-            DB::commit();
+            // Tính giờ kết thúc dựa trên thời lượng phim
+            $gioBatDau = $request->gio_bat_dau;
+            $gioKetThuc = date('H:i:s', strtotime($gioBatDau . ' + ' . $phim->thoi_luong . ' minutes'));
 
-            return response()->json([
-                'status' => true,
-                'message' => 'Đã thêm suất chiếu thành công!'
-            ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'status' => false,
-                'message' => 'Đã xảy ra lỗi: ' . $e->getMessage()
-            ]);
+            // Kiểm tra xung đột lịch chiếu trong cùng phòng
+            $suatChieuTrung = SuatChieu::where('phong_id', $request->phong_id)
+                ->where('ngay_chieu', $request->ngay_chieu)
+                ->where(function ($query) use ($gioBatDau, $gioKetThuc) {
+                    $query->whereBetween('gio_bat_dau', [$gioBatDau, $gioKetThuc])
+                        ->orWhereBetween('gio_ket_thuc', [$gioBatDau, $gioKetThuc])
+                        ->orWhere(function ($q) use ($gioBatDau, $gioKetThuc) {
+                            $q->where('gio_bat_dau', '<=', $gioBatDau)
+                                ->where('gio_ket_thuc', '>=', $gioKetThuc);
+                        });
+                })
+                ->exists();
+
+            if ($suatChieuTrung) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Đã có suất chiếu khác trong cùng thời gian và phòng này!'
+                ]);
+            }
+
+            // Tạo suất chiếu mới
+            $data = $request->all();
+            $data['gio_ket_thuc'] = $gioKetThuc;
+
+            DB::beginTransaction();
+            try {
+                // Tạo suất chiếu
+                $suat = SuatChieu::create($data);
+
+                // Tạo chi tiết vé cho tất cả ghế trong phòng
+                $danhSachGhe = Ghe::where('phong_id', $request->phong_id)->get();
+                foreach ($danhSachGhe as $ghe) {
+                    if ($ghe->loai_ghe == 1) {
+                        ChiTietVe::create([
+                            'id_suat' => $suat->id,
+                            'tinh_trang' => 0, // Ghế trống
+                            'id_ghe' => $ghe->id,
+                            'hoa_don_id' => null,
+                            'gia_tien' => $request->gia_ve_vip,
+                            'khach_hang_id' => null,
+                            'ghi_chu' => null,
+                        ]);
+                    } elseif ($ghe->loai_ghe == 2) {
+                        ChiTietVe::create([
+                            'id_suat' => $suat->id,
+                            'tinh_trang' => 0, // Ghế trống
+                            'id_ghe' => $ghe->id,
+                            'hoa_don_id' => null,
+                            'gia_tien' => $request->gia_ve_doi,
+                            'khach_hang_id' => null,
+                            'ghi_chu' => null,
+                        ]);
+                    } else {
+                        ChiTietVe::create([
+                            'id_suat' => $suat->id,
+                            'tinh_trang' => 0, // Ghế trống
+                            'id_ghe' => $ghe->id,
+                            'hoa_don_id' => null,
+                            'gia_tien' => $request->gia_ve,
+                            'khach_hang_id' => null,
+                            'ghi_chu' => null,
+                        ]);
+                    }
+                }
+
+                DB::commit();
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Đã thêm suất chiếu thành công!'
+                ]);
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Đã xảy ra lỗi: ' . $e->getMessage()
+                ]);
+            }
+        } else {
+            $check = ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
+                ->where('chuc_vus.tinh_trang', 1)
+                ->where('id_quyen', $user->id_chuc_vu)
+                ->where('id_chuc_nang', $id_chuc_nang)
+                ->first();
+            if ($check) {
+                // Kiểm tra dữ liệu đầu vào
+                $request->validate([
+                    'phim_id' => 'required|exists:quan_ly_phims,id',
+                    'phong_id' => 'required|exists:phongs,id',
+                    'ngay_chieu' => 'required|date|after_or_equal:today',
+                    'gio_bat_dau' => 'required',
+                    'gia_ve' => 'required|numeric',
+                    'gia_ve_vip' => 'required|numeric',
+                    'gia_ve_doi' => 'required|numeric',
+                    'dinh_dang' => 'required|in:2D,3D,IMAX',
+                    'ngon_ngu' => 'required|in:Phụ đề,Lồng tiếng,Nguyên bản',
+                    'trang_thai' => 'required|in:Sắp chiếu,Đang chiếu,Hết vé,Hủy',
+                ]);
+
+                // Lấy thông tin phim để tính thời gian kết thúc
+                $phim = QuanLyPhim::find($request->phim_id);
+                if (!$phim) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Không tìm thấy thông tin phim!'
+                    ]);
+                }
+
+                // Tính giờ kết thúc dựa trên thời lượng phim
+                $gioBatDau = $request->gio_bat_dau;
+                $gioKetThuc = date('H:i:s', strtotime($gioBatDau . ' + ' . $phim->thoi_luong . ' minutes'));
+
+                // Kiểm tra xung đột lịch chiếu trong cùng phòng
+                $suatChieuTrung = SuatChieu::where('phong_id', $request->phong_id)
+                    ->where('ngay_chieu', $request->ngay_chieu)
+                    ->where(function ($query) use ($gioBatDau, $gioKetThuc) {
+                        $query->whereBetween('gio_bat_dau', [$gioBatDau, $gioKetThuc])
+                            ->orWhereBetween('gio_ket_thuc', [$gioBatDau, $gioKetThuc])
+                            ->orWhere(function ($q) use ($gioBatDau, $gioKetThuc) {
+                                $q->where('gio_bat_dau', '<=', $gioBatDau)
+                                    ->where('gio_ket_thuc', '>=', $gioKetThuc);
+                            });
+                    })
+                    ->exists();
+
+                if ($suatChieuTrung) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Đã có suất chiếu khác trong cùng thời gian và phòng này!'
+                    ]);
+                }
+
+                // Tạo suất chiếu mới
+                $data = $request->all();
+                $data['gio_ket_thuc'] = $gioKetThuc;
+
+                DB::beginTransaction();
+                try {
+                    // Tạo suất chiếu
+                    $suat = SuatChieu::create($data);
+
+                    // Tạo chi tiết vé cho tất cả ghế trong phòng
+                    $danhSachGhe = Ghe::where('phong_id', $request->phong_id)->get();
+                    foreach ($danhSachGhe as $ghe) {
+                        if ($ghe->loai_ghe == 1) {
+                            ChiTietVe::create([
+                                'id_suat' => $suat->id,
+                                'tinh_trang' => 0, // Ghế trống
+                                'id_ghe' => $ghe->id,
+                                'hoa_don_id' => null,
+                                'gia_tien' => $request->gia_ve_vip,
+                                'khach_hang_id' => null,
+                                'ghi_chu' => null,
+                            ]);
+                        } elseif ($ghe->loai_ghe == 2) {
+                            ChiTietVe::create([
+                                'id_suat' => $suat->id,
+                                'tinh_trang' => 0, // Ghế trống
+                                'id_ghe' => $ghe->id,
+                                'hoa_don_id' => null,
+                                'gia_tien' => $request->gia_ve_doi,
+                                'khach_hang_id' => null,
+                                'ghi_chu' => null,
+                            ]);
+                        } else {
+                            ChiTietVe::create([
+                                'id_suat' => $suat->id,
+                                'tinh_trang' => 0, // Ghế trống
+                                'id_ghe' => $ghe->id,
+                                'hoa_don_id' => null,
+                                'gia_tien' => $request->gia_ve,
+                                'khach_hang_id' => null,
+                                'ghi_chu' => null,
+                            ]);
+                        }
+                    }
+
+                    DB::commit();
+
+                    return response()->json([
+                        'status' => true,
+                        'message' => 'Đã thêm suất chiếu thành công!'
+                    ]);
+                } catch (\Exception $e) {
+                    DB::rollBack();
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Đã xảy ra lỗi: ' . $e->getMessage()
+                    ]);
+                }
+            } else {
+                return response()->json([
+                    "message" => 'bạn không có quyền này'
+                ]);
+            }
         }
     }
 
@@ -495,7 +618,8 @@ class SuatChieuController extends Controller
         $user = Auth::guard('sanctum')->user();
         $master = ChucVu::where('id', $user->id_chuc_vu)
             ->first();
-        if ($master->is_master || ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
+        if (
+            $master->is_master || ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
             ->where('chuc_vus.tinh_trang', 1)
             ->where('id_quyen', $user->id_chuc_vu)
             ->where('id_chuc_nang', $id_chuc_nang)

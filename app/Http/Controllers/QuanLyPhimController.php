@@ -30,7 +30,7 @@ class QuanLyPhimController extends Controller
             'quan_ly_phim' => $data,
         ]);
     }
-    public function themMoiQuanLyPhim(createQuanLyPhim $request)
+    public function themMoiQuanLyPhim(CreateQuanLyPhim $request)
     {
         try {
             $phim = QuanLyPhim::create([
@@ -49,9 +49,10 @@ class QuanLyPhimController extends Controller
                 'tinh_trang'            => $request->tinh_trang,
             ]);
 
-            if ($request->has('the_loai_ids')) {
-                $phim->theLoais()->attach($request->the_loai_ids);
+            if ($request->has('id_the_loai')) {
+                $phim->theLoais()->sync($request->id_the_loai);
             }
+
 
             return response()->json([
                 'status'            =>   true,
@@ -137,9 +138,11 @@ class QuanLyPhimController extends Controller
                 ]);
 
                 // Update the genres using sync
-                if ($request->has('the_loai_ids')) {
-                    $phim->theLoais()->sync($request->the_loai_ids);
+                if ($request->has('id_the_loai')) {
+                    $phim->theLoais()->sync($request->id_the_loai);
                 }
+
+
 
                 return response()->json([
                     'status'    => true,

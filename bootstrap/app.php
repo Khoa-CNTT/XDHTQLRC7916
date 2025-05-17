@@ -14,6 +14,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             "adminMiddle" => \App\Http\Middleware\kiemTraAdminMiddleware::class,
+            'check.chucnang' => \App\Http\Middleware\CheckChucNang::class,
+
             // "khachHangMiddle" => \App\Http\Middleware\kiemTraKhachHangMiddleware::class,
         ]);
     })
