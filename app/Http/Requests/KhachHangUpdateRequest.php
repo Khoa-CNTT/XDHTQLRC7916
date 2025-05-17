@@ -22,7 +22,7 @@ class KhachHangUpdateRequest extends FormRequest
             'so_dien_thoai' => 'nullable|string|regex:/^([0-9\s\-\+\(\)]*)$/|min:10|max:11',
             'ngay_sinh' => 'nullable|date|before:today',
             'is_block' => 'required|in:0,1',
-            'tinh_trang' => 'required|in:0,1',
+            'is_active' => 'required|in:0,1',
         ];
     }
 
@@ -47,8 +47,8 @@ class KhachHangUpdateRequest extends FormRequest
             'is_block.required' => 'Vui lòng chọn tình trạng',
             'is_block.in' => 'Tình trạng không hợp lệ',
 
-            'tinh_trang.required' => 'Vui lòng chọn trạng thái tài khoản',
-            'tinh_trang.in' => 'Trạng thái tài khoản không hợp lệ',
+            'is_active.required' => 'Vui lòng chọn trạng thái tài khoản',
+            'is_active.in' => 'Trạng thái tài khoản không hợp lệ',
         ];
     }
 }

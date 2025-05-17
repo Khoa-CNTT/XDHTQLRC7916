@@ -118,7 +118,7 @@ class NhanVienController extends Controller
     }
     public function updateData(UpdateNhanVien $request)
     {
-        $id_chuc_nang = 62;
+        $id_chuc_nang = 63;
         $user = Auth::guard('sanctum')->user();
         $master = ChucVu::where('id', $user->id_chuc_vu)
             ->first();

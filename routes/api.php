@@ -92,6 +92,7 @@ Route::group(['middleware' => 'adminMiddle'], function () {
 
 
     Route::post('/chuc-nang/data', [ChiTietPhanQuyenController::class, 'getDataCN']);
+    Route::post('/phan-quyen/quyen', [ChiTietPhanQuyenController::class, 'CheckQuyen']);
     Route::post('/chi-tiet-quyen/data', [ChiTietPhanQuyenController::class, 'getData']);
     Route::post('/chi-tiet-quyen/cap-quyen', [ChiTietPhanQuyenController::class, 'capQuyen']);
     Route::post('/chi-tiet-quyen/xoa-quyen', [ChiTietPhanQuyenController::class, 'xoaQuyen']);
@@ -144,12 +145,15 @@ Route::group(['middleware' => 'adminMiddle'], function () {
             Route::put('/update', [TheLoaiController::class, 'updateTheLoai']);
         });
         // Thống kê routes
-        Route::get('/thong-ke/doanh-thu', [ThongKeController::class, 'thongKeDoanhThu']);
-        Route::get('/thong-ke/theo-ngay', [ThongKeController::class, 'thongKeTheoNgay']);
-        Route::get('/thong-ke/theo-tuan', [ThongKeController::class, 'thongKeTheoTuan']);
-        Route::get('/thong-ke/theo-thang', [ThongKeController::class, 'thongKeTheoThang']);
-        Route::get('/thong-ke/theo-quy', [ThongKeController::class, 'thongKeTheoQuy']);
-        Route::get('/thong-ke/theo-nam', [ThongKeController::class, 'thongKeTheoNam']);
+        Route::middleware(['check.chucnang'])->group(function () {
+            Route::get('/thong-ke/doanh-thu', [ThongKeController::class, 'thongKeDoanhThu']);
+            Route::get('/thong-ke/theo-ngay', [ThongKeController::class, 'thongKeTheoNgay']);
+            Route::get('/thong-ke/theo-tuan', [ThongKeController::class, 'thongKeTheoTuan']);
+            Route::get('/thong-ke/theo-thang', [ThongKeController::class, 'thongKeTheoThang']);
+            Route::get('/thong-ke/theo-quy', [ThongKeController::class, 'thongKeTheoQuy']);
+            Route::get('/thong-ke/theo-nam', [ThongKeController::class, 'thongKeTheoNam']);
+        });
+
 
 
         // Su kien
@@ -164,6 +168,7 @@ Route::group(['middleware' => 'adminMiddle'], function () {
 
 //client
 Route::get('/hoa-don/data', [HoaDonController::class, 'getData']);
+Route::get('/hoa-don/quyen', [HoaDonController::class, 'quyen']);
 Route::get('/hoa-don/data-client', [HoaDonController::class, 'getDataClient']);
 Route::post('/hoa-don/create', [HoaDonController::class, 'create']);
 Route::post('/hoa-don/chi-tiet-dat-ve', [HoaDonController::class, 'chiTietDatVe']);

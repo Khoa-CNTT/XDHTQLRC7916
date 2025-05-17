@@ -28,6 +28,8 @@ class KhachHangRequest extends FormRequest
             'password' => 'required|string|min:6',
             're_password' => 'required|same:password',
             'ngay_sinh' => 'nullable|date|before:today',
+            'is_block' => 'required|in:0,1',
+            'is_active' => 'required|in:0,1',
         ];
     }
 
@@ -60,6 +62,12 @@ class KhachHangRequest extends FormRequest
 
             'ngay_sinh.date' => 'Ngày sinh không đúng định dạng',
             'ngay_sinh.before' => 'Ngày sinh không được lớn hơn ngày hiện tại',
+
+            'is_block.required' => 'Vui lòng chọn tình trạng',
+            'is_block.in' => 'Tình trạng không hợp lệ',
+
+            'is_active.required' => 'Vui lòng chọn trạng thái tài khoản',
+            'is_active.in' => 'Trạng thái tài khoản không hợp lệ',
         ];
     }
 }

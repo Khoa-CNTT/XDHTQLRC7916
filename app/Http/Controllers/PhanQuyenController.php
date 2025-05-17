@@ -10,7 +10,7 @@ class PhanQuyenController extends Controller
 {
     public function getData()
     {
-
+        
         $data = PhanQuyen::get();
 
         return response()->json([

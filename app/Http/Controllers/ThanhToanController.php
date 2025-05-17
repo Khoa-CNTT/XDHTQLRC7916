@@ -442,7 +442,7 @@ class ThanhToanController extends Controller
                 $hoaDon->save();
 
                 // Chuẩn bị dữ liệu cho email
-                $danhSachGhe = $chiTietVes->map(function($ve) {
+                $danhSachGhe = $chiTietVes->map(function ($ve) {
                     return $ve->ghe->ten_ghe;
                 })->implode(', ');
 
@@ -1227,7 +1227,7 @@ class ThanhToanController extends Controller
             $hoaDon->save();
 
             // Chuẩn bị dữ liệu cho email
-            $danhSachGhe = $ve->map(function($ve) {
+            $danhSachGhe = $ve->map(function ($ve) {
                 return $ve->ghe->ten_ghe;
             })->implode(', ');
 
@@ -1276,7 +1276,6 @@ class ThanhToanController extends Controller
                     'email_gui' => $email_khach_hang
                 ]
             ]);
-
         } catch (\Exception $e) {
             Log::error('Lỗi thanh toán tiền mặt: ' . $e->getMessage());
             return response()->json([

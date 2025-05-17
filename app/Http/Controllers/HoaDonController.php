@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ChiTietPhanQuyen;
 use App\Models\HoaDon;
 use App\Models\ChiTietVe;
+use App\Models\ChucVu;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,28 +15,68 @@ class HoaDonController extends Controller
 {
     public function getData()
     {
-        $data = HoaDon::leftJoin('nhan_viens', 'hoa_dons.id_nhan_vien', 'nhan_viens.id')
-            ->leftJoin('khach_hangs', 'hoa_dons.id_khach_hang', 'khach_hangs.id')
-            ->leftJoin('suat_chieus', 'hoa_dons.id_suat', 'suat_chieus.id')
+        $id_chuc_nang = 82;
+        $user = Auth::guard('sanctum')->user();
+        $master = ChucVu::where('id', $user->id_chuc_vu)
+            ->first();
+        if ($master->is_master) {
+            $data = HoaDon::leftJoin('nhan_viens', 'hoa_dons.id_nhan_vien', 'nhan_viens.id')
+                ->leftJoin('khach_hangs', 'hoa_dons.id_khach_hang', 'khach_hangs.id')
+                ->leftJoin('suat_chieus', 'hoa_dons.id_suat', 'suat_chieus.id')
 
-            ->leftJoin('quan_ly_phims', 'suat_chieus.phim_id', 'quan_ly_phims.id') // Sửa lại id_phim thành phim_id
-            ->select(
-                'hoa_dons.*',
-                'nhan_viens.ten_nhan_vien',
-                'khach_hangs.ten_khach_hang',
-                'quan_ly_phims.ten_phim',
-                'suat_chieus.gio_bat_dau',
-                'suat_chieus.ngay_chieu',
-                'suat_chieus.dinh_dang',
-                'suat_chieus.ngon_ngu'
-            )
-            ->orderBy('hoa_dons.created_at', 'desc')
-            ->get();
+                ->leftJoin('quan_ly_phims', 'suat_chieus.phim_id', 'quan_ly_phims.id') // Sửa lại id_phim thành phim_id
+                ->select(
+                    'hoa_dons.*',
+                    'nhan_viens.ten_nhan_vien',
+                    'khach_hangs.ten_khach_hang',
+                    'quan_ly_phims.ten_phim',
+                    'suat_chieus.gio_bat_dau',
+                    'suat_chieus.ngay_chieu',
+                    'suat_chieus.dinh_dang',
+                    'suat_chieus.ngon_ngu'
+                )
+                ->orderBy('hoa_dons.created_at', 'desc')
+                ->get();
 
-        return response()->json([
-            'status' => true,
-            'hoa_don' => $data
-        ]);
+            return response()->json([
+                'status' => true,
+                'hoa_don' => $data
+            ]);
+        } else {
+            $check = ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
+                ->where('chuc_vus.tinh_trang', 1)
+                ->where('id_quyen', $user->id_chuc_vu)
+                ->where('id_chuc_nang', $id_chuc_nang)
+                ->first();
+            if ($check) {
+                $data = HoaDon::leftJoin('nhan_viens', 'hoa_dons.id_nhan_vien', 'nhan_viens.id')
+                    ->leftJoin('khach_hangs', 'hoa_dons.id_khach_hang', 'khach_hangs.id')
+                    ->leftJoin('suat_chieus', 'hoa_dons.id_suat', 'suat_chieus.id')
+
+                    ->leftJoin('quan_ly_phims', 'suat_chieus.phim_id', 'quan_ly_phims.id') // Sửa lại id_phim thành phim_id
+                    ->select(
+                        'hoa_dons.*',
+                        'nhan_viens.ten_nhan_vien',
+                        'khach_hangs.ten_khach_hang',
+                        'quan_ly_phims.ten_phim',
+                        'suat_chieus.gio_bat_dau',
+                        'suat_chieus.ngay_chieu',
+                        'suat_chieus.dinh_dang',
+                        'suat_chieus.ngon_ngu'
+                    )
+                    ->orderBy('hoa_dons.created_at', 'desc')
+                    ->get();
+
+                return response()->json([
+                    'status' => true,
+                    'hoa_don' => $data
+                ]);
+            } else {
+                return response()->json([
+                    'status' => false,
+                ]);
+            }
+        }
     }
     public function getDataClient()
     {
@@ -58,6 +100,34 @@ class HoaDonController extends Controller
             'status' => true,
             'hoa_don' => $data
         ]);
+    }
+
+    public function quyen()
+    {
+        $id_chuc_nang = 81;
+        $user = Auth::guard('sanctum')->user();
+        $master = ChucVu::where('id', $user->id_chuc_vu)
+            ->first();
+        if ($master->is_master) {
+            return response()->json([
+                'status' => true,
+            ]);
+        } else {
+            $check = ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
+                ->where('chuc_vus.tinh_trang', 1)
+                ->where('id_quyen', $user->id_chuc_vu)
+                ->where('id_chuc_nang', $id_chuc_nang)
+                ->first();
+            if ($check) {
+                return response()->json([
+                    'status' => true,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => false,
+                ]);
+            }
+        }
     }
 
     public function chiTietDatVe(Request $request)
