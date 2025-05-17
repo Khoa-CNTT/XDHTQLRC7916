@@ -298,7 +298,6 @@ class KhachHangController extends Controller
     public function doiMatKhau(DoiMatKhauRequest $request)
     {
         $check  = Auth::guard('khach_hang')->attempt(['email' => $request->email, 'password' =>  $request->password]);
-
         $kh = KhachHang::where('email', $request->email)->first();
         if ($check) {
             $kh['password'] = bcrypt($request->moi);
@@ -446,7 +445,7 @@ class KhachHangController extends Controller
         ]);
     }
 
-    public function capNhatThongTin(Request $request)
+    public function capNhatThongTin(KhachHangUpdateRequest $request)
     {
         $data = $request->all();
         $khachHang = KhachHang::find($request->id);
