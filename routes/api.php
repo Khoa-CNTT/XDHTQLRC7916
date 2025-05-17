@@ -120,6 +120,7 @@ Route::group(['middleware' => 'adminMiddle'], function () {
     Route::get('/ghe/search', [GheController::class, 'search']);
     Route::get('/ghe/theo-phong/{phongId}', [GheController::class, 'getGheTheoPhong']);
     Route::put('/ghe/doi-loai-ghe', [GheController::class, 'doiLoaiGhe']);
+    Route::put('/ghe/doi-trang-thai', [GheController::class, 'doiTrangThai']);
 
     Route::post('/hoa-don/check-in/{ma_hoa_don}', [ThanhToanController::class, 'checkInHoaDon']);
     Route::post('/hoa-don/check-in-dich-vu/{ma_hoa_don}', [ThanhToanController::class, 'checkInDichVu']);

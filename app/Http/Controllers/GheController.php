@@ -82,7 +82,7 @@ class GheController extends Controller
 
                 return response()->json([
                     'status' => true,
-                    'message' => "Đổi trạng thái ghế thành công!"
+                    'message' => "Đã đổi trạng thái thành công!"
                 ]);
             } else {
                 return response()->json([

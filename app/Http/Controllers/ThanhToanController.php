@@ -1165,10 +1165,8 @@ class ThanhToanController extends Controller
             $request->validate([
                 'id_suat' => 'required|exists:suat_chieus,id',
                 'tong_tien' => 'required|numeric|min:0',
-                'email_khach' => 'required|email',
+                'email_khach' => 'email|nullable', // Optional email for customer
             ]);
-
-            $email_khach_hang = $request->email_khach;
 
             // Lấy thông tin vé đã chọn
             $ve = ChiTietVe::where('id_nhan_vien', $user->id)
@@ -1203,6 +1201,9 @@ class ThanhToanController extends Controller
                 $chiTietVe->id_hoa_don = $hoaDon->id;
                 $chiTietVe->tinh_trang = 2; // Đã thanh toán
                 $chiTietVe->save();
+
+                // Dịch vụ sẽ được theo dõi thông qua liên kết với vé (id_chi_tiet_ve)
+                // Không cần update vì đã có sẵn liên kết
             }
 
             // Get suất chiếu details
@@ -1226,45 +1227,49 @@ class ThanhToanController extends Controller
             $hoaDon->ma_qr_checkin = $qrResult['qr_code'];
             $hoaDon->save();
 
-            // Chuẩn bị dữ liệu cho email
-            $danhSachGhe = $ve->map(function ($ve) {
-                return $ve->ghe->ten_ghe;
-            })->implode(', ');
+            // Gửi email nếu có yêu cầu
+            if ($request->has('email_khach') && $request->email_khach) {
+                // Chuẩn bị dữ liệu cho email
+                $danhSachGhe = $ve->map(function ($ve) {
+                    return $ve->ghe->ten_ghe;
+                })->implode(', ');
 
-            $emailData = [
-                'ho_va_ten' => 'Quý khách',
-                'ma_hoa_don' => $hoaDon->ma_hoa_don,
-                'ten_phim' => $suatChieu->ten_phim,
-                'thoi_gian_chieu' => $suatChieu->ngay_chieu . ' ' . $suatChieu->gio_bat_dau,
-                'phong' => $suatChieu->ten_phong,
-                'danh_sach_ghe' => $danhSachGhe,
-                'tong_tien' => $hoaDon->tong_tien,
-                'qr_code' => $qrResult['qr_code'],
-                'qr_file_path' => $qrResult['qr_file_path']
-            ];
+                $emailData = [
+                    'ho_va_ten' => 'Quý khách',
+                    'ma_hoa_don' => $hoaDon->ma_hoa_don,
+                    'ten_phim' => $suatChieu->ten_phim,
+                    'thoi_gian_chieu' => $suatChieu->ngay_chieu . ' ' . $suatChieu->gio_bat_dau,
+                    'phong' => $suatChieu->ten_phong,
+                    'danh_sach_ghe' => $danhSachGhe,
+                    'tong_tien' => $hoaDon->tong_tien,
+                    'qr_code' => $qrResult['qr_code'],
+                    'qr_file_path' => $qrResult['qr_file_path']
+                ];
 
-            // Log trước khi gửi email
-            Log::info('Chuẩn bị gửi email thanh toán tiền mặt', [
-                'email_khach' => $request->email_khach,
-                'email_data' => $emailData,
-                'qr_file_exists' => file_exists($qrResult['qr_file_path'])
-            ]);
-
-            try {
-                // Gửi email xác nhận thanh toán
-                Mail::to($email_khach_hang)->send(new SendMail(
-                    "Xác nhận thanh toán thành công",
-                    "thanh_toan_thanh_cong",
-                    $emailData
-                ));
-                Log::info('Đã gửi email thành công đến: ' . $email_khach_hang);
-            } catch (\Exception $e) {
-                Log::error('Lỗi gửi email: ' . $e->getMessage(), [
-                    'email' => $email_khach_hang,
-                    'error' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString()
-                ]);
+                try {
+                    Mail::to($request->email_khach)->send(new SendMail(
+                        "Xác nhận thanh toán thành công",
+                        "thanh_toan_thanh_cong",
+                        $emailData
+                    ));
+                    Log::info('Đã gửi email thành công đến: ' . $request->email_khach);
+                } catch (\Exception $e) {
+                    Log::error('Lỗi gửi email: ' . $e->getMessage());
+                    // Không throw exception vì thanh toán vẫn thành công
+                }
             }
+
+            // Lấy thông tin dịch vụ đã đặt
+            $dichVuDaDat = ChiTietVeDichVu::whereIn('id_chi_tiet_ve', $ve->pluck('id'))
+                ->with('dichVu')
+                ->get()
+                ->map(function ($dv) {
+                    return [
+                        'ten_dich_vu' => $dv->dichVu->ten_dich_vu,
+                        'so_luong' => $dv->so_luong,
+                        'gia_tien' => $dv->gia_tien
+                    ];
+                });
 
             return response()->json([
                 'status' => true,
@@ -1273,7 +1278,15 @@ class ThanhToanController extends Controller
                     'ma_hoa_don' => $maHoaDon,
                     'thoi_gian_thanh_toan' => Carbon::now()->format('Y-m-d H:i:s'),
                     'qr_code' => $qrResult['qr_code'],
-                    'email_gui' => $email_khach_hang
+                    'tong_tien' => $tongTien,
+                    'danh_sach_ghe' => $ve->map(function($v) {
+                        return [
+                            'ten_ghe' => $v->ghe->ten_ghe,
+                            'loai_ghe' => $v->ghe->loai_ghe
+                        ];
+                    }),
+                    'dich_vu' => $dichVuDaDat,
+                    'email_gui' => $request->email_khach ?? null
                 ]
             ]);
         } catch (\Exception $e) {

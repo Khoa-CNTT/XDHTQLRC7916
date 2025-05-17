@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateSuatChieu;
 use App\Models\ChiTietPhanQuyen;
 use App\Models\ChiTietVe;
 use App\Models\ChucVu;
@@ -237,7 +238,7 @@ class SuatChieuController extends Controller
 
                 return response()->json([
                     'status' => true,
-                    'message' => 'Đã thêm suất chiếu thành công!'
+                    'message' => 'Thêm suất chiếu thành công!'
                 ]);
             } catch (\Exception $e) {
                 DB::rollBack();
@@ -612,7 +613,7 @@ class SuatChieuController extends Controller
     }
 
     // Cập nhật suất chiếu
-    public function update(Request $request)
+    public function update(UpdateSuatChieu $request)
     {
         $id_chuc_nang = 69;
         $user = Auth::guard('sanctum')->user();

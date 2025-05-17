@@ -22,7 +22,7 @@ class CreatePhong extends FormRequest
     public function rules(): array
     {
         return [
-            'ten_phong'   => 'required|string|max:100',
+            'ten_phong'   => 'required|regex:/^[a-zA-Z0-9\s]+$/|max:100|unique:phongs,ten_phong',
             'tinh_trang'  => 'required|boolean',
         ];
     }
@@ -30,9 +30,9 @@ class CreatePhong extends FormRequest
     {
         return [
             'ten_phong.required'  => 'Vui lòng nhập tên phòng.',
-            'ten_phong.string'    => 'Tên phòng phải là chuỗi.',
+            'ten_phong.regex'     => 'Tên phòng phải là chuỗi.',
+            'ten_phong.unique'    => 'Tên phòng đã tồn tại.',
             'ten_phong.max'       => 'Tên phòng không được vượt quá 100 ký tự.',
-
             'tinh_trang.required' => 'Vui lòng chọn tình trạng.',
             'tinh_trang.boolean'  => 'Tình trạng phải là true hoặc false.'
         ];

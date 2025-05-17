@@ -135,17 +135,19 @@ class HoaDonController extends Controller
         try {
             $admin = Auth::guard('sanctum')->user();
 
-            // Common query
+            // Lấy tất cả chi tiết vé theo hóa đơn
             $query = ChiTietVe::where('id_hoa_don', $request->id)
                 ->join('ghes', 'chi_tiet_ves.id_ghe', '=', 'ghes.id')
                 ->join('suat_chieus', 'chi_tiet_ves.id_suat', '=', 'suat_chieus.id')
                 ->join('phongs', 'suat_chieus.phong_id', '=', 'phongs.id')
                 ->join('quan_ly_phims', 'suat_chieus.phim_id', '=', 'quan_ly_phims.id')
                 ->join('hoa_dons', 'chi_tiet_ves.id_hoa_don', '=', 'hoa_dons.id')
-                ->join('chi_tiet_ve_dich_vus', 'chi_tiet_ves.id', '=', 'chi_tiet_ve_dich_vus.id_chi_tiet_ve')
-                ->join('dich_vus', 'chi_tiet_ve_dich_vus.id_dich_vu', '=', 'dich_vus.id')
+                ->leftJoin('chi_tiet_ve_dich_vus', 'chi_tiet_ves.id', '=', 'chi_tiet_ve_dich_vus.id_chi_tiet_ve')
+                ->leftJoin('dich_vus', 'chi_tiet_ve_dich_vus.id_dich_vu', '=', 'dich_vus.id')
                 ->select(
+                    'chi_tiet_ves.id as id_chi_tiet_ve',
                     'ghes.ten_ghe',
+                    'ghes.id as id_ghe',
                     'quan_ly_phims.ten_phim',
                     'suat_chieus.gio_bat_dau',
                     'suat_chieus.ngay_chieu',
@@ -154,15 +156,12 @@ class HoaDonController extends Controller
                     'phongs.ten_phong',
                     'hoa_dons.ma_qr_checkin',
                     'hoa_dons.ma_hoa_don',
-                    'chi_tiet_ve_dich_vus.so_luong',
-                    'dich_vus.ten_dich_vu',
                     'hoa_dons.tong_tien',
-                    DB::raw('chi_tiet_ve_dich_vus.so_luong AS so_luong_dich_vu')
+                    DB::raw('COALESCE(chi_tiet_ve_dich_vus.so_luong, 0) AS so_luong_dich_vu'),
+                    'dich_vus.ten_dich_vu'
                 );
 
-
-
-            // Adjust the query for authenticated user (admin)
+            // Nếu là admin, lấy tên nhân viên; ngược lại lấy tên khách hàng
             if ($admin) {
                 $query->leftJoin('nhan_viens', 'chi_tiet_ves.id_nhan_vien', '=', 'nhan_viens.id')
                     ->addSelect('nhan_viens.ten_nhan_vien');
@@ -171,15 +170,40 @@ class HoaDonController extends Controller
                     ->addSelect('khach_hangs.ten_khach_hang');
             }
 
-            // Execute query
             $data = $query->get();
+
+            // Group lại theo chi tiết vé nếu muốn gộp dịch vụ cho từng vé
+            $grouped = $data->groupBy('id_chi_tiet_ve')->map(function ($items) {
+                $first = $items->first();
+                return [
+                    'id_chi_tiet_ve' => $first->id_chi_tiet_ve,
+                    'ten_ghe' => $first->ten_ghe,
+                    'id_ghe' => $first->id_ghe,
+                    'ten_phim' => $first->ten_phim,
+                    'gio_bat_dau' => $first->gio_bat_dau,
+                    'ngay_chieu' => $first->ngay_chieu,
+                    'dinh_dang' => $first->dinh_dang,
+                    'ngon_ngu' => $first->ngon_ngu,
+                    'ten_phong' => $first->ten_phong,
+                    'ma_qr_checkin' => $first->ma_qr_checkin,
+                    'ma_hoa_don' => $first->ma_hoa_don,
+                    'tong_tien' => $first->tong_tien,
+                    'ten_khach_hang' => $first->ten_khach_hang ?? null,
+                    'ten_nhan_vien' => $first->ten_nhan_vien ?? null,
+                    'dich_vus' => $items->map(function ($item) {
+                        return [
+                            'ten_dich_vu' => $item->ten_dich_vu,
+                            'so_luong' => $item->so_luong_dich_vu,
+                        ];
+                    })->filter(fn($dv) => $dv['ten_dich_vu'] !== null)->values()
+                ];
+            })->values();
 
             return response()->json([
                 'status' => true,
-                'data' => $data
+                'data' => $grouped
             ]);
         } catch (\Exception $e) {
-            // Log the exception for debugging purposes
             return response()->json([
                 'status' => false,
                 'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
