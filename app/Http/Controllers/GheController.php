@@ -23,12 +23,12 @@ class GheController extends Controller
             ->first();
         if ($master->is_master) {
             $data = Ghe::with('phong')
-            ->orderBy('ten_ghe', 'asc')
-            ->get();
+                ->orderBy('ten_ghe', 'asc')
+                ->get();
 
-        return response()->json([
-            'data' => $data
-        ]);
+            return response()->json([
+                'data' => $data
+            ]);
         } else {
             $check = ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
                 ->where('chuc_vus.tinh_trang', 1)
@@ -37,20 +37,18 @@ class GheController extends Controller
                 ->first();
             if ($check) {
                 $data = Ghe::with('phong')
-            ->orderBy('ten_ghe', 'asc')
-            ->get();
+                    ->orderBy('ten_ghe', 'asc')
+                    ->get();
 
-        return response()->json([
-            'data' => $data
-        ]);
+                return response()->json([
+                    'data' => $data
+                ]);
             } else {
                 return response()->json([
                     "message" => 'bạn không có quyền này'
                 ]);
             }
         }
-
-
     }
 
     // Đổi trạng thái ghế
@@ -100,44 +98,42 @@ class GheController extends Controller
                 ->first();
             if ($check) {
                 $ghe = Ghe::find($request->id);
-        if ($ghe) {
-            // Kiểm tra xem ghế đã được đặt trong bất kỳ suất chiếu nào chưa
-            $daCoNguoiDat = ChiTietVe::where('id_ghe', $ghe->id)
-                ->where('tinh_trang', 1)
-                ->exists();
+                if ($ghe) {
+                    // Kiểm tra xem ghế đã được đặt trong bất kỳ suất chiếu nào chưa
+                    $daCoNguoiDat = ChiTietVe::where('id_ghe', $ghe->id)
+                        ->where('tinh_trang', 1)
+                        ->exists();
 
-            if ($daCoNguoiDat && $ghe->trang_thai == 1) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Không thể vô hiệu hóa ghế đã có người đặt!'
-                ]);
-            }
+                    if ($daCoNguoiDat && $ghe->trang_thai == 1) {
+                        return response()->json([
+                            'status' => false,
+                            'message' => 'Không thể vô hiệu hóa ghế đã có người đặt!'
+                        ]);
+                    }
 
-            if ($ghe->trang_thai == 1) {
-                $ghe->trang_thai = 0;
-            } else {
-                $ghe->trang_thai = 1;
-            }
-            $ghe->save();
+                    if ($ghe->trang_thai == 1) {
+                        $ghe->trang_thai = 0;
+                    } else {
+                        $ghe->trang_thai = 1;
+                    }
+                    $ghe->save();
 
-            return response()->json([
-                'status' => true,
-                'message' => "Đổi trạng thái ghế thành công!"
-            ]);
-        } else {
-            return response()->json([
-                'status' => false,
-                'message' => "Đã có lỗi xảy ra!"
-            ]);
-        }
+                    return response()->json([
+                        'status' => true,
+                        'message' => "Đổi trạng thái ghế thành công!"
+                    ]);
+                } else {
+                    return response()->json([
+                        'status' => false,
+                        'message' => "Đã có lỗi xảy ra!"
+                    ]);
+                }
             } else {
                 return response()->json([
                     "message" => 'bạn không có quyền này'
                 ]);
             }
         }
-
-
     }
 
     // Đổi loại ghế
@@ -199,8 +195,6 @@ class GheController extends Controller
                 ]);
             }
         }
-
-
     }
 
     // Lấy ghế theo phòng

@@ -19,7 +19,8 @@ class ChucVuController extends Controller
         if ($master->is_master) {
             $data   =   ChucVu::all();
             return response()->json([
-            'data'  =>  $data
+            'data'  =>  $data,
+            'quyen' => $master->ten_chuc_vu,
         ]);
         } else {
             $check = ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
@@ -30,7 +31,8 @@ class ChucVuController extends Controller
             if ($check) {
                 $data   =   ChucVu::all();
         return response()->json([
-            'data'  =>  $data
+            'data'  =>  $data,
+            'quyen' => $master->ten_chuc_vu,
         ]);
             } else {
                 return response()->json([

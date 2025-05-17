@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\ChiTietPhanQuyen;
 use App\Models\ChucNang;
+use App\Models\ChucVu;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 use function Laravel\Prompts\select;
 
@@ -20,6 +22,22 @@ class ChiTietPhanQuyenController extends Controller
         return response()->json([
             'data' => $data
         ]);
+    }
+
+    public function CheckQuyen()
+    {
+        $user = Auth::guard('sanctum')->user();
+        $master = ChucVu::where('id', $user->id_chuc_vu)
+            ->first();
+        if ($master->is_master) {
+            return response()->json([
+                'status' => true,
+            ]);
+        }else{
+            return response()->json([
+                'status' => false,
+            ]);
+        }
     }
 
     public function getDataCN(Request $request)
@@ -50,7 +68,8 @@ class ChiTietPhanQuyenController extends Controller
             'data' => $data
         ]);
     }
-    public function timKiemCQ(Request $request){
+    public function timKiemCQ(Request $request)
+    {
         $noi_dung = '%' . $request->noi_dung . '%';
         $data = ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
             ->join('chuc_nangs', 'chuc_nangs.id', 'chi_tiet_phan_quyens.id_chuc_nang')
