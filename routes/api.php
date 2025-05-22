@@ -257,11 +257,10 @@ Route::get('/thanh-toan/chi-tiet-hoa-don/{maHoaDon}', [ThanhToanController::clas
 Route::get('/hoa-don/check-in/{ma_hoa_don}', [ThanhToanController::class, 'checkInHoaDon']);
 Route::post('/thanh-toan/tien-mat', [ThanhToanController::class, 'thanhToanTienMat']);
 
-// Chatbot API routes
-
-Route::post('/chatbot/query', [TestControllert::class, 'analyzeUserQuery']);
-Route::get('/chatbot/suggest-movies', [ChatbotController::class, 'suggestMovies']);
-Route::post('/chatbot/bill-history', [ChatbotController::class, 'viewBillHistory']);
+// Chatbot routes
+Route::prefix('chatbot')->group(function () {
+    Route::post('/query', [TestControllert::class, 'analyzeUserQuery']);
+});
 
 Route::prefix('goc-dien-anh')->group(function () {
     Route::get('/data', [GocDienAnhController::class, 'getData']);

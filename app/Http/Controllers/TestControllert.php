@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ChiTietVe;
+use App\Models\HoaDon;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -37,108 +39,17 @@ class TestControllert extends Controller
                 'g.hang',
                 'g.cot',
                 'hd.ma_hoa_don',
-                'b.hinh_anh as baner_hinh_anh'
+                'b.hinh_anh as baner_hinh_anh',
+                'p.dao_dien',
+                'p.dien_vien',
+                'p.nha_san_xuat',
+                'p.mo_ta',
+                'p.gioi_han_do_tuoi'
             ])
             ->get()
-            ->groupBy('id'); // group theo phim ID
-
+            ->groupBy('id');
 
         $phims->transform(function ($group) {
-            $phim = $group->first(); // thông tin phim chung
-            $phim->danh_sach_ve = $group->map(function ($item) {
-                return [
-                    'suat_chieu_id' => $item->suat_chieu_id,
-                    'ngay_chieu' => $item->ngay_chieu,
-                    'gio_bat_dau' => $item->gio_bat_dau,
-                    'gia_ve' => $item->gia_ve,
-                    'ten_phong' => $item->ten_phong,
-                    'chi_tiet_ve_id' => $item->chi_tiet_ve_id,
-                    'gia_ve_chi_tiet' => $item->chi_tiet_gia_ve,
-                    'ten_ghe' => $item->ten_ghe,
-                    'ma_hoa_don' => $item->ma_hoa_don,
-                ];
-            })->values();
-            return $phim;
-        });
-        return response()->json($phims);
-    }
-
-    function buildPhimQueryFromJson(array $filterJson)
-    {
-        $query = DB::table('quan_ly_phims as p')
-            ->leftJoin('chi_tiet_the_loais as cttl', 'p.id', '=', 'cttl.id_phim')
-            ->leftJoin('the_loais as tl', 'cttl.id_the_loai', '=', 'tl.id')
-            ->leftJoin('suat_chieus as sc', 'p.id', '=', 'sc.phim_id')
-            ->leftJoin('phongs as ph', 'sc.phong_id', '=', 'ph.id')
-            ->leftJoin('chi_tiet_ves as ctv', 'sc.id', '=', 'ctv.id_suat')
-            ->leftJoin('ghes as g', 'ctv.id_ghe', '=', 'g.id')
-            ->leftJoin('hoa_dons as hd', 'ctv.id_hoa_don', '=', 'hd.id')
-            ->leftJoin('baners as b', 'p.id', '=', 'b.id_phim')
-            ->select([
-                'p.id as id', // để groupBy hoạt động đúng
-                'p.*',
-                'tl.id as the_loai_id',
-                'tl.ten_the_loai',
-                'sc.id as suat_chieu_id',
-                'sc.ngay_chieu',
-                'sc.gio_bat_dau',
-                'sc.gia_ve',
-                'ph.ten_phong',
-                'ctv.id as chi_tiet_ve_id',
-                'ctv.gia_tien as chi_tiet_gia_ve',
-                'g.ten_ghe',
-                'g.hang',
-                'g.cot',
-                'hd.ma_hoa_don',
-                'b.hinh_anh as baner_hinh_anh'
-            ]);
-        foreach ($filterJson as $key => $value) {
-
-            if (is_null($value)) continue;
-            switch ($key) {
-                case 'ten_phim':
-                    if (is_array($value)) {
-                        $query->where(function ($q) use ($value) {
-                            foreach ($value as $ten) {
-                                $q->orWhere('p.ten_phim', 'like', "%{$ten}%");
-                            }
-                        });
-                    } elseif (is_string($value)) {
-                        $query->where('p.ten_phim', 'like', "%{$value}%");
-                    }
-                    break;
-
-                case 'the_loai':
-                    $query->where('tl.ten_the_loai', 'like', "%{$value}%");
-                    break;
-
-                case 'dao_dien':
-                    $query->where('p.dao_dien', 'like', "%{$value}%");
-                    break;
-
-                case 'dien_vien':
-                    $query->where('p.dien_vien', 'like', "%{$value}%");
-                    break;
-
-                case 'ngay_chieu':
-                    $query->whereDate('sc.ngay_chieu', $value);
-                    break;
-
-                case 'gio_bat_dau':
-                    $query->whereTime('sc.gio_bat_dau', $value);
-                    break;
-
-                case 'gioi_han_do_tuoi':
-                    $query->where('p.gioi_han_do_tuoi', $value);
-                    break;
-
-                case 'tinh_trang':
-                    $query->where('p.tinh_trang', $value ? 1 : 0);
-                    break;
-            }
-        }
-
-        return $query->get()->groupBy('id')->transform(function ($group) {
             $phim = $group->first();
             $phim->danh_sach_ve = $group->map(function ($item) {
                 return [
@@ -153,10 +64,73 @@ class TestControllert extends Controller
                     'ma_hoa_don' => $item->ma_hoa_don,
                 ];
             })->values();
+
+            // Add movie details
+            $phim->chi_tiet_phim = [
+                'dao_dien' => $phim->dao_dien,
+                'dien_vien' => $phim->dien_vien,
+                'nha_san_xuat' => $phim->nha_san_xuat,
+                'mo_ta' => $phim->mo_ta,
+                'gioi_han_do_tuoi' => $phim->gioi_han_do_tuoi
+            ];
+
             return $phim;
         });
+        return response()->json($phims);
     }
 
+    function buildPhimQueryFromJson(array $filterJson)
+    {
+        $query = DB::table('quan_ly_phims as p')
+            ->leftJoin('suat_chieus as sc', 'p.id', '=', 'sc.phim_id')
+            ->leftJoin('phongs as ph', 'sc.phong_id', '=', 'ph.id')
+            ->leftJoin('chi_tiet_ves as ctv', 'sc.id', '=', 'ctv.id_suat')
+            ->select(
+                'p.ten_phim',
+                'p.dao_dien',
+                'p.dien_vien',
+                'p.nha_san_xuat',
+                'p.mo_ta',
+                'p.gioi_han_do_tuoi',
+                'sc.id as suat_chieu_id',
+                'sc.ngay_chieu',
+                'sc.gio_bat_dau',
+                DB::raw('COUNT(CASE WHEN ctv.tinh_trang = 0 THEN 1 END) as tong_so_ve'),
+                DB::raw('COUNT(CASE WHEN ctv.tinh_trang = 1 THEN 1 END) as so_ve_da_ban'),
+                DB::raw('COUNT(CASE WHEN ctv.tinh_trang = 0 THEN 1 END) - COUNT(CASE WHEN ctv.tinh_trang = 1 THEN 1 END) as so_ve_trong')
+            )
+            ->groupBy('sc.id', 'p.ten_phim', 'sc.ngay_chieu', 'sc.gio_bat_dau', 'p.dao_dien', 'p.dien_vien', 'p.nha_san_xuat', 'p.mo_ta', 'p.gioi_han_do_tuoi');
+
+        // Áp dụng bộ lọc nếu có
+        foreach ($filterJson as $key => $value) {
+            if (is_null($value)) continue;
+            switch ($key) {
+                case 'ten_phim':
+                    $query->where('p.ten_phim', 'like', "%{$value}%");
+                    break;
+                case 'ngay_chieu':
+                    $query->whereDate('sc.ngay_chieu', $value);
+                    break;
+                case 'gio_bat_dau':
+                    $query->whereTime('sc.gio_bat_dau', $value);
+                    break;
+                case 'dao_dien':
+                    $query->where('p.dao_dien', 'like', "%{$value}%");
+                    break;
+                case 'dien_vien':
+                    $query->where('p.dien_vien', 'like', "%{$value}%");
+                    break;
+                case 'nha_san_xuat':
+                    $query->where('p.nha_san_xuat', 'like', "%{$value}%");
+                    break;
+                case 'gioi_han_do_tuoi':
+                    $query->where('p.gioi_han_do_tuoi', $value);
+                    break;
+            }
+        }
+
+        return $query->get();
+    }
 
     public function buildDichVuQuery()
     {
@@ -233,6 +207,7 @@ class TestControllert extends Controller
 
             Hãy phân tích câu hỏi và xác định người dùng đang hỏi về loại thông tin nào.
             Nếu người dùng hỏi về phim đang chiếu, hãy luôn trả về "phim" trong mảng type.
+            Nếu người dùng hỏi về chi tiết phim (đạo diễn, diễn viên), hãy trả về "phim" và thêm các trường tương ứng vào phim_filter.
 
             Trả về JSON theo định dạng sau:
             {
@@ -242,6 +217,7 @@ class TestControllert extends Controller
                     "the_loai": null,
                     "dao_dien": null,
                     "dien_vien": null,
+                    "nha_san_xuat": null,
                     "ngay_chieu": "$today",
                     "gio_bat_dau": null,
                     "gioi_han_do_tuoi": null,
@@ -253,6 +229,7 @@ class TestControllert extends Controller
 
             Lưu ý:
             - Nếu người dùng hỏi về phim đang chiếu, LUÔN trả về ["phim"] trong type
+            - Nếu người dùng hỏi về chi tiết phim (đạo diễn, diễn viên), đảm bảo trả về thông tin trong phim_filter
             - Nếu không rõ thời gian, sử dụng ngày hôm nay: "$today"
             - Trả về JSON đúng định dạng, không thêm text
             PROMPT;
@@ -334,17 +311,21 @@ class TestControllert extends Controller
         ---
 
         🎯 Nhiệm vụ của bạn:
+        - Xuống dòng sau mỗi câu
         - Tư vấn rõ ràng về các thông tin được hỏi (phim, dịch vụ, tin tức, sự kiện)
-        - Với phim: liệt kê giờ chiếu, phòng, giá vé
+        - Với phim:
+          + Nếu hỏi về đạo diễn/diễn viên: cung cấp thông tin chi tiết về đạo diễn, diễn viên
+          + Nếu hỏi về lịch chiếu: liệt kê giờ chiếu, số vé còn trống
+          + Nếu hỏi về chi tiết phim: cung cấp thông tin về nhà sản xuất, giới hạn độ tuổi, mô tả
         - Với dịch vụ: giới thiệu tên và giá
         - Với góc điện ảnh: tóm tắt tin mới nhất
         - Với sự kiện: thông tin về các sự kiện đang diễn ra
+        - Với câu hỏi khác: trả lời thân thiện, không trả lời về phim, dịch vụ, tin tức, sự kiện
         - Văn phong thân thiện như nhân viên tư vấn thật
         - Không trả lại JSON
         - Kết thúc bằng lời mời phù hợp (đặt vé/sử dụng dịch vụ/tham gia sự kiện)
         - Trình bày bằng Markdown gọn gàng, dễ đọc (có thể dùng emoji, tiêu đề phụ, danh sách)
         - Trả lời bám sát message của người dùng
-        - Xuống dòng sau mỗi câu
         PROMPT;
 
         $advise = Http::withHeaders([
