@@ -26,7 +26,7 @@ class CreateSuKienRequest extends FormRequest
             'ngay_bat_dau' => 'required|date',
             'ngay_ket_thuc' => 'required|date',
             'hinh_anh' => 'required|string|max:255',
-            'mo_ta' => 'required|string|max:255',
+            'mo_ta' => 'required|string',
             'tinh_trang' => 'required|boolean',
         ];
     }
@@ -45,7 +45,6 @@ class CreateSuKienRequest extends FormRequest
             'hinh_anh.max' => 'Hình ảnh không được vượt quá 255 ký tự.',
             'mo_ta.required' => 'Vui lòng nhập mô tả.',
             'mo_ta.string' => 'Mô tả phải là chuỗi.',
-            'mo_ta.max' => 'Mô tả không được vượt quá 255 ký tự.',
             'tinh_trang.required' => 'Vui lòng chọn trạng thái.',
             'tinh_trang.boolean' => 'Trạng thái phải là true hoặc false.',
         ];

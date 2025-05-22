@@ -32,9 +32,9 @@ class UpdateGocDienAnhRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'tieu_de.required' => 'Vui lòng nhập tên góc diễn án.',
-            'tieu_de.string' => 'Tên góc diễn án phải là chuỗi.',
-            'tieu_de.max' => 'Tên góc diễn án không được vượt quá 255 ký tự.',
+            'tieu_de.required' => 'Vui lòng nhập tên góc điện ảnh.',
+            'tieu_de.string' => 'Tên góc điện ảnh phải là chuỗi.',
+            'tieu_de.max' => 'Tên góc điện ảnh không được vượt quá 255 ký tự.',
             'hinh_anh.required' => 'Vui lòng nhập hình ảnh.',
             'hinh_anh.string' => 'Hình ảnh phải là chuỗi.',
             'hinh_anh.max' => 'Hình ảnh không được vượt quá 255 ký tự.',

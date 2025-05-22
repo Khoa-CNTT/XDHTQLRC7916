@@ -72,7 +72,7 @@ class PhongController extends Controller
 
                 return response()->json([
                     'status'    =>  true,
-                    'message'   =>  'Đã tạo mới phòng thành công!'
+                    'message'   =>  'Thêm Phòng thành công'
                 ]);
             } else {
                 return response()->json([
@@ -177,7 +177,7 @@ class PhongController extends Controller
 
             return response()->json([
                 'status' => true,
-                'message' => "Đổi trạng thái phòng thành công!"
+                'message' => "Đã đổi trạng thái thành công"
             ]);
         } else {
             return response()->json([
