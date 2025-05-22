@@ -15,7 +15,7 @@ class DoiMatKhauRequest extends FormRequest
         return [
             'password' => 'required',
             'moi' => 'required|min:4',
-            're_password' => 'required|same: password',
+            're_password' => 'required|same:moi',
         ];
     }
     public function messages(): array
