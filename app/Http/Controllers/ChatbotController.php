@@ -622,7 +622,7 @@ class ChatbotController extends Controller
             ];
 
             $response = $this->callGeminiApi(
-                "Gợi ý một số phim đang chiếu cho khách hàng, kèm theo link chi tiết phim.",
+                "Gợi ý một số phim đang chiếu cho khách hàng",
                 $contextData
             );
 

@@ -23,6 +23,8 @@ use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\ChiTietVeDichVuController;
 use App\Http\Controllers\GocDienAnhController;
 use App\Http\Controllers\SuKienController;
+use App\Http\Controllers\TestController;
+use App\Http\Controllers\TestControllert;
 use App\Http\Controllers\ThongKeController;
 
 use Illuminate\Http\Request;
@@ -31,6 +33,10 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
 // })->middleware('auth:sanctum');
+
+
+
+
 Route::group(['middleware' => 'adminMiddle'], function () {
     Route::get('/khach-hang/data', [KhachHangController::class, 'getData']);
     Route::post('/khach-hang/create', [KhachHangController::class, 'createData']);
@@ -253,7 +259,7 @@ Route::post('/thanh-toan/tien-mat', [ThanhToanController::class, 'thanhToanTienM
 
 // Chatbot API routes
 
-Route::post('/chatbot/query', [ChatbotController::class, 'query']);
+Route::post('/chatbot/query', [TestControllert::class, 'analyzeUserQuery']);
 Route::get('/chatbot/suggest-movies', [ChatbotController::class, 'suggestMovies']);
 Route::post('/chatbot/bill-history', [ChatbotController::class, 'viewBillHistory']);
 
