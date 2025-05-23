@@ -479,7 +479,7 @@ class KhachHangController extends Controller
             $thoi_gian_dat = Carbon::parse($value->updated_at);
             $khoang_cach = $thoi_gian_dat->diffInMinutes($hien_tai);
 
-            if($khoang_cach > 1) {
+            if($khoang_cach > 15) {
                 $value->tinh_trang = 0;
                 $value->id_khach_hang = null;
                 $value->id_nhan_vien = null;

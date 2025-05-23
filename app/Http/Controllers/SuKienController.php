@@ -14,10 +14,32 @@ class SuKienController extends Controller
 {
     public function getData()
     {
-        $data   =   SuKien::all();
-        return response()->json([
-            'data'  =>  $data
-        ]);
+        $id_chuc_nang = 77;
+        $user = Auth::guard('sanctum')->user();
+        $master = ChucVu::where('id', $user->id_chuc_vu)
+            ->first();
+        if ($master->is_master) {
+            $data   =   SuKien::all();
+            return response()->json([
+                'data'  =>  $data
+            ]);
+        } else {
+            $check = ChiTietPhanQuyen::join('chuc_vus', 'chuc_vus.id', 'chi_tiet_phan_quyens.id_quyen')
+                ->where('chuc_vus.tinh_trang', 1)
+                ->where('id_quyen', $user->id_chuc_vu)
+                ->where('id_chuc_nang', $id_chuc_nang)
+                ->first();
+            if ($check) {
+                $data   =   SuKien::all();
+                return response()->json([
+                    'data'  =>  $data
+                ]);
+            } else {
+                return response()->json([
+                    "message" => 'bạn không có quyền này'
+                ]);
+            }
+        }
     }
 
     public function getDataSuKien()

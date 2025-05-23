@@ -108,7 +108,9 @@ class ChucNangSeeder extends Seeder
                 ["id" => 74, "ten_chuc_nang" => "Xoá góc điện ảnh"],
                 ["id" => 75, "ten_chuc_nang" => "Cập nhật góc điện ảnh"],
                 ["id" => 76, "ten_chuc_nang" => "Đổi trạng thái góc điện ảnh"],
+                ["id" => 92, "ten_chuc_nang" => "Xem góc điện ảnh"],
 
+                ["id" => 93, "ten_chuc_nang" => "Xem sự kiện"],
                 ["id" => 77, "ten_chuc_nang" => "Thêm sự kiện"],
                 ["id" => 78, "ten_chuc_nang" => "Xoá sự kiện"],
                 ["id" => 79, "ten_chuc_nang" => "Cập nhật sự kiện"],

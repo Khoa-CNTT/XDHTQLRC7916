@@ -1097,7 +1097,6 @@ class ThanhToanController extends Controller
                         'gio_hien_tai' => $now->format('H:i')
                     ], 400);
                 }
-
                 if ($now->lt($thoiGianBatDauCheckIn)) {
                     return response()->json([
                         'status' => false,

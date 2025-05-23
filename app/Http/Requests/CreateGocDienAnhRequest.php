@@ -24,7 +24,7 @@ class CreateGocDienAnhRequest extends FormRequest
         return [
             'tieu_de' => 'required|string|max:255',
             'hinh_anh' => 'required|string|max:255',
-            'noi_dung' => 'required|string|max:255',
+            'noi_dung' => 'required|string|min:5',
             'ngay_dang' => 'required|date',
             'trang_thai' => 'required|boolean',
         ];
@@ -40,7 +40,7 @@ class CreateGocDienAnhRequest extends FormRequest
             'hinh_anh.max' => 'Hình ảnh không được vượt quá 255 ký tự.',
             'noi_dung.required' => 'Vui lòng nhập nội dung.',
             'noi_dung.string' => 'Nội dung phải là chuỗi.',
-            'noi_dung.max' => 'Nội dung không được vượt quá 255 ký tự.',
+            'noi_dung.min' => 'Phải có ít nhất 5 ký tự.',
             'ngay_dang.required' => 'Vui lòng chọn ngày đăng.',
             'ngay_dang.date' => 'Ngày đăng phải là ngày.',
             'trang_thai.required' => 'Vui lòng chọn trạng thái.',
