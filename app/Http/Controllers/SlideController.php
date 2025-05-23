@@ -12,6 +12,15 @@ use Illuminate\Support\Facades\Auth;
 
 class SlideController extends Controller
 {
+    public function getDataClient()
+    {
+        $data   =   Slide::where('tinh_trang', 1)
+            ->get();
+
+        return response()->json([
+            'slide'  =>  $data
+        ]);
+    }
     public function getData()
     {
         $id_chuc_nang = 85;

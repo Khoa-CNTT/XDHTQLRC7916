@@ -229,6 +229,7 @@ Route::post('/lay-suat-chieu/open-data/{id}', [SuatChieuController::class, 'open
 Route::get('/phim-chi-tiet/{id}', [QuanLyPhimController::class, 'phimChiTiet']);
 
 Route::get('/slide/data', [SlideController::class, 'getData']);
+Route::get('/slide/data-client', [SlideController::class, 'getDataClient']);
 Route::post('/slide/create', [SlideController::class, 'store']);
 Route::delete('/slide/delete/{id}', [SlideController::class, 'destroy']);
 Route::put('/slide/update', [SlideController::class, 'update']);
