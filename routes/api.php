@@ -23,6 +23,8 @@ use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\ChiTietVeDichVuController;
 use App\Http\Controllers\GocDienAnhController;
 use App\Http\Controllers\SuKienController;
+use App\Http\Controllers\TestController;
+use App\Http\Controllers\TestControllert;
 use App\Http\Controllers\ThongKeController;
 
 use Illuminate\Http\Request;
@@ -36,6 +38,10 @@ Route::get('/auto', [KhachHangController::class, 'getAuto']);
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
 // })->middleware('auth:sanctum');
+
+
+
+
 Route::group(['middleware' => 'adminMiddle'], function () {
     Route::get('/khach-hang/data', [KhachHangController::class, 'getData']);
     Route::post('/khach-hang/create', [KhachHangController::class, 'createData']);
@@ -233,6 +239,7 @@ Route::post('/lay-suat-chieu/open-data/{id}', [SuatChieuController::class, 'open
 Route::get('/phim-chi-tiet/{id}', [QuanLyPhimController::class, 'phimChiTiet']);
 
 Route::get('/slide/data', [SlideController::class, 'getData']);
+Route::get('/slide/data-client', [SlideController::class, 'getDataClient']);
 Route::post('/slide/create', [SlideController::class, 'store']);
 Route::delete('/slide/delete/{id}', [SlideController::class, 'destroy']);
 Route::put('/slide/update', [SlideController::class, 'update']);
@@ -261,11 +268,10 @@ Route::get('/thanh-toan/chi-tiet-hoa-don/{maHoaDon}', [ThanhToanController::clas
 Route::get('/hoa-don/check-in/{ma_hoa_don}', [ThanhToanController::class, 'checkInHoaDon']);
 Route::post('/thanh-toan/tien-mat', [ThanhToanController::class, 'thanhToanTienMat']);
 
-// Chatbot API routes
-
-Route::post('/chatbot/query', [ChatbotController::class, 'query']);
-Route::get('/chatbot/suggest-movies', [ChatbotController::class, 'suggestMovies']);
-Route::post('/chatbot/bill-history', [ChatbotController::class, 'viewBillHistory']);
+// Chatbot routes
+Route::prefix('chatbot')->group(function () {
+    Route::post('/query', [TestControllert::class, 'analyzeUserQuery']);
+});
 
 Route::prefix('goc-dien-anh')->group(function () {
     Route::get('/data', [GocDienAnhController::class, 'getData']);
