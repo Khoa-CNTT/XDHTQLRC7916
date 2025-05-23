@@ -14,7 +14,7 @@ class SuKienController extends Controller
 {
     public function getData()
     {
-        $id_chuc_nang = 77;
+        $id_chuc_nang = 93;
         $user = Auth::guard('sanctum')->user();
         $master = ChucVu::where('id', $user->id_chuc_vu)
             ->first();
@@ -36,7 +36,8 @@ class SuKienController extends Controller
                 ]);
             } else {
                 return response()->json([
-                    "message" => 'bạn không có quyền này'
+                    'status'  => false,
+                    "message" => 'bạn không có quyền này',
                 ]);
             }
         }

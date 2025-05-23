@@ -275,6 +275,7 @@ Route::prefix('chatbot')->group(function () {
 
 Route::prefix('goc-dien-anh')->group(function () {
     Route::get('/data', [GocDienAnhController::class, 'getData']);
+    Route::get('/data/open', [GocDienAnhController::class, 'getDataOP']);
     Route::post('/create', [GocDienAnhController::class, 'createData']);
     Route::post('/update', [GocDienAnhController::class, 'updateData']);
     Route::delete('/delete/{id}', [GocDienAnhController::class, 'deleteData']);

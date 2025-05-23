@@ -42,6 +42,15 @@ class GocDienAnhController extends Controller
         }
     }
 
+    public function getDataOP()
+    {
+        $data = GocDienAnh::where('trang_thai',1)
+                            ->orderBy('ngay_dang', 'desc')->get();
+        return response()->json([
+            'data' => $data
+        ]);
+    }
+
     public function createData(CreateGocDienAnhRequest $request)
     {
         $id_chuc_nang = 73;

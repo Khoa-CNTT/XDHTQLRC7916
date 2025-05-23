@@ -282,21 +282,24 @@ class ChiTietVeController extends Controller
     }
     public function kiemTraTrangThai(Request $request)
     {
-        $ve = ChiTietVe::where('id_ghe', $request->id_ghe)
-            ->where('id_suat', $request->id_suat)
-            ->first();
-        if ($ve) {
-            if ($ve->id_khach_hang == $request->id_khach_hang && $ve->tinh_trang == 1) {
-                $ve->tinh_trang = 0;
-
-                $ve->save();
-
-                return response()->json([
+        return response()->json([
                     'status' => true,
-                    'message' => "Đã huỷ ghế thành công! Do đã quá thời gian thanh toán"
                 ]);
-            }
-        }
+        // $ve = ChiTietVe::where('id_ghe', $request->id_ghe)
+        //     ->where('id_suat', $request->id_suat)
+        //     ->first();
+        // if ($ve) {
+        //     if ($ve->id_khach_hang == $request->id_khach_hang && $ve->tinh_trang == 1) {
+        //         $ve->tinh_trang = 0;
+
+        //         $ve->save();
+
+        //         return response()->json([
+        //             'status' => true,
+        //             'message' => "Đã huỷ ghế thành công! Do đã quá thời gian thanh toán"
+        //         ]);
+        //     }
+        // }
     }
     public function getData1($id)
     {
