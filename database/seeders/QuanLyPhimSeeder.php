@@ -19,7 +19,7 @@ class QuanLyPhimSeeder extends Seeder
             [
                 'ten_phim'         => 'Bộ tứ báo thủ',
                 'slug_phim'        => 'bo-tu-bao-thu',
-                'ngay_chieu'       => Carbon::parse('2025-01-29'),
+                'ngay_chieu'       => now(),
                 'thoi_luong'       => '133',
                 'dao_dien'         => 'Trấn Thành',
                 'hinh_anh'         => 'https://res.cloudinary.com/dfff9gqxw/image/upload/v1745075677/botubaothu_hdpm7g.jpg',
@@ -36,7 +36,7 @@ class QuanLyPhimSeeder extends Seeder
             [
                 'ten_phim'         => 'Nụ hôn bạc tỷ',
                 'slug_phim'        => 'nu-hon-bac-ty',
-                'ngay_chieu'       => Carbon::parse('2025-01-29'),
+                'ngay_chieu'       => now(),
                 'thoi_luong'       => '100',
                 'dao_dien'         => 'Thu Trang',
                 'hinh_anh'         => 'https://res.cloudinary.com/dfff9gqxw/image/upload/v1745075897/nuhonbacti_vubymb.jpg',
@@ -53,7 +53,7 @@ class QuanLyPhimSeeder extends Seeder
             [
                 'ten_phim'         => 'Yêu nhầm bạn thân',
                 'slug_phim'        => 'yeu-nham-ban-than',
-                'ngay_chieu'       => Carbon::parse('2025-01-29'),
+                'ngay_chieu'       => now(),
                 'thoi_luong'       => '106',
                 'dao_dien'         => 'Nguyễn Quang Dũng, Diệp Thế Vinh',
                 'hinh_anh'         => 'https://res.cloudinary.com/dfff9gqxw/image/upload/v1745076010/yeunhambanthan_oi4lzk.jpg',
@@ -70,7 +70,7 @@ class QuanLyPhimSeeder extends Seeder
             [
                 'ten_phim'         => 'Gấu Yêu Của Anh',
                 'slug_phim'        => 'gau-yeu-cua-anh',
-                'ngay_chieu'       => Carbon::parse('2025-04-04'),
+                'ngay_chieu'       => now(),
                 'thoi_luong'       => '119',
                 'dao_dien'         => 'Ping Lumpraploeng',
                 'hinh_anh'         => 'https://res.cloudinary.com/dfff9gqxw/image/upload/v1745077515/470x700-muaythai_path0j.jpg',
@@ -87,7 +87,7 @@ class QuanLyPhimSeeder extends Seeder
             [
                 'ten_phim'         => 'Cưới Ma Giải Hạn',
                 'slug_phim'        => 'cuoi-ma-giai-han',
-                'ngay_chieu'       => Carbon::parse('2025-04-11'),
+                'ngay_chieu'       => now(),
                 'thoi_luong'       => '128',
                 'dao_dien'         => 'Chayanop Bunprakob',
                 'hinh_anh'         => 'https://res.cloudinary.com/dfff9gqxw/image/upload/v1745076369/cuumagiaihan_mcd5pi.jpg',
@@ -104,7 +104,7 @@ class QuanLyPhimSeeder extends Seeder
             [
                 'ten_phim'         => 'Siêu Nhân Nhí Đại Náo Rừng Xanh',
                 'slug_phim'        => 'sieu-nhan-nhi-dai-nao-rung-xanh',
-                'ngay_chieu'       => Carbon::parse('2025-04-11'),
+                'ngay_chieu'       => now(),
                 'thoi_luong'       => '82',
                 'dao_dien'         => 'Behnoud Nekooei',
                 'hinh_anh'         => 'https://res.cloudinary.com/dfff9gqxw/image/upload/v1745076868/sieunhannhi_b5ggkn.jpg',
@@ -121,7 +121,7 @@ class QuanLyPhimSeeder extends Seeder
             [
                 'ten_phim'         => 'Một Bộ Phim Minecraft',
                 'slug_phim'        => 'mot-bo-phim-minecraft',
-                'ngay_chieu'       => Carbon::parse('2025-04-04'),
+                'ngay_chieu'       => now(),
                 'thoi_luong'       => '101',
                 'dao_dien'         => 'Jared Hess',
                 'hinh_anh'         => 'https://res.cloudinary.com/dfff9gqxw/image/upload/v1745077134/minecraft_kftqsr.jpg',
@@ -138,7 +138,7 @@ class QuanLyPhimSeeder extends Seeder
             [
                 'ten_phim'         => 'Pororo: Thám Hiểm Đại Dương Xanh',
                 'slug_phim'        => 'pororo-tham-hiem-dai-duong-xanh',
-                'ngay_chieu'       => Carbon::parse('2025-04-04'),
+                'ngay_chieu'       => now(),
                 'thoi_luong'       => '71',
                 'dao_dien'         => 'Yoon Je-wan',
                 'hinh_anh'         => 'https://res.cloudinary.com/dfff9gqxw/image/upload/v1745077334/thamhiemdaiduowng_rlsl4h.jpg',
@@ -155,7 +155,7 @@ class QuanLyPhimSeeder extends Seeder
             [
                 'ten_phim' => 'JUNG KOOK: I AM STILL',
                 'slug_phim' => 'jung-kook-i-am-still',
-                'ngay_chieu' => Carbon::parse('2024-09-18'),
+                'ngay_chieu'       => now(),
                 'thoi_luong' => '93', // 1 giờ 33 phút
                 'dao_dien' => 'Park Jun Soo',
                 'hinh_anh' => 'https://media.lottecinemavn.com/Media/MovieFile/MovieImg/202409/11559_103_100001.jpg',
@@ -172,7 +172,7 @@ class QuanLyPhimSeeder extends Seeder
             [
                 'ten_phim' => 'TEE YOD: QUỶ ĂN TẠNG PHẦN 2',
                 'slug_phim' => 'tee-yod-quy-an-tang-phan-2',
-                'ngay_chieu' => Carbon::parse('2024-02-01'), // Giữ ngày bạn cung cấp, cần kiểm tra lại ngày chiếu chính thức tại VN nếu đây là phần 2
+                'ngay_chieu'       => now(), // Giữ ngày bạn cung cấp, cần kiểm tra lại ngày chiếu chính thức tại VN nếu đây là phần 2
                 'thoi_luong' => '90', // Cần xác nhận lại cho phần 2
                 'dao_dien' => 'Taweewat Wantha',
                 'hinh_anh' => 'https://media.lottecinemavn.com/Media/MovieFile/MovieImg/202410/11567_103_100006.jpg',
@@ -189,7 +189,7 @@ class QuanLyPhimSeeder extends Seeder
             [
                 'ten_phim' => 'ROBOT HOANG DÃ',
                 'slug_phim' => 'robot-hoang-da',
-                'ngay_chieu' => Carbon::parse('2024-10-04'), // Cập nhật ngày chiếu chính xác hơn tại VN
+                'ngay_chieu'       => now(), // Cập nhật ngày chiếu chính xác hơn tại VN
                 'thoi_luong' => '102', // Cập nhật thời lượng chính xác hơn (1 giờ 42 phút)
                 'dao_dien' => 'Chris Sanders',
                 'hinh_anh' => 'https://media.lottecinemavn.com/Media/MovieFile/MovieImg/202410/11482_103_100002.jpg',
@@ -206,7 +206,7 @@ class QuanLyPhimSeeder extends Seeder
             [
                 'ten_phim' => 'CÁM',
                 'slug_phim' => 'cam',
-                'ngay_chieu' => Carbon::parse('2024-09-20'),
+                'ngay_chieu'       => now(),
                 'thoi_luong' => '122',
                 'dao_dien' => 'Trần Hữu Tấn',
                 'hinh_anh' => 'https://media.lottecinemavn.com/Media/MovieFile/MovieImg/202409/11507_103_100004.jpg',
@@ -223,7 +223,7 @@ class QuanLyPhimSeeder extends Seeder
             [
                 'ten_phim' => 'FUBAO: BẢO BỐI CỦA ÔNG',
                 'slug_phim' => 'fubao-bao-boi-cua-ong',
-                'ngay_chieu' => Carbon::parse('2024-10-11'),
+                'ngay_chieu'       => now(),
                 'thoi_luong' => '94',
                 'dao_dien' => 'Shim Hyeong-jun, Thomas Ko',
                 'hinh_anh' => 'https://media.lottecinemavn.com/Media/MovieFile/MovieImg/202410/11574_103_100002.jpg',
@@ -240,7 +240,7 @@ class QuanLyPhimSeeder extends Seeder
             [
                 'ten_phim' => 'BIỆT ĐỘI HOT GIRL',
                 'slug_phim' => 'biet-doi-hot-girl',
-                'ngay_chieu' => Carbon::parse('2024-10-25'),
+                'ngay_chieu'       => now(),
                 'thoi_luong' => '95',
                 'dao_dien' => 'Vĩnh Khương',
                 'hinh_anh' => 'https://media.lottecinemavn.com/Media/MovieFile/MovieImg/202410/11595_103_100001.jpg',
@@ -257,7 +257,7 @@ class QuanLyPhimSeeder extends Seeder
             [
                 'ten_phim' => 'TRÒ CHƠI NHÂN TÍNH',
                 'slug_phim' => 'tro-choi-nhan-tinh',
-                'ngay_chieu' => Carbon::parse('2024-10-25'),
+                'ngay_chieu'       => now(),
                 'thoi_luong' => '110', // Giữ nguyên, cần xác nhận lại
                 'dao_dien' => 'William Henry Aherne',
                 'hinh_anh' => 'https://media.lottecinemavn.com/Media/MovieFile/MovieImg/202410/11592_103_100001.jpg',
@@ -274,7 +274,7 @@ class QuanLyPhimSeeder extends Seeder
             [
                 'ten_phim' => 'CÔ DÂU HÀO MÔN',
                 'slug_phim' => 'co-dau-hao-mon',
-                'ngay_chieu' => Carbon::parse('2024-10-18'),
+                'ngay_chieu'       => now(),
                 'thoi_luong' => '110', // Giữ nguyên, cần xác nhận lại
                 'dao_dien' => 'Vũ Ngọc Đãng',
                 'hinh_anh' => 'https://media.lottecinemavn.com/Media/MovieFile/MovieImg/202410/11556_103_100002.jpg',

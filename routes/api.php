@@ -29,6 +29,11 @@ use App\Http\Controllers\ThongKeController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Log;
+
+
+Route::get('/auto', [KhachHangController::class, 'getAuto']);
+
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -173,6 +178,11 @@ Route::group(['middleware' => 'adminMiddle'], function () {
 });
 
 
+//api check vé
+Route::get('/chi-tiet-ve/data', [ChiTietVeController::class, 'checkVe']);
+
+
+
 //client
 Route::get('/hoa-don/data', [HoaDonController::class, 'getData']);
 Route::get('/hoa-don/quyen', [HoaDonController::class, 'quyen']);
@@ -229,6 +239,7 @@ Route::post('/lay-suat-chieu/open-data/{id}', [SuatChieuController::class, 'open
 Route::get('/phim-chi-tiet/{id}', [QuanLyPhimController::class, 'phimChiTiet']);
 
 Route::get('/slide/data', [SlideController::class, 'getData']);
+Route::get('/slide/data-client', [SlideController::class, 'getDataClient']);
 Route::post('/slide/create', [SlideController::class, 'store']);
 Route::delete('/slide/delete/{id}', [SlideController::class, 'destroy']);
 Route::put('/slide/update', [SlideController::class, 'update']);

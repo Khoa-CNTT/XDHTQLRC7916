@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -15,11 +16,13 @@ class SuKienSeeder extends Seeder
     {
         DB::table('su_kiens')->delete();
         DB::table('su_kiens')->truncate();
+        $now = Carbon::now();
+        $endDate = $now->copy()->addDays(30);
         DB::table('su_kiens')->insert([
             [
                 'ten_su_kien' => 'THÔNG BÁO QUYỀN LỢI THÀNH VIÊN 2025',
-                'ngay_bat_dau' => '2024-09-01',
-                'ngay_ket_thuc' => '2024-09-17',
+                'ngay_bat_dau' => $now,
+                'ngay_ket_thuc' => $endDate,
                 'tinh_trang' => 1,
                 'mo_ta' => '- Hạng VIP (Khách hàng có chi tiêu từ 2,000,000 VND đến 4,999,999 VND trong năm 2024):
 
@@ -42,8 +45,8 @@ class SuKienSeeder extends Seeder
             ],
             [
                 'ten_su_kien' => 'BÁNH MÌ QUE NÓNG GIÒN',
-                'ngay_bat_dau' => '2023-07-28',
-                'ngay_ket_thuc' => '2023-07-31',
+                'ngay_bat_dau' => $now,
+                'ngay_ket_thuc' => $endDate,
                 'tinh_trang' => 1,
                 'mo_ta' => 'Ngon giòn nóng hổi từ lớp vỏ.... đầy đặn đẫm xốt trong lớp nhân, bánh mì que đã sẵn sàng phục vụ quý khách với 03 hương vị:
 
@@ -70,8 +73,8 @@ Sản phẩm hiện đang có mặt tại:
             ],
             [
                 'ten_su_kien' => 'SUPERPLEX - CÔNG NGHỆ MỚI VƯỢT TRỘI & ĐẲNG CẤP',
-                'ngay_bat_dau' => '2024-12-23',
-                'ngay_ket_thuc' => '2024-12-23',
+                'ngay_bat_dau' => $now,
+                'ngay_ket_thuc' => $endDate,
                 'tinh_trang' => 1,
                 'mo_ta' => 'Xuất hiện lần đầu tiên tại Việt Nam, công nghệ chiếu phim mới SUPERPLEX sở hữu nhiều ưu điểm nổi trội so với phòng chiếu tiêu chuẩn:
 
@@ -94,8 +97,8 @@ Lotte Mart, 242 Nguyễn Văn Lượng, Phường 10, Gò Vấp, TP.HCM',
             ],
             [
                 'ten_su_kien' => 'PHÒNG CHIẾU CINECOMFORT - LẠC VÀO THẾ GIỚI ĐIỆN ẢNH TRÊN GHẾ SOFA CAO CẤP',
-                'ngay_bat_dau' => '2025-02-26',
-                'ngay_ket_thuc' => '2025-03-07',
+                'ngay_bat_dau' => $now,
+                'ngay_ket_thuc' => $endDate,
                 'tinh_trang' => 1,
                 'mo_ta' => 'Nằm trong hệ thống phòng chiếu cao cấp của LOTTE Cinema Việt Nam, CineComfort mang đến trải nghiệm điện ảnh khác biệt nhằm hướng đến sự thoải mái của khách hàng:
 
@@ -108,8 +111,8 @@ Hãy mau ra rạp trải nghiệm phòng chiêu cao cấp này cùng người th
             ],
             [
                 'ten_su_kien' => 'PHÒNG CHIẾU CHARLOTTE - THƯỞNG THỨC ĐIỆN ẢNH VỚI PHONG CÁCH SANG TRỌNG và ĐẦY TÍNH RIÊNG BIỆTƯu đãi vé xem phim 5.000đ qua VinID',
-                'ngay_bat_dau' => '2019-11-16',
-                'ngay_ket_thuc' => '2019-11-22',
+                'ngay_bat_dau' => $now,
+                'ngay_ket_thuc' => $endDate,
                 'tinh_trang' => 1,
                 'mo_ta' => 'Nằm trong hệ thống phòng chiếu cao cấp của LOTTE Cinema Việt Nam, CharLotte thuộc phân khúc sang trọng bậc nhất với trải nghiệm điện ảnh hạng “thương gia” cho khách hàng.
 
@@ -126,8 +129,8 @@ Hãy mau ra rạp trải nghiệm phòng chiêu cao cấp này cùng người th
             ],
             [
                 'ten_su_kien' => 'LY PHIM MỚI: LẬT MẶT 8 – VÒNG TAY NẮNG',
-                'ngay_bat_dau' => '2024-01-01',
-                'ngay_ket_thuc' => '2024-12-31',
+                'ngay_bat_dau' => $now,
+                'ngay_ket_thuc' => $endDate,
                 'tinh_trang' => 1,
                 'mo_ta' => 'Chỉ có tại lotte Cinema, thiết kế đặc biệt dành riêng cho Lật Mặt 8 với dung tích ~750ml. Sở hữu ngay trục tiếp tại quầy !!!
 
@@ -146,8 +149,8 @@ COMBO C = 01 ly LẬT MẶT 8 + 02 nước ngọt + 01 bắp lớn
             ],
             [
                 'ten_su_kien' => 'MUA COMBO – NHẬN QUÀ CỰC ĐÃ',
-                'ngay_bat_dau' => '2024-06-01',
-                'ngay_ket_thuc' => '2024-06-30',
+                'ngay_bat_dau' => $now,
+                'ngay_ket_thuc' => $endDate,
                 'tinh_trang' => 1,
                 'mo_ta' => 'Từ 28.04 đến 04.05, khi mua combo bất kỳ có đồ uống của Pepsico, bạn sẽ nhận ngay 1 trong các quà tặng hấp dẫn:
 
@@ -158,8 +161,8 @@ COMBO C = 01 ly LẬT MẶT 8 + 02 nước ngọt + 01 bắp lớn
             ],
             [
                 'ten_su_kien' => 'ĐẶT VÉ XEM PHIM LOTTE 79K TRÊN ỨNG DỤNG NGÂN HÀNG VÀ VÍ VNPAY',
-                'ngay_bat_dau' => '2024-07-10',
-                'ngay_ket_thuc' => '2024-07-20',
+                'ngay_bat_dau' => $now,
+                'ngay_ket_thuc' => $endDate,
                 'tinh_trang' => 1,
                 'mo_ta' => 'Chỉ từ 79K cho vé xem phim rạp LOTTE
 Đặt vé xem phim ngay trên Ví VNPAY & hầu hết các ứng dụng ngân hàng Agribank, Vietcombank, BIDV, VietinBank...',
@@ -167,8 +170,8 @@ COMBO C = 01 ly LẬT MẶT 8 + 02 nước ngọt + 01 bắp lớn
             ],
             [
                 'ten_su_kien' => 'DIỆN ĐỒ CHẤT VIỆT - NHẬN QUÀ CỰC CHẤT',
-                'ngay_bat_dau' => '2024-08-15',
-                'ngay_ket_thuc' => '2024-08-30',
+                'ngay_bat_dau' => $now,
+                'ngay_ket_thuc' => $endDate,
                 'tinh_trang' => 1,
                 'mo_ta' => 'Chương trình đặc biệt khi khách đến xem phim tại Lotte Cinema trong TTTM GO!
 
@@ -181,8 +184,8 @@ Chi tiết: Mặc Việt Phục đến 06 rạp Lotte Cinema trong Go! và check
             ],
             [
                 'ten_su_kien' => 'Nhập mã MMLOTTE: Giảm liền 10K khi đặt vé LOTTE Cinema',
-                'ngay_bat_dau' => '2024-09-05',
-                'ngay_ket_thuc' => '2024-09-20',
+                'ngay_bat_dau' => $now,
+                'ngay_ket_thuc' => $endDate,
                 'tinh_trang' => 1,
                 'mo_ta' => 'Nhanh tay nhập code “MMLOTTE” để được giảm 10.000đ (cho hóa đơn từ 200.000đ) khi mua vé phim hoặc combo bắp nước tại LOTTE Cinema
 
@@ -193,8 +196,8 @@ Tranh thủ xài liền kẻo hết nhaaaaaaaaaa',
             ],
             [
                 'ten_su_kien' => 'Triển lãm "The Mute"',
-                'ngay_bat_dau' => '2024-10-01',
-                'ngay_ket_thuc' => '2024-10-31',
+                'ngay_bat_dau' => $now,
+                'ngay_ket_thuc' => $endDate,
                 'tinh_trang' => 1,
                 'mo_ta' => 'Triển lãm sơn mài truyền thống của họa sĩ Nguyễn Tuấn Cường tại Art 30 Gallery.',
                 'hinh_anh' => 'https://media.lottecinemavn.com/Media/Event/5e27ab8899d74fadb82aa6eb68294483.png',

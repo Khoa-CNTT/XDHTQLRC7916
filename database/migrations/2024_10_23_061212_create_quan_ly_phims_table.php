@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('quan_ly_phims', function (Blueprint $table) {
             $table->id();
             $table->string('ten_phim');
-            $table->date('ngay_chieu');
+            $table->date('ngay_chieu')->useCurrent();
             $table->integer('thoi_luong');
             $table->string('slug_phim');
             $table->string('dao_dien');
@@ -24,7 +24,6 @@ return new class extends Migration
             $table->string('danh_gia');
             $table->integer('tinh_trang')->default(1);
             $table->timestamps();
-
         });
     }
 
