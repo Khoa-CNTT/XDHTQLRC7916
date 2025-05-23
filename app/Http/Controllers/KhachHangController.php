@@ -481,6 +481,11 @@ class KhachHangController extends Controller
 
             if($khoang_cach > 1) {
                 $value->tinh_trang = 0;
+                $value->id_khach_hang = null;
+                $value->id_nhan_vien = null;
+                $value->ma_check = null;
+                $value->id_chi_tiet_ve_dich_vu = null;
+                $value->id_hoa_don = null;
                 $value->save();
             }
         }
