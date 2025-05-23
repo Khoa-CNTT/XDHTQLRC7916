@@ -63,7 +63,6 @@ class ChucNangSeeder extends Seeder
                 //["id" => 27, "ten_chuc_nang" => "Tìm Kiếm Chức Vụ"], //không có
                 ["id" => 28, "ten_chuc_nang" => "Xóa Chức Vụ"],
                 ["id" => 29, "ten_chuc_nang" => "Đổi Trạng Thái Chức Vụ"],
-                ["id" => 60, "ten_chuc_nang" => "Đổi Trạng Thái Master Cho Chức Vụ"],
                 ["id" => 66, "ten_chuc_nang" => "Cập Nhật Chức Vụ"],
 
                 // Ghế
@@ -129,7 +128,6 @@ class ChucNangSeeder extends Seeder
                 ["id" => 88, "ten_chuc_nang" => "Cập nhật slide"],
                 ["id" => 89, "ten_chuc_nang" => "Đổi trạng trái slide"],
 
-                ["id" => 90, "ten_chuc_nang" => "Quản lý phân quyền"],
 
         ]);
     }

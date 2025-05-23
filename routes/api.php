@@ -103,7 +103,7 @@ Route::group(['middleware' => 'adminMiddle'], function () {
 
 
     Route::post('/chuc-nang/data', [ChiTietPhanQuyenController::class, 'getDataCN']);
-    Route::post('/phan-quyen/quyen', [ChiTietPhanQuyenController::class, 'CheckQuyen']);
+    Route::get('/phan-quyen/quyen', [ChiTietPhanQuyenController::class, 'CheckQuyen']);
     Route::post('/chi-tiet-quyen/data', [ChiTietPhanQuyenController::class, 'getData']);
     Route::post('/chi-tiet-quyen/cap-quyen', [ChiTietPhanQuyenController::class, 'capQuyen']);
     Route::post('/chi-tiet-quyen/xoa-quyen', [ChiTietPhanQuyenController::class, 'xoaQuyen']);

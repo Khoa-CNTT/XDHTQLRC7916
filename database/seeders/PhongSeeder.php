@@ -25,16 +25,31 @@ class PhongSeeder extends Seeder
         // Thêm dữ liệu phòng
         DB::table('phongs')->insert([
             [
-                'ten_phong' => 'Phòng chiếu 1',
-
+                'ten_phong' => 'Phòng 1',
                 'tinh_trang' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-
-                'ten_phong' => 'Phòng chiếu 2',
-
+                'ten_phong' => 'Phòng 2',
+                'tinh_trang' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'ten_phong' => 'Phòng 3',
+                'tinh_trang' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'ten_phong' => 'Phòng 4',
+                'tinh_trang' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'ten_phong' => 'Phòng 5',
                 'tinh_trang' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),

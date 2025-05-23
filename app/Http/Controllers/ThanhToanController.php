@@ -885,8 +885,8 @@ class ThanhToanController extends Controller
                 }
             }
 
-            $thoiGianBatDauCheckIn = $thoiGianChieu->copy()->subMinutes(30);
-            $thoiGianKetThucCheckIn = $thoiGianChieu->copy()->addMinutes(10);
+            $thoiGianBatDauCheckIn = $thoiGianChieu->copy()->subMinutes(10);
+            $thoiGianKetThucCheckIn = $thoiGianChieu->copy()->addMinutes(30);
 
             Log::info('Debug thời gian check-in:', [
                 'now' => $now->format('Y-m-d H:i:s'),
@@ -904,7 +904,7 @@ class ThanhToanController extends Controller
                 if ($thoiGianChieu->format('Y-m-d') > $now->format('Y-m-d') && $thoiGianChieu->format('H:i') < '12:00') {
                     return response()->json([
                         'status' => false,
-                        'message' => 'Suất chiếu sáng sớm ngày mai, check-in sẽ mở lúc 18:00 hôm nay',
+                        'message' => 'Suất chiếu sáng sớm ngày mai, check-in sẽ mở lúc '. $thoiGianBatDauCheckIn,
                         'gio hien tai' => $now->format('H:i'),
                         'debug_time' => [
                             'ngay_gio_hien_tai' => $now->format('Y-m-d H:i:s'),
@@ -1093,7 +1093,7 @@ class ThanhToanController extends Controller
                 if ($thoiGianChieu->format('Y-m-d') > $now->format('Y-m-d') && $thoiGianChieu->format('H:i') < '12:00') {
                     return response()->json([
                         'status' => false,
-                        'message' => 'Suất chiếu sáng sớm ngày mai, check-in dịch vụ sẽ mở lúc 18:00 hôm nay',
+                        'message' => 'Suất chiếu sáng sớm ngày mai, check-in dịch vụ sẽ mở lúc '. $thoiGianBatDauCheckIn,
                         'gio_hien_tai' => $now->format('H:i')
                     ], 400);
                 }
