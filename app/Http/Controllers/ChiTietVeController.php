@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Auth;
 
 class ChiTietVeController extends Controller
 {
+
+
+
     public function getData()
     {
         $data = ChiTietVe::join('suat_chieus', 'chi_tiet_ves.id_suat', '=', 'suat_chieus.id')
@@ -25,7 +28,8 @@ class ChiTietVeController extends Controller
                 'chi_tiet_ves.id',
                 'chi_tiet_ves.gia_tien',
                 'chi_tiet_ves.tinh_trang',
-                'quan_ly_phims.ten_phim',                'suat_chieus.ngay_chieu',
+                'quan_ly_phims.ten_phim',
+                'suat_chieus.ngay_chieu',
                 'suat_chieus.gio_bat_dau',
                 'suat_chieus.gio_ket_thuc',
                 'suat_chieus.dinh_dang',
@@ -328,27 +332,27 @@ class ChiTietVeController extends Controller
     {
         try {
             $data = ChiTietVe::leftJoin('khach_hangs', 'chi_tiet_ves.id_khach_hang', 'khach_hangs.id')
-                            ->leftJoin('hoa_dons', 'chi_tiet_ves.id_hoa_don', 'hoa_dons.id')
-                            ->leftJoin('ghes', 'chi_tiet_ves.id_ghe', 'ghes.id')
-                            ->where('chi_tiet_ves.id_suat', $id_suat)
-                            ->select(
-                                'chi_tiet_ves.id',
-                                'chi_tiet_ves.id_suat',
-                                'chi_tiet_ves.id_ghe',
-                                'chi_tiet_ves.id_khach_hang',
-                                'chi_tiet_ves.id_hoa_don',
-                                'chi_tiet_ves.gia_tien',
-                                'chi_tiet_ves.tinh_trang',
-                                'chi_tiet_ves.ghi_chu',
-                                'khach_hangs.ten_khach_hang',
-                                'hoa_dons.ma_hoa_don',
-                                'ghes.ten_ghe',
-                                'ghes.hang',
-                                'ghes.cot',
-                                'ghes.loai_ghe',
-                                'ghes.trang_thai as trang_thai_ghe'
-                            )
-                            ->get();
+                ->leftJoin('hoa_dons', 'chi_tiet_ves.id_hoa_don', 'hoa_dons.id')
+                ->leftJoin('ghes', 'chi_tiet_ves.id_ghe', 'ghes.id')
+                ->where('chi_tiet_ves.id_suat', $id_suat)
+                ->select(
+                    'chi_tiet_ves.id',
+                    'chi_tiet_ves.id_suat',
+                    'chi_tiet_ves.id_ghe',
+                    'chi_tiet_ves.id_khach_hang',
+                    'chi_tiet_ves.id_hoa_don',
+                    'chi_tiet_ves.gia_tien',
+                    'chi_tiet_ves.tinh_trang',
+                    'chi_tiet_ves.ghi_chu',
+                    'khach_hangs.ten_khach_hang',
+                    'hoa_dons.ma_hoa_don',
+                    'ghes.ten_ghe',
+                    'ghes.hang',
+                    'ghes.cot',
+                    'ghes.loai_ghe',
+                    'ghes.trang_thai as trang_thai_ghe'
+                )
+                ->get();
 
             return response()->json([
                 'status'    => true,
@@ -364,14 +368,14 @@ class ChiTietVeController extends Controller
     }
 
     public function kiemTraDatVe(Request $request)
-{
-    $suatChieuId = $request->query('suat_chieu_id');
-    $daCoNguoiDat = \App\Models\ChiTietVe::where('id_suat', $suatChieuId)
-        ->where('tinh_trang', 1)
-        ->exists();
+    {
+        $suatChieuId = $request->query('suat_chieu_id');
+        $daCoNguoiDat = \App\Models\ChiTietVe::where('id_suat', $suatChieuId)
+            ->where('tinh_trang', 1)
+            ->exists();
 
-    return response()->json([
-        'da_co_nguoi_dat' => $daCoNguoiDat
-    ]);
-}
+        return response()->json([
+            'da_co_nguoi_dat' => $daCoNguoiDat
+        ]);
+    }
 }
