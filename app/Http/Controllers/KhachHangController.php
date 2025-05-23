@@ -15,8 +15,10 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SendMail;
 use App\Models\ChiTietPhanQuyen;
+use App\Models\ChiTietVe;
 use App\Models\ChucVu;
 use App\Models\HoaDon;
+use Carbon\Carbon;
 
 class KhachHangController extends Controller
 {
@@ -463,5 +465,24 @@ class KhachHangController extends Controller
             'status' => true,
             'message' => 'Đã cập nhật thành công!'
         ]);
+    }
+
+    public function getAuto()
+    {
+        $hien_tai = Carbon::now();
+        $hien_tai_old = Carbon::now()->subHour();
+        $data = ChiTietVe::whereTime('updated_at', '>=', $hien_tai_old)
+                         ->whereTime('updated_at', '<=', $hien_tai)
+                         ->where('tinh_trang', 1)
+                         ->get();
+        foreach($data as $key => $value) {
+            $thoi_gian_dat = Carbon::parse($value->updated_at);
+            $khoang_cach = $thoi_gian_dat->diffInMinutes($hien_tai);
+
+            if($khoang_cach > 1) {
+                $value->tinh_trang = 0;
+                $value->save();
+            }
+        }
     }
 }

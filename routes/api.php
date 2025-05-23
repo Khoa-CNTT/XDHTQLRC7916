@@ -27,6 +27,11 @@ use App\Http\Controllers\ThongKeController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Log;
+
+
+Route::get('/auto', [KhachHangController::class, 'getAuto']);
+
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -165,6 +170,11 @@ Route::group(['middleware' => 'adminMiddle'], function () {
         Route::put('/su-kien/doi-trang-thai', [SuKienController::class, 'doiTrangThai']);
     });
 });
+
+
+//api check vé
+Route::get('/chi-tiet-ve/data', [ChiTietVeController::class, 'checkVe']);
+
 
 
 //client
